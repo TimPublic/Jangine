@@ -1,6 +1,7 @@
 package internal.rendering;
 
 
+import internal.input.JangineKeyListener;
 import internal.input.JangineMouseListener;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
@@ -60,6 +61,8 @@ public class JangineWindow {
         glfwSetCursorPosCallback(_glfw_windowPointer, JangineMouseListener::cursorPositionCallback);
         glfwSetMouseButtonCallback(_glfw_windowPointer, JangineMouseListener::mouseButtonCallback);
         glfwSetScrollCallback(_glfw_windowPointer, JangineMouseListener::scrollCallback);
+
+        glfwSetKeyCallback(_glfw_windowPointer, JangineKeyListener::keyCallback);
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(_glfw_windowPointer, (window, key, scancode, action, mods) -> {
