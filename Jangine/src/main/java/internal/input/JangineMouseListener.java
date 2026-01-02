@@ -37,38 +37,38 @@ public class JangineMouseListener {
     }
 
 
-    private void _cursorPositionCallback(long windowPointer, double xPos, double yPos) {
-        _prevX = _xPos;
-        _prevY = _yPos;
-        _xPos = xPos;
-        _yPos = yPos;
+    public static void cursorPositionCallback(long windowPointer, double xPos, double yPos) {
+        get()._prevX = get()._xPos;
+        get()._prevY = get()._yPos;
+        get()._xPos = xPos;
+        get()._yPos = yPos;
 
         // If the mouse has moved AND any button is down, a drag is happening.
-        for (int index = 0; index < _mouseButtonsPressed.length; index++) {
-            if (!_mouseButtonsPressed[index]) {continue;}
+        for (int index = 0; index < get()._mouseButtonsPressed.length; index++) {
+            if (!get()._mouseButtonsPressed[index]) {continue;}
 
-            _isDragging = true;
+            get()._isDragging = true;
 
             break;
         }
     }
 
-    private void _mouseButtonCallback(long windowPointer, int button, int action, int mods) {
+    public static void mouseButtonCallback(long windowPointer, int button, int action, int mods) {
         if (action == GLFW_PRESS && _isKnownMouseButton(button)) {
-            _mouseButtonsPressed[button] = true;
+            get()._mouseButtonsPressed[button] = true;
         }
         else if (action == GLFW_RELEASE && _isKnownMouseButton(button)) {
-            _mouseButtonsPressed[button] = false;
-            _isDragging = false; // Could also be only if all are not pressed.
+            get()._mouseButtonsPressed[button] = false;
+            get()._isDragging = false; // Could also be only if all are not pressed.
         }
     }
-    private boolean _isKnownMouseButton(int mouseButton) {
-        return mouseButton < _mouseButtonsPressed.length;
+    private static boolean _isKnownMouseButton(int mouseButton) {
+        return mouseButton < get()._mouseButtonsPressed.length;
     }
 
-    private void _scrollCallback(long windowPointer, double xOffset, double yOffset) {
-        _scrollOffsetX = xOffset;
-        _scrollOffsetY = yOffset;
+    public static void scrollCallback(long windowPointer, double xOffset, double yOffset) {
+        get()._scrollOffsetX = xOffset;
+        get()._scrollOffsetY = yOffset;
     }
 
 

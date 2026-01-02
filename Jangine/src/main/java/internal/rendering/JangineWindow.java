@@ -1,6 +1,7 @@
 package internal.rendering;
 
 
+import internal.input.JangineMouseListener;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
@@ -54,6 +55,11 @@ public class JangineWindow {
         _glfw_windowPointer = glfwCreateWindow(_width, _height, "Hello World!", NULL, NULL);
         if (_glfw_windowPointer == NULL)
             throw new RuntimeException("Failed to create the GLFW window");
+
+        // Set up mouse listener.
+        glfwSetCursorPosCallback(_glfw_windowPointer, JangineMouseListener::cursorPositionCallback);
+        glfwSetMouseButtonCallback(_glfw_windowPointer, JangineMouseListener::mouseButtonCallback);
+        glfwSetScrollCallback(_glfw_windowPointer, JangineMouseListener::scrollCallback);
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
         glfwSetKeyCallback(_glfw_windowPointer, (window, key, scancode, action, mods) -> {
