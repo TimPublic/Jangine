@@ -17,7 +17,7 @@ public class JangineLogger {
         _messageBuffer = new ArrayList<>();
     }
 
-    private static JangineLogger get() {
+    public static JangineLogger get() {
         if (_instance == null) {
             _instance = new JangineLogger();
         }
