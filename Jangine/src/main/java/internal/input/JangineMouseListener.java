@@ -1,4 +1,4 @@
-﻿package internal.input;
+package internal.input;
 
 
 import internal.util.JangineLogger;

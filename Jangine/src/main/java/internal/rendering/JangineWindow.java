@@ -64,12 +64,6 @@ public class JangineWindow {
 
         glfwSetKeyCallback(_glfw_windowPointer, JangineKeyListener::keyCallback);
 
-        // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(_glfw_windowPointer, (window, key, scancode, action, mods) -> {
-            if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-                glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
-        });
-
         // Get the thread stack and push a new frame
         try (MemoryStack stack = stackPush()) {
             IntBuffer pWidth = stack.mallocInt(1); // int*
@@ -111,6 +105,9 @@ public class JangineWindow {
         // Run the rendering loop until the user has attempted to close
         // the window or has pressed the ESCAPE key.
         while (!glfwWindowShouldClose(_glfw_windowPointer)) {
+            JangineMouseListener.get().endFrame();
+            JangineKeyListener.get().endFrame();
+
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
             glfwSwapBuffers(_glfw_windowPointer); // swap the color buffers

@@ -1,6 +1,9 @@
-﻿package internal.input;
+package internal.input;
 
 
+import internal.util.JangineLogger;
+
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
@@ -13,13 +16,17 @@ public class JangineKeyListener {
     private static JangineKeyListener _instance;
 
 
-    private Set<Integer> _keyPressedBuffer;
-    private Set<Integer> _framePressedBuffer;
-    private Set<Integer> _frameReleasedBuffer;
+    private HashSet<Integer> _keyPressedBuffer;
+    private HashSet<Integer> _prevKeyPressedBuffer;
+    private HashSet<Integer> _framePressedBuffer;
+    private HashSet<Integer> _frameReleasedBuffer;
 
 
     private JangineKeyListener() {
-
+        _keyPressedBuffer = new HashSet<>();
+        _prevKeyPressedBuffer = new HashSet<>();
+        _framePressedBuffer = new HashSet<>();
+        _frameReleasedBuffer = new HashSet<>();
     }
 
     public static JangineKeyListener get() {
@@ -39,7 +46,7 @@ public class JangineKeyListener {
                 break;
             case GLFW_RELEASE:
                 get()._frameReleasedBuffer.add(key);
-                get()._keyPressedBuffer.remove(key); // Prevents multiple actions per frame.
+                get()._framePressedBuffer.remove(key); // Prevents multiple actions per frame.
                 break;
         }
     }
@@ -51,13 +58,11 @@ public class JangineKeyListener {
 
 
     private void _manageKeyEvents() {
+        // System.out.println(_keyPressedBuffer);
         for (Integer key : _framePressedBuffer) {
-            if (_keyPressedBuffer.add(key)) {
-                _pushPressed(key);
-                continue;
-            }
+            if (!_keyPressedBuffer.add(key)) {continue;}
 
-            _pushContinued(key);
+            _pushPressed(key);
         }
 
         for (Integer key : _frameReleasedBuffer) {
@@ -65,16 +70,26 @@ public class JangineKeyListener {
 
             _pushReleased(key);
         }
+
+        for (Integer key : _prevKeyPressedBuffer) {
+            if (!_keyPressedBuffer.contains(key)) {continue;}
+
+            _pushContinued(key);
+        }
+
+        _prevKeyPressedBuffer = (HashSet<Integer>) _keyPressedBuffer.clone();
+        _framePressedBuffer.clear();
+        _frameReleasedBuffer.clear();
     }
 
     private void _pushPressed(Integer key) {
-
+        JangineLogger.get().log("PRESS");
     }
     private void _pushContinued(Integer key) {
-
+        JangineLogger.get().log("CONTINUED");
     }
     private void _pushReleased(Integer key) {
-
+        JangineLogger.get().log("RELEASED");
     }
 
 
