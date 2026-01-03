@@ -31,6 +31,8 @@ public class JangineWindow {
 
     private long _glfw_windowPointer;
 
+    ShaderTest test;
+
 
     public JangineWindow(Engine engine) {
         _width = 960;
@@ -46,6 +48,8 @@ public class JangineWindow {
         _setUpMouseListener();
 
         _setUpEngine(engine);
+
+        test = new ShaderTest();
     }
 
     private void _init() {
@@ -117,15 +121,12 @@ public class JangineWindow {
         }
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-        glfwSwapBuffers(_glfw_windowPointer); // swap the color buffers
-
-        ShaderTest test;
-
-        test = new ShaderTest();
 
         test.run();
 
         glfwMakeContextCurrent(_glfw_windowPointer);
+
+        glfwSwapBuffers(_glfw_windowPointer); // swap the color buffers
 
         _keyListener.update();
         _mouseListener.update();
