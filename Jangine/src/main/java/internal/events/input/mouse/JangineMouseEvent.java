@@ -1,4 +1,4 @@
-﻿package internal.events.input;
+﻿package internal.events.input.mouse;
 
 
 import internal.events.JangineEvent;
