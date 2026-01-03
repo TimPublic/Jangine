@@ -17,8 +17,10 @@ public class JangineMouseListener {
     private double _scrollOffsetX, _scrollOffsetY;
 
     private boolean _isDragging;
+    private boolean _prevIsDragging;
 
-    private boolean _mouseButtonsPressed[] = new boolean[3];
+    private boolean[] _mouseButtonsPressed = new boolean[3];
+    private boolean[] _prevMouseButtonsPressed = new boolean[3];
 
 
     private JangineMouseListener() {
@@ -78,7 +80,56 @@ public class JangineMouseListener {
 
         _prevX = 0.0;
         _prevY = 0.0;
+
+        _prevIsDragging = _isDragging;
+
+        _manageButtonEvents();
+        _manageScrollEvent();
+        _manageDragEvents();
+        _manageMoveEvent();
     }
+
+    private void _manageButtonEvents() {
+        for (int index = 0; index < _mouseButtonsPressed.length; index++) {
+            if (!_prevMouseButtonsPressed[index] && _mouseButtonsPressed[index]) {
+                _pushPressed(index);
+                continue;
+            }
+            if (_prevMouseButtonsPressed[index] && _mouseButtonsPressed[index]) {
+                _pushContinued(index);
+                continue;
+            }
+            if (_prevMouseButtonsPressed[index] && !_mouseButtonsPressed[index]) {
+                _pushReleased(index);
+                continue;
+            }
+        }
+
+        _prevMouseButtonsPressed = _mouseButtonsPressed.clone();
+    }
+
+    private void _pushPressed(int index) {
+
+    }
+    private void _pushContinued(int index) {
+
+    }
+    private void _pushReleased(int index) {
+
+    }
+
+    private void _manageScrollEvent() {
+
+    }
+
+    private void _manageDragEvents() {
+
+    }
+
+    private void _manageMoveEvent() {
+
+    }
+
 
     public double getX() {
         return _xPos;

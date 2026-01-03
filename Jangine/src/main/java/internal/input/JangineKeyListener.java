@@ -18,15 +18,11 @@ public class JangineKeyListener {
 
     private HashSet<Integer> _keyPressedBuffer;
     private HashSet<Integer> _prevKeyPressedBuffer;
-    private HashSet<Integer> _framePressedBuffer;
-    private HashSet<Integer> _frameReleasedBuffer;
 
 
     private JangineKeyListener() {
         _keyPressedBuffer = new HashSet<>();
         _prevKeyPressedBuffer = new HashSet<>();
-        _framePressedBuffer = new HashSet<>();
-        _frameReleasedBuffer = new HashSet<>();
     }
 
     public static JangineKeyListener get() {
@@ -41,12 +37,10 @@ public class JangineKeyListener {
     public static void keyCallback(long windowPointer, int key, int scanCode, int action, int mods) {
         switch (action) {
             case GLFW_PRESS:
-                get()._framePressedBuffer.add(key);
-                get()._frameReleasedBuffer.remove(key); // Prevents multiple actions per frame.
+                get()._keyPressedBuffer.add(key);
                 break;
             case GLFW_RELEASE:
-                get()._frameReleasedBuffer.add(key);
-                get()._framePressedBuffer.remove(key); // Prevents multiple actions per frame.
+                get()._keyPressedBuffer.remove(key);
                 break;
         }
     }
@@ -58,28 +52,25 @@ public class JangineKeyListener {
 
 
     private void _manageKeyEvents() {
-        // System.out.println(_keyPressedBuffer);
-        for (Integer key : _framePressedBuffer) {
-            if (!_keyPressedBuffer.add(key)) {continue;}
+        int sizeDifference; // The difference in size, of the two buffers.
+        int optimizationCounter; // Counts how many pressed events where already pushed, to be checked against the size difference.
+
+        sizeDifference = _keyPressedBuffer.size() - _prevKeyPressedBuffer.size();
+        optimizationCounter = 0;
+
+        for (Integer key : _keyPressedBuffer) {
+            if (optimizationCounter >= sizeDifference) {break;}
+            if (_prevKeyPressedBuffer.contains(key)) {continue;}
 
             _pushPressed(key);
         }
-
-        for (Integer key : _frameReleasedBuffer) {
-            if (!_keyPressedBuffer.remove(key)) {continue;}
-
-            _pushReleased(key);
-        }
-
         for (Integer key : _prevKeyPressedBuffer) {
-            if (!_keyPressedBuffer.contains(key)) {continue;}
-
-            _pushContinued(key);
+            if (_keyPressedBuffer.contains(key)) {
+                _pushContinued(key);
+            } else {
+                _pushPressed(key);
+            }
         }
-
-        _prevKeyPressedBuffer = (HashSet<Integer>) _keyPressedBuffer.clone();
-        _framePressedBuffer.clear();
-        _frameReleasedBuffer.clear();
     }
 
     private void _pushPressed(Integer key) {
