@@ -1,8 +1,10 @@
 package internal.rendering;
 
 
+import internal.events.JangineEventHandler;
 import internal.input.JangineKeyListener;
 import internal.input.JangineMouseListener;
+import internal.main.Engine;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
@@ -23,18 +25,27 @@ public class JangineWindow {
     private int _width, _height;
     private String _title;
 
+    private JangineEventHandler _eventHandler;
+    private JangineKeyListener _keyListener;
+    private JangineMouseListener _mouseListener;
+
     private long _glfw_windowPointer;
 
-    private static JangineWindow _instance;
 
-
-    private JangineWindow() {
+    public JangineWindow(Engine engine) {
         _width = 960;
         _height = 540;
 
         _title = "Jangine Window";
 
+        _eventHandler = new JangineEventHandler();
+
         _init();
+
+        _setUpKeyListener();
+        _setUpMouseListener();
+
+        _setUpEngine(engine);
     }
 
     private void _init() {
@@ -56,13 +67,6 @@ public class JangineWindow {
         _glfw_windowPointer = glfwCreateWindow(_width, _height, "Hello World!", NULL, NULL);
         if (_glfw_windowPointer == NULL)
             throw new RuntimeException("Failed to create the GLFW window");
-
-        // Set up mouse listener.
-        glfwSetCursorPosCallback(_glfw_windowPointer, JangineMouseListener::cursorPositionCallback);
-        glfwSetMouseButtonCallback(_glfw_windowPointer, JangineMouseListener::mouseButtonCallback);
-        glfwSetScrollCallback(_glfw_windowPointer, JangineMouseListener::scrollCallback);
-
-        glfwSetKeyCallback(_glfw_windowPointer, JangineKeyListener::keyCallback);
 
         // Get the thread stack and push a new frame
         try (MemoryStack stack = stackPush()) {
@@ -103,15 +107,6 @@ public class JangineWindow {
     }
 
 
-    public static JangineWindow get() {
-        if (_instance == null) {
-            _instance = new JangineWindow();
-        }
-
-        return _instance;
-    }
-
-
     public boolean update() {
         if (glfwWindowShouldClose(_glfw_windowPointer)) {
             // Free the window callbacks and destroy the window
@@ -125,8 +120,8 @@ public class JangineWindow {
             return false;
         }
 
-        JangineMouseListener.get().endFrame();
-        JangineKeyListener.get().endFrame();
+        _keyListener.update();
+        _mouseListener.update();
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
@@ -137,6 +132,28 @@ public class JangineWindow {
         glfwPollEvents();
 
         return true;
+    }
+
+    private void _setUpEngine(Engine engine) {
+        _keyListener.addEventHandler(engine.getEventHandler());
+        _mouseListener.addEventHandler(engine.getEventHandler());
+    }
+    private void _setUpKeyListener() {
+        _keyListener = new JangineKeyListener();
+
+        _keyListener.setUpWindow(this);
+    }
+    private void _setUpMouseListener() {
+        _mouseListener = new JangineMouseListener();
+
+        _mouseListener.setUpWindow(this);
+    }
+
+    public long getPointer() {
+        return _glfw_windowPointer;
+    }
+    public JangineEventHandler getEventHandler() {
+        return _eventHandler;
     }
 
 

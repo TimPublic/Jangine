@@ -1,4 +1,4 @@
-﻿package internal.events;
+package internal.events;
 
 
 import java.util.ArrayList;
@@ -10,22 +10,11 @@ import java.util.function.Consumer;
 public class JangineEventHandler {
 
 
-    private static JangineEventHandler _instance;
-
-
     private ArrayList<EventListeningPort> _ports;
 
 
-    private JangineEventHandler() {
+    public JangineEventHandler() {
         _ports = new ArrayList<>();
-    }
-
-    public static JangineEventHandler get() {
-        if (_instance == null) {
-            _instance = new JangineEventHandler();
-        }
-
-        return _instance;
     }
 
 

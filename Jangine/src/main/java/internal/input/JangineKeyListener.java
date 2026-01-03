@@ -1,70 +1,83 @@
 package internal.input;
 
 
+import internal.events.JangineEvent;
 import internal.events.JangineEventHandler;
 import internal.events.input.key.JangineKeyContinuedEvent;
 import internal.events.input.key.JangineKeyPressedEvent;
 import internal.events.input.key.JangineKeyReleasedEvent;
+import internal.rendering.JangineWindow;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
-import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
-import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 
 
 public class JangineKeyListener {
 
 
-    private static JangineKeyListener _instance;
-
+    private ArrayList<JangineEventHandler> _eventHandlers;
 
     private HashSet<Integer> _keyPressedBuffer;
     private HashSet<Integer> _prevKeyPressedBuffer;
 
 
-    private JangineKeyListener() {
+    public JangineKeyListener() {
+        _eventHandlers = new ArrayList<>();
+
         _keyPressedBuffer = new HashSet<>();
         _prevKeyPressedBuffer = new HashSet<>();
     }
 
-    public static JangineKeyListener get() {
-        if (_instance == null) {
-            _instance = new JangineKeyListener();
-        }
 
-        return _instance;
-    }
-
-
-    public static void keyCallback(long windowPointer, int key, int scanCode, int action, int mods) {
+    public void keyCallback(long windowPointer, int key, int scanCode, int action, int mods) {
         switch (action) {
             case GLFW_PRESS:
-                get()._keyPressedBuffer.add(key);
+                _keyPressedBuffer.add(key);
                 break;
             case GLFW_RELEASE:
-                get()._keyPressedBuffer.remove(key);
+                _keyPressedBuffer.remove(key);
                 break;
         }
     }
 
 
-    public void endFrame() {
+    public void update() {
         _manageKeyEvents();
+    }
+    public void setUpWindow(JangineWindow window) {
+        _eventHandlers.add(window.getEventHandler());
+
+        glfwSetKeyCallback(window.getPointer(), this::keyCallback);
+    }
+    public void removeWindow(JangineWindow window) {
+        _eventHandlers.remove(window.getEventHandler());
+
+        glfwSetKeyCallback(window.getPointer(), (long windowPointer, int key, int scanCode, int action, int mods) -> {});
+    }
+
+    public void addEventHandler(JangineEventHandler eventHandler) {
+        _eventHandlers.add(eventHandler);
+    }
+    public void rmvEventHandler(JangineEventHandler eventHandler) {
+        _eventHandlers.remove(eventHandler);
     }
 
 
+    private void _pushEvent(JangineEvent event) {
+        for (JangineEventHandler eventHandler : _eventHandlers) {
+            eventHandler.pushEvent(event);
+        }
+    }
+
     private void _manageKeyEvents() {
-        int sizeDifference; // The difference in size, of the two buffers.
-        int optimizationCounter; // Counts how many pressed events where already pushed, to be checked against the size difference.
-
-        sizeDifference = _keyPressedBuffer.size() - _prevKeyPressedBuffer.size();
-        optimizationCounter = 0;
-
         for (Integer key : _keyPressedBuffer) {
-            if (optimizationCounter >= sizeDifference) {break;}
             if (_prevKeyPressedBuffer.contains(key)) {continue;}
 
             _pushPressed(key);
+            System.out.println("PRESS");
         }
         for (Integer key : _prevKeyPressedBuffer) {
             if (_keyPressedBuffer.contains(key)) {
@@ -73,21 +86,18 @@ public class JangineKeyListener {
                 _pushReleased(key);
             }
         }
+
+        _prevKeyPressedBuffer = (HashSet<Integer>) _keyPressedBuffer.clone();
     }
 
     private void _pushPressed(Integer key) {
-        JangineEventHandler.get().pushEvent(new JangineKeyPressedEvent(key));
+        _pushEvent(new JangineKeyPressedEvent(key));
     }
     private void _pushContinued(Integer key) {
-        JangineEventHandler.get().pushEvent(new JangineKeyContinuedEvent(key));
+        _pushEvent(new JangineKeyContinuedEvent(key));
     }
     private void _pushReleased(Integer key) {
-        JangineEventHandler.get().pushEvent(new JangineKeyReleasedEvent(key));
-    }
-
-
-    public boolean isButtonPressed(int button) {
-        return _keyPressedBuffer.contains(button);
+        _pushEvent(new JangineKeyReleasedEvent(key));
     }
 
 

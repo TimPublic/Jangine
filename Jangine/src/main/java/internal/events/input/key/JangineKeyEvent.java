@@ -1,4 +1,4 @@
-﻿package internal.events.input.key;
+package internal.events.input.key;
 
 
 import internal.events.JangineEvent;

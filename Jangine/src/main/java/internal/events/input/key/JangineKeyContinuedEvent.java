@@ -1,4 +1,4 @@
-﻿package internal.events.input.key;
+package internal.events.input.key;
 
 public class JangineKeyContinuedEvent extends JangineKeyEvent {
 

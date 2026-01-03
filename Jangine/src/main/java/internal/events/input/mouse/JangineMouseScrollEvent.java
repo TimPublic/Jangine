@@ -1,4 +1,4 @@
-﻿package internal.events.input.mouse;
+package internal.events.input.mouse;
 
 public class JangineMouseScrollEvent extends JangineMouseEvent {
 
