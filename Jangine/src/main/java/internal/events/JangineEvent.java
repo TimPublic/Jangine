@@ -1,10 +1,4 @@
 ﻿package internal.events;
 
 
-public abstract class JangineEvent {
-
-
-
-
-
-}
+public abstract class JangineEvent {}
