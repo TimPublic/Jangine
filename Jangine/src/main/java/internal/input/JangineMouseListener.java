@@ -1,6 +1,8 @@
 package internal.input;
 
 
+import internal.events.JangineEventHandler;
+import internal.events.input.mouse.*;
 import internal.util.JangineLogger;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -40,8 +42,6 @@ public class JangineMouseListener {
 
 
     public static void cursorPositionCallback(long windowPointer, double xPos, double yPos) {
-        get()._prevX = get()._xPos;
-        get()._prevY = get()._yPos;
         get()._xPos = xPos;
         get()._yPos = yPos;
 
@@ -78,8 +78,8 @@ public class JangineMouseListener {
         _scrollOffsetX = 0.0;
         _scrollOffsetY = 0.0;
 
-        _prevX = 0.0;
-        _prevY = 0.0;
+        _prevX = _xPos;
+        _prevY = _yPos;
 
         _prevIsDragging = _isDragging;
 
@@ -109,25 +109,40 @@ public class JangineMouseListener {
     }
 
     private void _pushPressed(int index) {
-
+        JangineEventHandler.get().pushEvent(new JangineMouseButtonPressedEvent(index));
     }
     private void _pushContinued(int index) {
-
+        JangineEventHandler.get().pushEvent(new JangineMouseButtonContinuedEvent(index));
     }
     private void _pushReleased(int index) {
-
+        JangineEventHandler.get().pushEvent(new JangineMouseButtonReleasedEvent(index));
     }
 
     private void _manageScrollEvent() {
+        if (_scrollOffsetX == 0 && _scrollOffsetY == 0) {return;}
 
+        JangineEventHandler.get().pushEvent(new JangineMouseScrollEvent(_scrollOffsetX, _scrollOffsetY));
     }
 
     private void _manageDragEvents() {
-
+        if (_prevIsDragging == _isDragging) {
+            JangineEventHandler.get().pushEvent(new JangineMouseDraggingEvent());
+            return;
+        }
+        if (!_prevIsDragging && _isDragging) {
+            JangineEventHandler.get().pushEvent(new JangineMouseDraggingStartedEvent());
+            return;
+        }
+        if (_prevIsDragging && !_isDragging) {
+            JangineEventHandler.get().pushEvent(new JangineMouseDraggingEndedEvent());
+            return;
+        }
     }
 
     private void _manageMoveEvent() {
+        if (_prevY == _yPos && _prevX == _xPos) {return;}
 
+        JangineEventHandler.get().pushEvent(new JangineMouseMovedEvent(_prevX, _prevY, _xPos, _yPos));
     }
 
 

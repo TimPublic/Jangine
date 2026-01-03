@@ -1,3 +1,3 @@
 ﻿package internal.events.input.mouse;
 
-public abstract class JangineMouseDraggingEvent extends JangineMouseEvent {}
+public class JangineMouseDraggingEvent extends JangineMouseEvent {}

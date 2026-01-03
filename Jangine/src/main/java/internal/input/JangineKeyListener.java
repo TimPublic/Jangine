@@ -1,10 +1,12 @@
 package internal.input;
 
 
-import internal.util.JangineLogger;
+import internal.events.JangineEventHandler;
+import internal.events.input.key.JangineKeyContinuedEvent;
+import internal.events.input.key.JangineKeyPressedEvent;
+import internal.events.input.key.JangineKeyReleasedEvent;
 
 import java.util.HashSet;
-import java.util.Set;
 
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
@@ -68,19 +70,19 @@ public class JangineKeyListener {
             if (_keyPressedBuffer.contains(key)) {
                 _pushContinued(key);
             } else {
-                _pushPressed(key);
+                _pushReleased(key);
             }
         }
     }
 
     private void _pushPressed(Integer key) {
-        JangineLogger.get().log("PRESS");
+        JangineEventHandler.get().pushEvent(new JangineKeyPressedEvent(key));
     }
     private void _pushContinued(Integer key) {
-        JangineLogger.get().log("CONTINUED");
+        JangineEventHandler.get().pushEvent(new JangineKeyContinuedEvent(key));
     }
     private void _pushReleased(Integer key) {
-        JangineLogger.get().log("RELEASED");
+        JangineEventHandler.get().pushEvent(new JangineKeyReleasedEvent(key));
     }
 
 

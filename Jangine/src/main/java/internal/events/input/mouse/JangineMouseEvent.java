@@ -5,5 +5,3 @@ import internal.events.JangineEvent;
 
 
 public class JangineMouseEvent extends JangineEvent {}
-
-
