@@ -3,6 +3,10 @@ package internal.main;
 import internal.events.JangineEventHandler;
 import internal.rendering.JangineWindow;
 
+import java.util.HashSet;
+import java.util.Set;
+
+
 public class Engine {
 
 
@@ -11,11 +15,15 @@ public class Engine {
 
     private JangineEventHandler _eventHandler;
 
+    private Set<JangineWindow> _windows;
+
     private boolean _shouldClose;
 
 
     private Engine() {
         _eventHandler = new JangineEventHandler();
+
+        _windows = new HashSet<>();
 
         _shouldClose = false;
     }
@@ -34,17 +42,45 @@ public class Engine {
     }
 
     public void run() {
-        JangineWindow window;
-        JangineWindow secondWindow;
-
-        window = new JangineWindow(this);
-        secondWindow = new JangineWindow(this);
+        createWindow();
+        createWindow();
 
         while (!_shouldClose) {
-            _shouldClose = !window.update();
-
-            secondWindow.update();
+            _shouldClose = _updateWindows();
         }
+    }
+
+    public JangineWindow createWindow() {
+        JangineWindow newWindow;
+
+        newWindow = new JangineWindow(this);
+
+        _windows.add(newWindow);
+
+        return newWindow;
+    }
+
+
+    private boolean _updateWindows() {
+        Set<JangineWindow> deletionQueue;
+
+        int windowsSize;
+
+        deletionQueue = new HashSet<>();
+
+        windowsSize = _windows.size();
+
+        for (JangineWindow window : _windows) {
+            if (window.update()) {continue;}
+
+            deletionQueue.add(window);
+        }
+
+        _windows.removeAll(deletionQueue);
+
+        if (_windows.size() < windowsSize) {return true;}
+
+        return false;
     }
 
 
