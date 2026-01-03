@@ -113,19 +113,22 @@ public class JangineWindow {
             glfwFreeCallbacks(_glfw_windowPointer);
             glfwDestroyWindow(_glfw_windowPointer);
 
-            // Terminate GLFW and free the error callback
-            glfwTerminate();
-            glfwSetErrorCallback(null).free();
-
             return false;
         }
 
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
+        glfwSwapBuffers(_glfw_windowPointer); // swap the color buffers
+
+        ShaderTest test;
+
+        test = new ShaderTest();
+
+        test.run();
+
+        glfwMakeContextCurrent(_glfw_windowPointer);
+
         _keyListener.update();
         _mouseListener.update();
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-
-        glfwSwapBuffers(_glfw_windowPointer); // swap the color buffers
 
         // Poll for window events. The key callback above will only be
         // invoked during this call.

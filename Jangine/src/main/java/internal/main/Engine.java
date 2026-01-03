@@ -2,9 +2,13 @@ package internal.main;
 
 import internal.events.JangineEventHandler;
 import internal.rendering.JangineWindow;
+import internal.rendering.ShaderTest;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
+import static org.lwjgl.glfw.GLFW.glfwTerminate;
 
 
 public class Engine {
@@ -48,6 +52,10 @@ public class Engine {
         while (!_shouldClose) {
             _shouldClose = _updateWindows();
         }
+
+        // Terminate GLFW and free the error callback
+        glfwTerminate();
+        glfwSetErrorCallback(null).free();
     }
 
     public JangineWindow createWindow() {
