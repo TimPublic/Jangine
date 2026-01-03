@@ -90,8 +90,7 @@ public class JangineWindow {
 
         // Make the window visible
         glfwShowWindow(_glfw_windowPointer);
-    }
-    private void _loop() {
+
         // This line is critical for LWJGL's interoperation with GLFW's
         // OpenGL context, or any context that is managed externally.
         // LWJGL detects the context that is current in the current thread,
@@ -101,21 +100,6 @@ public class JangineWindow {
 
         // Set the clear color
         glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
-
-        // Run the rendering loop until the user has attempted to close
-        // the window or has pressed the ESCAPE key.
-        while (!glfwWindowShouldClose(_glfw_windowPointer)) {
-            JangineMouseListener.get().endFrame();
-            JangineKeyListener.get().endFrame();
-
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-
-            glfwSwapBuffers(_glfw_windowPointer); // swap the color buffers
-
-            // Poll for window events. The key callback above will only be
-            // invoked during this call.
-            glfwPollEvents();
-        }
     }
 
 
@@ -127,16 +111,32 @@ public class JangineWindow {
         return _instance;
     }
 
-    public void run() {
-        _loop();
 
-        // Free the window callbacks and destroy the window
-        glfwFreeCallbacks(_glfw_windowPointer);
-        glfwDestroyWindow(_glfw_windowPointer);
+    public boolean update() {
+        if (glfwWindowShouldClose(_glfw_windowPointer)) {
+            // Free the window callbacks and destroy the window
+            glfwFreeCallbacks(_glfw_windowPointer);
+            glfwDestroyWindow(_glfw_windowPointer);
 
-        // Terminate GLFW and free the error callback
-        glfwTerminate();
-        glfwSetErrorCallback(null).free();
+            // Terminate GLFW and free the error callback
+            glfwTerminate();
+            glfwSetErrorCallback(null).free();
+
+            return false;
+        }
+
+        JangineMouseListener.get().endFrame();
+        JangineKeyListener.get().endFrame();
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
+
+        glfwSwapBuffers(_glfw_windowPointer); // swap the color buffers
+
+        // Poll for window events. The key callback above will only be
+        // invoked during this call.
+        glfwPollEvents();
+
+        return true;
     }
 
 

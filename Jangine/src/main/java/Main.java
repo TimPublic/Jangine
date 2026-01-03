@@ -1,14 +1,16 @@
+import internal.main.Engine;
 import internal.rendering.JangineWindow;
+
 
 public class Main {
 
 
     public static void main(String[] args) {
-        JangineWindow window;
+        Engine engine;
 
-        window = JangineWindow.get();
+        engine = Engine.get();
 
-        window.run();
+        engine.run();
     }
 
 
