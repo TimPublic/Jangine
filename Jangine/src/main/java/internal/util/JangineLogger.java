@@ -1,7 +1,12 @@
 package internal.util;
 
+
 import java.util.ArrayList;
 
+
+// Is a singleton-class, that logs to the console, as long as it is active.
+// There are options for safe logging, which safes the message to a buffer,
+// if the logger is not active, to be logged as soon as the logger is active again.
 public class JangineLogger {
 
 
@@ -26,14 +31,24 @@ public class JangineLogger {
     }
 
 
+    // -+- LOGGING-STATE MANAGEMENT -+- //
+
     // Sets the state of the logger -> Should log, or not.
+    // If the state is set to true, the buffer gets logged.
     public void setIsLogging(boolean isLogging) {
         _isLogging = isLogging;
+
+        if (isLogging == true) {
+            logBuffer();
+        }
     }
     // Tells, if the logger currently logs or not.
     public boolean isLogging() {
         return _isLogging;
     }
+
+
+    // -+- BUFFER-LOGIC -+- //
 
     // Adds a message to the message-buffer.
     public void addToBuffer(String message) {
@@ -43,6 +58,9 @@ public class JangineLogger {
     public void clearBuffer() {
         _messageBuffer.clear();
     }
+
+
+    // -+- LOGGING-LOGIC -+- //
 
     // Tries to print a message.
     // If the logger is not logging,

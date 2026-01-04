@@ -1,8 +1,8 @@
 package internal.main;
 
+
 import internal.events.JangineEventHandler;
 import internal.rendering.JangineWindow;
-import internal.rendering.ShaderTest;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,6 +11,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 
 
+// Engine is a singleton-class which manages the windows and the main update-loop.
 public class Engine {
 
 
@@ -32,19 +33,10 @@ public class Engine {
         _shouldClose = false;
     }
 
-    public static Engine get() {
-        if (_instance == null) {
-            _instance = new Engine();
-        }
 
-        return _instance;
-    }
+    // -+- MAIN UPDATE-LOOP -+- //
 
-
-    public JangineEventHandler getEventHandler() {
-        return _eventHandler;
-    }
-
+    // Starts the main loop. If this function ends, the engine closes.
     public void run() {
         createWindow();
         createWindow();
@@ -58,6 +50,27 @@ public class Engine {
         glfwSetErrorCallback(null).free();
     }
 
+
+    // -+- GETTERS -+- //
+
+    // Returns the engines' event-handler.
+    public JangineEventHandler getEventHandler() {
+        return _eventHandler;
+    }
+
+    // Returns the singleton-instance of this engine.
+    public static Engine get() {
+        if (_instance == null) {
+            _instance = new Engine();
+        }
+
+        return _instance;
+    }
+
+
+    // -+- WINDOW-MANAGEMENT -+- //
+
+    // Creates a window and takes it into the main update-loop.
     public JangineWindow createWindow() {
         JangineWindow newWindow;
 
@@ -68,7 +81,7 @@ public class Engine {
         return newWindow;
     }
 
-
+    // Updates the windows.
     private boolean _updateWindows() {
         Set<JangineWindow> deletionQueue;
 

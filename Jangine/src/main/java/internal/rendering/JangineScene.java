@@ -1,4 +1,4 @@
-﻿package internal.rendering;
+package internal.rendering;
 
 
 import internal.events.EventListeningPort;
@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+// Scenes manage render-objects and are always home to exactly one window.
+// They have their own event-handler, which only receives events, when
+// the scene is active.
 public class JangineScene {
 
 
@@ -27,13 +30,14 @@ public class JangineScene {
     // private ArrayList<RenderObject> _renderObjects;
 
 
-    public JangineScene(final JangineEventHandler windowEventHandler, final JangineEventHandler engineEventHandler, int width, int height) {
+    public JangineScene(final JangineEventHandler windowEventHandler, final JangineEventHandler engineEventHandler, int width, int height, boolean active) {
         _windowEventHandler = windowEventHandler;
         _engineEventHandler = engineEventHandler;
 
         _ownEventHandler = new JangineEventHandler();
         _ownEventHandlerListeningPort = _windowEventHandler.register();
         _ownEventHandlerListeningPort.registerFunction(_ownEventHandler::pushEvent, List.of(JangineEvent.class));
+        _ownEventHandlerListeningPort.setActive(active);
 
         _windowListeningPorts = new ArrayList<>();
         _engineListeningPorts = new ArrayList<>();

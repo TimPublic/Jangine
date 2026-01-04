@@ -19,6 +19,13 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 
+// Is created and managed by the engine directly.
+// Contains and manages scenes, which take on rendering.
+// Only one scene can ever be active at one time.
+// This window, contains key- and mouse-listeners and an own event-handler,
+// to which the listeners push events.
+// But every window also holds a reference to the engines' event-handler on which
+// all occurring events will be pushed as well.
 public class JangineWindow {
 
 
@@ -183,7 +190,7 @@ public class JangineWindow {
     protected JangineScene createScene() {
         JangineScene newScene;
 
-        newScene = new JangineScene(_eventHandler, _engineEventHandler, _width, _height);
+        newScene = new JangineScene(_eventHandler, _engineEventHandler, _width, _height, false);
 
         _scenes.add(newScene);
 
@@ -192,7 +199,7 @@ public class JangineWindow {
     // Activates a scene.
     // The scene must be home to this window, if not, the engine will crash.
     // If another scene is currently active, it will be deactivated.
-    protected void activateScene(JangineScene scene) {
+    protected JangineScene activateScene(JangineScene scene) {
         if (!_scenes.contains(scene)) {
             System.err.println("[WINDOW ERROR] : Tried to make scene active, which is not home to this window!");
 
@@ -206,11 +213,13 @@ public class JangineWindow {
         _activeScene = scene;
 
         _activeScene.activate();
+
+        return _activeScene;
     }
     // Deactivates a scene.
     // The scene must be home to this window, if not, the engine will crash.
     // After this call, no scene will be active.
-    protected void deactivateScene(JangineScene scene) {
+    protected JangineScene deactivateScene(JangineScene scene) {
         if (!_scenes.contains(scene)) {
             System.err.println("[WINDOW ERROR] : Tried to deactivate scene, which is not home to this window!");
 
@@ -220,6 +229,8 @@ public class JangineWindow {
         _activeScene.deactivate();
 
         _activeScene = null;
+
+        return scene;
     }
     // Deactivates a scene and activates another one.
     // Both scenes must be home to this window, if not, the engine will crash.
@@ -230,7 +241,7 @@ public class JangineWindow {
     // Transfers a scene to another window.
     // The scene must be home to this window, if not, the engine will crash.
     // After this call, the scene is home to the specified window and not to this window anymore.
-    public void transferScene(JangineScene scene, JangineWindow to) {
+    public JangineScene transferScene(JangineScene scene, JangineWindow to) {
         if (!_scenes.contains(scene)) {
             System.err.println("[WINDOW ERROR] : Tried to transfer scene, which is not home to this window!");
         }
@@ -243,6 +254,8 @@ public class JangineWindow {
         _scenes.remove(scene);
 
         to._addScene(scene);
+
+        return scene;
     }
 
     // Adds a scene to this window and therefore makes it home to this window.

@@ -6,6 +6,9 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 
+// Specifies the viewport for the rendering.
+// This is a temporary class, which will be refactored in the future to
+// be more efficient and better integrated, is currently just a one-on-one copy.
 public class JangineCamera2D {
 
 
@@ -24,6 +27,9 @@ public class JangineCamera2D {
     }
 
 
+    // -+- PROJECTION-LOGIC -+- //
+
+    // Adjust how much the camera can see in 32-by-32 pixels.
     public JangineCamera2D adjustProjection(int width, int height) {
         _projectionMatrix.identity();
 
@@ -33,6 +39,9 @@ public class JangineCamera2D {
     }
 
 
+    // -+- GETTERS -+- //
+
+    // Returns the view-matrix.
     public Matrix4f getViewMatrix() {
         Vector3f cameraFront;
         Vector3f cameraUp;
@@ -49,10 +58,12 @@ public class JangineCamera2D {
 
         return _viewMatrix;
     }
+    // Returns the projection-matrix.
     public Matrix4f getProjectionMatrix() {
         return _projectionMatrix;
     }
 
+    // Returns the position.
     public Vector2f getPosition() {
         return _position;
     }
