@@ -56,6 +56,40 @@ public class JangineWindow {
         test = new ShaderTest();
     }
 
+
+    // -+- UPDATE-LOOP -+- //
+
+    public boolean update() {
+        if (glfwWindowShouldClose(_glfw_windowPointer)) {
+            // Free the window callbacks and destroy the window
+            glfwFreeCallbacks(_glfw_windowPointer);
+            glfwDestroyWindow(_glfw_windowPointer);
+
+            return false;
+        }
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
+
+        test.run();
+
+        glfwMakeContextCurrent(_glfw_windowPointer);
+
+        glfwSwapBuffers(_glfw_windowPointer); // swap the color buffers
+
+        _keyListener.update();
+        _mouseListener.update();
+
+        // Poll for window events. The key callback above will only be
+        // invoked during this call.
+        glfwPollEvents();
+
+        return true;
+    }
+
+
+    // -+- INITIALIZATION -+- //
+
+    // Sets up GLFW-related stuff.
     private void _init() {
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
@@ -114,66 +148,48 @@ public class JangineWindow {
         glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
     }
 
-
-    public boolean update() {
-        if (glfwWindowShouldClose(_glfw_windowPointer)) {
-            // Free the window callbacks and destroy the window
-            glfwFreeCallbacks(_glfw_windowPointer);
-            glfwDestroyWindow(_glfw_windowPointer);
-
-            return false;
-        }
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-
-        test.run();
-
-        glfwMakeContextCurrent(_glfw_windowPointer);
-
-        glfwSwapBuffers(_glfw_windowPointer); // swap the color buffers
-
-        _keyListener.update();
-        _mouseListener.update();
-
-        // Poll for window events. The key callback above will only be
-        // invoked during this call.
-        glfwPollEvents();
-
-        return true;
-    }
-
-
+    // Connects the engines' event-handler to the listeners and keeps a reference of the event-handler.
     private void _setUpEngine(Engine engine) {
         _keyListener.addEventHandler(engine.getEventHandler());
         _mouseListener.addEventHandler(engine.getEventHandler());
 
         _engineEventHandler = engine.getEventHandler();
     }
+    // Creates the key-listener and connects this window with it.
     private void _setUpKeyListener() {
         _keyListener = new JangineKeyListener();
 
         _keyListener.setUpWindow(this);
     }
+    // Creates the mouse-listener and connect this window with it.
     private void _setUpMouseListener() {
         _mouseListener = new JangineMouseListener();
 
         _mouseListener.setUpWindow(this);
     }
 
+
+    // -+- GETTERS -+- //
+
+    // Returns the GLFW-pointer to this window.
     public long getPointer() {
         return _glfw_windowPointer;
     }
+
+    // Returns this windows' event-handler.
     public JangineEventHandler getEventHandler() {
         return _eventHandler;
     }
 
-
+    // Returns the width of this window.
     public int getWidth() {
         return _width;
     }
+    // Returns the height of this window.
     public int getHeight() {
         return _height;
     }
+    // Returns the title of this window.
     public String getTitle() {
         return _title;
     }
