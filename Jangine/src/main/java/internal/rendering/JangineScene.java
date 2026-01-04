@@ -88,18 +88,26 @@ public class JangineScene {
     // -+- UPDATE-LOOP -+- //
 
     // Can be overwritten by children to implement custom behaviour on every frame.
-    public void update(double deltaTime) {}
-    // Gets called by the window, after the update method, to render the changes to the screen.
-    public final void renderUpdate() {
+    public final void update(double deltaTime) {
+        _onUpdate(deltaTime);
+
+        _render();
+    }
+
+    // OVERWRITE |-> Gets called every frame inside the update method, to implement custom update logic.
+    protected void _onUpdate(double deltaTime) {}
+
+
+    // -+- RENDERING -+- //
+
+    // Gets called in the update method, to render general changes to the screen.
+    private final void _render() {
         // Render render-objects.
 
         _onRender();
     }
 
-
-    // -+- RENDERING -+- //
-
-    // OVERWRITE |-> Gets called every frame after the render-objects were drawn, to implement custom rendering.
+    // OVERWRITE |-> Gets called every frame in the render method, to implement custom rendering logic.
     protected void _onRender() {}
 
 

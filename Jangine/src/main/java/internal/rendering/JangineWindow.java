@@ -1,18 +1,16 @@
 package internal.rendering;
 
 
-import internal.events.EventListeningPort;
 import internal.events.JangineEventHandler;
 import internal.input.JangineKeyListener;
 import internal.input.JangineMouseListener;
 import internal.main.Engine;
-import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
 import java.nio.*;
-import java.util.ArrayList;
+import java.util.HashSet;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -35,7 +33,9 @@ public class JangineWindow {
 
     private long _glfw_windowPointer;
 
-    ShaderTest test;
+
+    private HashSet<JangineScene> _scenes;
+    private JangineScene _activeScene;
 
 
     public JangineWindow(Engine engine) {
@@ -53,12 +53,13 @@ public class JangineWindow {
 
         _setUpEngine(engine);
 
-        test = new ShaderTest();
+        _scenes = new HashSet<>();
     }
 
 
     // -+- UPDATE-LOOP -+- //
 
+    // Main update call.
     public boolean update() {
         if (glfwWindowShouldClose(_glfw_windowPointer)) {
             // Free the window callbacks and destroy the window
@@ -70,9 +71,9 @@ public class JangineWindow {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
-        test.run();
-
         glfwMakeContextCurrent(_glfw_windowPointer);
+
+        _updateScene();
 
         glfwSwapBuffers(_glfw_windowPointer); // swap the color buffers
 
@@ -84,6 +85,13 @@ public class JangineWindow {
         glfwPollEvents();
 
         return true;
+    }
+
+    // Updates the active scene.
+    private void _updateScene() {
+        if (_activeScene == null) {return;}
+
+        _activeScene.update(44); // 44 is just a placeholder.
     }
 
 
@@ -169,7 +177,86 @@ public class JangineWindow {
     }
 
 
+    // -+- SCENE-MANAGEMENT -+- //
+
+    // Creates a new scene in this window and returns it.
+    protected JangineScene createScene() {
+        JangineScene newScene;
+
+        newScene = new JangineScene(_eventHandler, _engineEventHandler, _width, _height);
+
+        _scenes.add(newScene);
+
+        return newScene;
+    }
+    // Activates a scene.
+    // The scene must be home to this window, if not, the engine will crash.
+    // If another scene is currently active, it will be deactivated.
+    protected void activateScene(JangineScene scene) {
+        if (!_scenes.contains(scene)) {
+            System.err.println("[WINDOW ERROR] : Tried to make scene active, which is not home to this window!");
+
+            System.exit(1);
+        }
+
+        if (_activeScene != null) {
+            _activeScene.deactivate();
+        }
+
+        _activeScene = scene;
+
+        _activeScene.activate();
+    }
+    // Deactivates a scene.
+    // The scene must be home to this window, if not, the engine will crash.
+    // After this call, no scene will be active.
+    protected void deactivateScene(JangineScene scene) {
+        if (!_scenes.contains(scene)) {
+            System.err.println("[WINDOW ERROR] : Tried to deactivate scene, which is not home to this window!");
+
+            System.exit(1);
+        }
+
+        _activeScene.deactivate();
+
+        _activeScene = null;
+    }
+    // Deactivates a scene and activates another one.
+    // Both scenes must be home to this window, if not, the engine will crash.
+    protected void deactivateScene(JangineScene scene, JangineScene newActiveScene) {
+        deactivateScene(scene);
+        activateScene(scene);
+    }
+    // Transfers a scene to another window.
+    // The scene must be home to this window, if not, the engine will crash.
+    // After this call, the scene is home to the specified window and not to this window anymore.
+    public void transferScene(JangineScene scene, JangineWindow to) {
+        if (!_scenes.contains(scene)) {
+            System.err.println("[WINDOW ERROR] : Tried to transfer scene, which is not home to this window!");
+        }
+
+        if (_activeScene == scene) {
+            _activeScene.deactivate();
+            _activeScene = null;
+        }
+
+        _scenes.remove(scene);
+
+        to._addScene(scene);
+    }
+
+    // Adds a scene to this window and therefore makes it home to this window.
+    // A scene should only ever be home to one window!
+    private void _addScene(JangineScene scene) {
+        _scenes.add(scene);
+    }
+
+
     // -+- GETTERS -+- //
+
+    protected JangineScene getActiveScene() {
+        return _activeScene;
+    }
 
     // Returns the GLFW-pointer to this window.
     public long getPointer() {
