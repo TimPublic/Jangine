@@ -1,0 +1,154 @@
+﻿package internal.rendering;
+
+
+import internal.events.EventListeningPort;
+import internal.events.JangineEvent;
+import internal.events.JangineEventHandler;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class JangineScene {
+
+
+    private final JangineEventHandler _windowEventHandler;
+    private final JangineEventHandler _engineEventHandler;
+
+    private final JangineEventHandler _ownEventHandler;
+    private final EventListeningPort _ownEventHandlerListeningPort;
+
+    private ArrayList<EventListeningPort> _windowListeningPorts;
+    private ArrayList<EventListeningPort> _engineListeningPorts;
+
+
+    private JangineCamera2D _camera;
+
+    // private ArrayList<RenderObject> _renderObjects;
+
+
+    public JangineScene(final JangineEventHandler windowEventHandler, final JangineEventHandler engineEventHandler, int width, int height) {
+        _windowEventHandler = windowEventHandler;
+        _engineEventHandler = engineEventHandler;
+
+        _ownEventHandler = new JangineEventHandler();
+        _ownEventHandlerListeningPort = _windowEventHandler.register();
+        _ownEventHandlerListeningPort.registerFunction(_ownEventHandler::pushEvent, List.of(JangineEvent.class));
+
+        _windowListeningPorts = new ArrayList<>();
+        _engineListeningPorts = new ArrayList<>();
+
+        _camera = new JangineCamera2D(width, height);
+
+        _onCreation();
+    }
+
+
+    // -+- LIFE-CYCLE -+- //
+
+    // Gets called by the window, when a scene gets active.
+    // Before this call, the event-handler is not distributing events.
+    public final void activate() {
+        _ownEventHandlerListeningPort.setActive(true);
+
+        _onActivation();
+    }
+    // Gets called by the window, when a scene is no longer active.
+    // If this call is not made, the event-handler will keep distributing Events.
+    public final void deactivate() {
+        _ownEventHandlerListeningPort.setActive(false);
+
+        _onDeactivation();
+    }
+    // Gets called by the window, right before it is deleted.
+    // Handles deregistering from services such as the windows' event-handler.
+    public final void kill() {
+        _windowEventHandler.deregister(_ownEventHandlerListeningPort);
+
+        for (EventListeningPort port : _windowListeningPorts) {
+            _windowEventHandler.deregister(port);
+        }
+        for (EventListeningPort port : _engineListeningPorts) {
+            _engineEventHandler.deregister(port);
+        }
+
+        _onKill();
+    }
+
+    // OVERWRITE |-> Gets called, every time the scene is activated.
+    protected void _onActivation() {}
+    // OVERWRITE |-> Gets called, every time the scene is deactivated.
+    protected void _onDeactivation() {}
+    // OVERWRITE |-> Gets called once, when the scene is created.
+    protected void _onCreation() {}
+    // OVERWRITE |-> Gets called once, when the scene is created.
+    protected void _onKill() {}
+
+
+    // -+- UPDATE-LOOP -+- //
+
+    // Can be overwritten by children to implement custom behaviour on every frame.
+    public void update(double deltaTime) {}
+    // Gets called by the window, after the update method, to render the changes to the screen.
+    public final void renderUpdate() {
+        // Render render-objects.
+
+        _onRender();
+    }
+
+
+    // -+- RENDERING -+- //
+
+    // OVERWRITE |-> Gets called every frame after the render-objects were drawn, to implement custom rendering.
+    protected void _onRender() {}
+
+
+    // -+- EVENT-HANDLING -+- //
+
+    // Returns a listening-port of the windows' event-handler and keeps a reference to that port,
+    // to delete it, if the scene gets killed.
+    public final EventListeningPort getWindowEventListeningPort() {
+        EventListeningPort port;
+
+        port = _windowEventHandler.register();
+
+        _windowListeningPorts.add(port);
+
+        return port;
+    }
+    // Removes a listening-port of the windows' event-handler, also deletes the owned reference.
+    public final void removeWindowEventListeningPort(EventListeningPort port) {
+        _windowListeningPorts.remove(port);
+
+        _windowEventHandler.deregister(port);
+    }
+    // Returns a listening-port of the engines' event-handler and keeps a reference to that port,
+    // to delete it, if the scene gets killed.
+    public EventListeningPort getEngineEventListeningPort() {
+        EventListeningPort port;
+
+        port = _engineEventHandler.register();
+
+        _engineListeningPorts.add(port);
+
+        return port;
+    }
+    // Removes a listening-port of the engines' event-handler, also deleted the owned reference.
+    public void removeEngineEventListeningPort(EventListeningPort port) {
+        _engineListeningPorts.remove(port);
+    }
+    // Returns scenes' event-handler.
+    public final JangineEventHandler getEventHandler() {
+        return _ownEventHandler;
+    }
+
+
+    // -+- CAMERA-LOGIC -+- //
+
+    // Sets the resolution of the camera to the specified width and height.
+    public void setRes(int width, int height) {
+        _camera.adjustProjection(width, height);
+    }
+
+
+}

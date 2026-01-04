@@ -1,6 +1,7 @@
 package internal.rendering;
 
 
+import internal.events.EventListeningPort;
 import internal.events.JangineEventHandler;
 import internal.input.JangineKeyListener;
 import internal.input.JangineMouseListener;
@@ -11,6 +12,7 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
 import java.nio.*;
+import java.util.ArrayList;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -24,6 +26,8 @@ public class JangineWindow {
 
     private int _width, _height;
     private String _title;
+
+    private JangineEventHandler _engineEventHandler;
 
     private JangineEventHandler _eventHandler;
     private JangineKeyListener _keyListener;
@@ -138,9 +142,12 @@ public class JangineWindow {
         return true;
     }
 
+
     private void _setUpEngine(Engine engine) {
         _keyListener.addEventHandler(engine.getEventHandler());
         _mouseListener.addEventHandler(engine.getEventHandler());
+
+        _engineEventHandler = engine.getEventHandler();
     }
     private void _setUpKeyListener() {
         _keyListener = new JangineKeyListener();
