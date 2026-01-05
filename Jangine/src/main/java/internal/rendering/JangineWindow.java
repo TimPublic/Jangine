@@ -4,7 +4,7 @@ package internal.rendering;
 import internal.events.JangineEventHandler;
 import internal.input.JangineKeyListener;
 import internal.input.JangineMouseListener;
-import internal.main.Engine;
+import internal.main.JangineEngine;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
@@ -45,7 +45,7 @@ public class JangineWindow {
     private JangineScene _activeScene;
 
 
-    public JangineWindow(Engine engine) {
+    public JangineWindow(JangineEngine jangineEngine) {
         _width = 960;
         _height = 540;
 
@@ -58,9 +58,11 @@ public class JangineWindow {
         _setUpKeyListener();
         _setUpMouseListener();
 
-        _setUpEngine(engine);
+        _setUpEngine(jangineEngine);
 
         _scenes = new HashSet<>();
+
+        activateScene(createScene());
     }
 
 
@@ -164,11 +166,11 @@ public class JangineWindow {
     }
 
     // Connects the engines' event-handler to the listeners and keeps a reference of the event-handler.
-    private void _setUpEngine(Engine engine) {
-        _keyListener.addEventHandler(engine.getEventHandler());
-        _mouseListener.addEventHandler(engine.getEventHandler());
+    private void _setUpEngine(JangineEngine jangineEngine) {
+        _keyListener.addEventHandler(jangineEngine.getEventHandler());
+        _mouseListener.addEventHandler(jangineEngine.getEventHandler());
 
-        _engineEventHandler = engine.getEventHandler();
+        _engineEventHandler = jangineEngine.getEventHandler();
     }
     // Creates the key-listener and connects this window with it.
     private void _setUpKeyListener() {

@@ -1,6 +1,8 @@
 package internal.rendering;
 
 
+import internal.rendering.texture.JangineTexture;
+import internal.rendering.texture.dependencies.implementations.STBI_TextureLoader;
 import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
@@ -15,10 +17,10 @@ public class ShaderTest {
 
 
     float[] vertexArray = {
-            /* Position */  100.5f, -100.5f, 0.0f, /* Color */ 1.0f, 0.0f, 0.0f, 1.0f, // Bottom-Right
-            /* Position */ -100.5f,  100.5f, 0.0f, /* Color */ 0.0f, 1.0f, 0.0f, 1.0f, // Top-Left
-            /* Position */  100.5f,  100.5f, 0.0f, /* Color */ 0.0f, 0.0f, 1.0f, 1.0f, // Top-Right
-            /* Position */ -100.5f, -100.5f, 0.0f, /* Color */ 1.0f, 1.0f, 0.0f, 1.0f, // Bottom-Left
+            /* Position */ 100.5f,     0f, 0.0f, /* Color */ 1.0f, 0.0f, 0.0f, 1.0f, /* UV-Coordinates */ 0.5f, 0f, // Bottom-Right
+            /* Position */     0f, 100.5f, 0.0f, /* Color */ 0.0f, 1.0f, 0.0f, 1.0f, /* UV-Coordinates */ 0f, 0.5f, // Top-Left
+            /* Position */ 100.5f, 100.5f, 0.0f, /* Color */ 0.0f, 0.0f, 1.0f, 1.0f, /* UV-Coordinates */ 0.5f, 0.5f, // Top-Right
+            /* Position */     0f,     0f, 0.0f, /* Color */ 1.0f, 1.0f, 0.0f, 1.0f, /* UV-Coordinates */ 0f, 0f, // Bottom-Left
     };
 
     // Must be in counter-clockwise order.
@@ -30,7 +32,8 @@ public class ShaderTest {
     int vertexArrayObjectID, vertexBufferObjectID, elementBufferObjectID;
 
 
-    JangineShader jangineShader;
+    JangineShaderProgram jangineShaderProgram;
+    JangineTexture jangineTexture;
     JangineCamera2D camera;
 
 
@@ -58,8 +61,11 @@ public class ShaderTest {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementBuffer, GL_STATIC_DRAW);
 
 
-        jangineShader = new JangineShader("assets/default.glsl");
+        jangineShaderProgram = new JangineShaderProgram("assets/default.glsl");
+        jangineTexture = new JangineTexture("assets/test_image.png", STBI_TextureLoader.get());
         camera = new JangineCamera2D(40, 21);
+
+        camera._position.y -= 50;
     }
 
 
@@ -67,29 +73,32 @@ public class ShaderTest {
         // Add vertex attribute pointers.
         int positionsSize;
         int colorSize;
-
-        int floatSize;
+        int uvCoordinatesSize;
 
         int vertexSizeBytes;
 
         positionsSize = 3;
         colorSize = 4;
+        uvCoordinatesSize = 2;
 
-        floatSize = 4;
+        vertexSizeBytes = (positionsSize + colorSize + uvCoordinatesSize) * Float.BYTES;
 
-        vertexSizeBytes = (positionsSize + colorSize) * floatSize;
+        // Bind jangineShaderProgram program.
+        jangineShaderProgram.use();
 
-        camera._position.x -= 50.0f;
+        glActiveTexture(GL_TEXTURE0);
+        jangineTexture.bind();
 
-        // Bind jangineShader program.
-        jangineShader.use();
-        jangineShader.upload("uProjectionMatrix", camera.getProjectionMatrix());
-        jangineShader.upload("uViewMatrix", camera.getViewMatrix());
+        jangineShaderProgram.upload("TEXTURE_SAMPLER", 0);
+        jangineShaderProgram.upload("uProjectionMatrix", camera.getProjectionMatrix());
+        jangineShaderProgram.upload("uViewMatrix", camera.getViewMatrix());
 
         glVertexAttribPointer(0, positionsSize, GL_FLOAT, false, vertexSizeBytes, 0);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(1, colorSize, GL_FLOAT, false, vertexSizeBytes, positionsSize * floatSize);
+        glVertexAttribPointer(1, colorSize, GL_FLOAT, false, vertexSizeBytes, positionsSize * Float.BYTES);
         glEnableVertexAttribArray(1);
+        glVertexAttribPointer(2, uvCoordinatesSize, GL_FLOAT, false, vertexSizeBytes, (positionsSize + colorSize) * Float.BYTES);
+        glEnableVertexAttribArray(2);
 
         // Bind vertex array.
         glBindVertexArray(vertexArrayObjectID);
@@ -97,6 +106,7 @@ public class ShaderTest {
         // Enable the vertex-attribute pointes.
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
 
         // Draw.
         glDrawElements(GL_TRIANGLES, elementArray.length, GL_UNSIGNED_INT, 0);
@@ -107,7 +117,7 @@ public class ShaderTest {
 
         glBindVertexArray(0);
 
-        jangineShader.unuse();
+        jangineShaderProgram.unuse();
     }
 
 

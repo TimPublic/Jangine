@@ -1,15 +1,15 @@
-import internal.main.Engine;
+import internal.main.JangineEngine;
 
 
 public class Main {
 
 
     public static void main(String[] args) {
-        Engine engine;
+        JangineEngine jangineEngine;
 
-        engine = Engine.get();
+        jangineEngine = JangineEngine.get();
 
-        engine.run();
+        jangineEngine.run();
     }
 
 

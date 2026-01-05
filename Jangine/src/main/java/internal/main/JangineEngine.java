@@ -11,11 +11,11 @@ import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 
 
-// Engine is a singleton-class which manages the windows and the main update-loop.
-public class Engine {
+// JangineEngine is a singleton-class which manages the windows and the main update-loop.
+public class JangineEngine {
 
 
-    private static Engine _instance;
+    private static JangineEngine _instance;
 
 
     private JangineEventHandler _eventHandler;
@@ -25,7 +25,7 @@ public class Engine {
     private boolean _shouldClose;
 
 
-    private Engine() {
+    private JangineEngine() {
         _eventHandler = new JangineEventHandler();
 
         _windows = new HashSet<>();
@@ -59,9 +59,9 @@ public class Engine {
     }
 
     // Returns the singleton-instance of this engine.
-    public static Engine get() {
+    public static JangineEngine get() {
         if (_instance == null) {
-            _instance = new Engine();
+            _instance = new JangineEngine();
         }
 
         return _instance;

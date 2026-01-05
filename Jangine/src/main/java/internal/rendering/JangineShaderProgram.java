@@ -19,7 +19,7 @@ import static org.lwjgl.opengl.GL20.*;
 // If any of those are missing, the engine crashes.
 // Then it compiles itself to a program which can then be used and unused
 // with the use- and unuse-method calls.
-public class JangineShader {
+public class JangineShaderProgram {
 
 
     public final String VERTEX_TYPE_IDENTIFIER = "vertex";
@@ -35,7 +35,7 @@ public class JangineShader {
     private int _programID;
 
 
-    public JangineShader(String filePath) {
+    public JangineShaderProgram(String filePath) {
         _retrieveShadersFromPath(filePath);
 
         _compileShaders();
@@ -84,13 +84,13 @@ public class JangineShader {
         }
 
         if (_vertexShaderSource == null) {
-            System.err.println("[SHADER ERROR] : Vertex-JangineShader could not be found!");
+            System.err.println("[SHADER ERROR] : Vertex-JangineShaderProgram could not be found!");
             System.err.println("|-> In file : " + path);
 
             System.exit(1);
         }
         if (_fragmentShaderSource == null) {
-            System.err.println("[SHADER ERROR] : Fragment-JangineShader could not be found!");
+            System.err.println("[SHADER ERROR] : Fragment-JangineShaderProgram could not be found!");
             System.err.println("|-> In file : " + path);
 
             System.exit(1);
@@ -267,7 +267,7 @@ public class JangineShader {
 
         if (position != -1) {return position;}
 
-        System.err.println("[SHADER ERROR] : JangineShader-Program does not contain uniform!");
+        System.err.println("[SHADER ERROR] : JangineShaderProgram-Program does not contain uniform!");
         System.err.println("|-> Uniform-Name : " + name);
 
         System.exit(1);

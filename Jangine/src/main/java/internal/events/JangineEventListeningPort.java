@@ -11,7 +11,7 @@ import java.util.function.Consumer;
 // They are used to connect completely anonymously to an event-handler.
 // Listening-Ports take in callbacks and filter events for subclasses to then push them
 // to respective callback, who requested those events.
-public class EventListeningPort {
+public class JangineEventListeningPort {
 
 
     private HashMap<Class<? extends JangineEvent>, ArrayList<Consumer<JangineEvent>>> _callbacks;
@@ -20,7 +20,7 @@ public class EventListeningPort {
     private boolean _active;
 
 
-    public EventListeningPort() {
+    public JangineEventListeningPort() {
         _callbacks = new HashMap<>();
 
         _active = true;

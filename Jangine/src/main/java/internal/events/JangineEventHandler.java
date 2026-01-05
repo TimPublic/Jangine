@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class JangineEventHandler {
 
 
-    private ArrayList<EventListeningPort> _ports;
+    private ArrayList<JangineEventListeningPort> _ports;
 
 
     public JangineEventHandler() {
@@ -25,7 +25,7 @@ public class JangineEventHandler {
 
     // Distributes the given event to the registered ports to there be handled further.
     public void pushEvent(JangineEvent jangineEvent) {
-        for (EventListeningPort port : _ports) {
+        for (JangineEventListeningPort port : _ports) {
             port.pushEvent(jangineEvent);
         }
     }
@@ -35,17 +35,17 @@ public class JangineEventHandler {
 
     // Returns a port, that is also saved in this event-handler, where you can then
     // register callbacks for events.
-    public EventListeningPort register() {
-        EventListeningPort newPort;
+    public JangineEventListeningPort register() {
+        JangineEventListeningPort newPort;
 
-        newPort = new EventListeningPort();
+        newPort = new JangineEventListeningPort();
 
         _ports.add(newPort);
 
         return newPort;
     }
     // Removes a port, which will therefore take no more events.
-    public void deregister(EventListeningPort port) {
+    public void deregister(JangineEventListeningPort port) {
         _ports.remove(port);
     }
 
