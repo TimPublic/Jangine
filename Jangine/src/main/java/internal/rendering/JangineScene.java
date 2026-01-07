@@ -27,6 +27,10 @@ public class JangineScene {
 
     private JangineCamera2D _camera;
 
+
+    ShaderTest test;
+
+
     // private ArrayList<RenderObject> _renderObjects;
 
 
@@ -43,6 +47,8 @@ public class JangineScene {
         _engineListeningPorts = new ArrayList<>();
 
         _camera = new JangineCamera2D(width, height);
+
+        test = new ShaderTest();
 
         _onCreation();
     }
@@ -106,10 +112,6 @@ public class JangineScene {
 
     // Gets called in the update method, to render general changes to the screen.
     private void _render() {
-        ShaderTest test;
-
-        test = new ShaderTest();
-
         test.run();
 
         _onRender();
