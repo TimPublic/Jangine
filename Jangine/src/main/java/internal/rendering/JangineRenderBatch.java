@@ -2,7 +2,6 @@ package internal.rendering;
 
 
 import internal.rendering.mock.JangineMesh;
-import internal.rendering.texture.JangineAtlasTexture;
 import internal.rendering.texture.JangineTexture;
 import org.lwjgl.BufferUtils;
 
@@ -18,12 +17,32 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 import static org.lwjgl.opengl.GL43.glInvalidateBufferSubData;
 
 
-// A render-batch collects meshes to create one big draw call.
-// The betcher needs to be able to:
-// - Take in any mesh, that follows the vertex layout
-// - Invalidate meshes
-// - Flush the buffer if needed
-// - Update parts of the buffer (animation critical)
+/**
+ * This class is the jangine implementation of a render batch.
+ * A render batch hold multiple vertices, a texture and a shader,
+ * to issue one draw call for multiple meshes.
+ * <p>
+ * Currently, the mesh-removal does not work correctly,
+ * but disables all updates on the mesh.
+ * This is because of the invalidation-function that is used
+ * here. It just makes the data at the point free again,
+ * but does not directly delete it.
+ * <p>
+ * The vertex layout needs to contain those values and only those in the following order:
+ * <ul>
+ *     <li>{@link Float} x</li>
+ *     -> X-Coordinate of the vertex' position.
+ *     <li>{@link Float} y</li>
+ *     -> Y-Coordinate of the vertex' position.
+ *     <li>{@link Float} xUV</li>
+ *     -> X-Coordinate of the uv-position, ranging from 0.0 to 1.0.
+ *     <li>{@link Float} yUV</li>
+ *     -> Y-Coordinate of the uv-position, ranging from 0.0 to 1.0.
+ * </ul>
+ *
+ * @author Tim Kloepper
+ * @version 0.9
+ */
 public class JangineRenderBatch {
 
 
@@ -46,6 +65,13 @@ public class JangineRenderBatch {
     private int _vaoID, _vboID, _eboID;
 
 
+    /**
+     * @param shaderProgram The shader, used to render all given {@link JangineMesh}.
+     * @param texture The texture, applied to all {@link JangineMesh}.
+     * @param camera The camera, used as a viewport.
+     *
+     * @author Tim Kloepper
+     */
     public JangineRenderBatch(JangineShaderProgram shaderProgram, JangineTexture texture, JangineCamera2D camera) {
         _shaderProgram = shaderProgram;
         _texture = texture;
@@ -63,6 +89,12 @@ public class JangineRenderBatch {
     }
 
 
+    /**
+     * This method initializes the vertex-array-object, the vertex-buffer-object and the element-buffer-object.
+     * Those id's then get assigned to the corresponding member-variables.
+     *
+     * @author Tim Kloepper
+     */
     private void _initObjects() {
         _vaoID = glGenVertexArrays();
         glBindVertexArray(_vaoID);
@@ -78,6 +110,12 @@ public class JangineRenderBatch {
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
+
+    /**
+     * This method generates the vertex-buffer-objects' id and assigns it to the corresponding member-variable.
+     *
+     * @author Tim Kloepper
+     */
     private void _genVertexBufferObject() {
         _vboID = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, _vboID);
@@ -88,6 +126,12 @@ public class JangineRenderBatch {
 
         glBufferData(GL_ARRAY_BUFFER, vertexBuffer, GL_DYNAMIC_DRAW);
     }
+
+    /**
+     * This method generates the element-buffer-objects' id and assigns it to the corresponding member-variable.
+     *
+     * @author Tim Kloepper
+     */
     private void _genElementBufferObject() {
         _eboID = glGenBuffers();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _eboID);
@@ -100,6 +144,14 @@ public class JangineRenderBatch {
     }
 
 
+    /**
+     * This method lets you add a {@link JangineMesh} to the Batch.
+     * Therefore, this mesh is rendered until removed with rmvMesh.
+     *
+     * @param mesh A {@link JangineMesh} to be added and therefore rendered by the Batch.
+     *
+     * @author Tim Kloepper
+     */
     public void addMesh(JangineMesh mesh) {
         if (_currentMeshes.contains(mesh)) {return;}
 
@@ -141,6 +193,18 @@ public class JangineRenderBatch {
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
+
+    /**
+     * Removes a mesh from the Batch. If this Mesh is not part
+     * of the Batch, nothing happens.
+     * This removal currently does not mean,
+     * that the mesh is not rendered anymore, it just can not be
+     * changed from this point forward.
+     *
+     * @param mesh A {@link JangineMesh} to be removed from the Batch.
+     *
+     * @author Tim Kloepper
+     */
     public void rmvMesh(JangineMesh mesh) {
         if (!_currentMeshes.contains(mesh)) {return;}
 
@@ -168,6 +232,14 @@ public class JangineRenderBatch {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
+    /**
+     * With this method, you can reupload a mesh, to transfer changes into the Batch.
+     * If this mesh is not part of the Batch, nothing happens.
+     *
+     * @param mesh A {@link JangineMesh} to be updated in the Batch.
+     *
+     * @author Tim Kloepper
+     */
     public void updateMesh(JangineMesh mesh) {
         if (!_currentMeshes.contains(mesh)) {return;}
 
@@ -189,6 +261,14 @@ public class JangineRenderBatch {
     }
 
 
+    /**
+     * This method clears the whole Batch, which means that all data gets lost
+     * and needs to be reuploaded.
+     * For this, the method currently just creates new buffers,
+     * but does not delete the old ones.
+     *
+     * @author Tim Kloepper
+     */
     public void flush() {
         _meshVertexPointers.clear();
         _meshIndexPointers.clear();
@@ -198,10 +278,16 @@ public class JangineRenderBatch {
 
         _currentMeshes.clear();
 
-        _initObjects();
+        _initObjects(); // TODO: Delete old objects!
     }
 
 
+    /**
+     * This method renders the Batch to the screen, meaning all meshes
+     * that are currently in the Batch.
+     *
+     * @author Tim Kloepper
+     */
     public void render() {
         glBindVertexArray(_vaoID);
 
