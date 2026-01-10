@@ -133,8 +133,11 @@ public class JangineMouseListener {
         _eventHandlers.remove(eventHandler);
     }
 
-    public void setUpEngine() {
+    public void addEngine() {
         _eventHandlers.add(JangineEngine.get().getEventHandler());
+    }
+    public void rmvEngine() {
+        _eventHandlers.remove(JangineEngine.get().getEventHandler());
     }
 
     // Registers mouse-button events and calls respective functions to push those events.

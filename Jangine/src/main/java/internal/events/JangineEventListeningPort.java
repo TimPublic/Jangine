@@ -62,7 +62,7 @@ public class JangineEventListeningPort {
     // -+- EVENT-DISTRIBUTION -+- //
 
     /**
-     * Gets called by the owning event-handler and distiributes the given event to the callbacks,
+     * Gets called by the owning event-handler and distributes the given event to the callbacks,
      * registered with this {@link JangineEvent} subclass.
      *
      * @param event to be distributed.

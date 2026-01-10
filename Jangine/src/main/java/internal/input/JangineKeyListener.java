@@ -78,8 +78,11 @@ public class JangineKeyListener {
         _eventHandlers.remove(eventHandler);
     }
 
-    public void setUpEngine() {
+    public void addEngine() {
         _eventHandlers.add(JangineEngine.get().getEventHandler());
+    }
+    public void rmvEngine() {
+        _eventHandlers.remove(JangineEngine.get().getEventHandler());
     }
 
     // Detects key events and calls respective event-pushes.

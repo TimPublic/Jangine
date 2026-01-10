@@ -183,8 +183,8 @@ public class JangineWindow {
 
     // Connects the engines' event-handler to the listeners and keeps a reference of the event-handler.
     private void _setUpEngine() {
-        _keyListener.setUpEngine();
-        _mouseListener.setUpEngine();
+        _keyListener.addEngine();
+        _mouseListener.addEngine();
     }
     // Creates the key-listener and connects this window with it.
     private void _setUpKeyListener() {
