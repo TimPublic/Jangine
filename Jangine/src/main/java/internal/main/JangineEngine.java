@@ -74,7 +74,7 @@ public class JangineEngine {
     public JangineWindow createWindow() {
         JangineWindow newWindow;
 
-        newWindow = new JangineWindow(this);
+        newWindow = new JangineWindow();
 
         _windows.add(newWindow);
 

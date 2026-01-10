@@ -4,6 +4,7 @@ package internal.rendering;
 import internal.events.JangineEventListeningPort;
 import internal.events.JangineEvent;
 import internal.events.JangineEventHandler;
+import internal.main.JangineEngine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,6 @@ public class JangineScene {
 
 
     private final JangineEventHandler _windowEventHandler;
-    private final JangineEventHandler _engineEventHandler;
 
     private final JangineEventHandler _ownEventHandler;
     private final JangineEventListeningPort _ownEventHandlerListeningPort;
@@ -34,9 +34,8 @@ public class JangineScene {
     // private ArrayList<RenderObject> _renderObjects;
 
 
-    public JangineScene(final JangineEventHandler windowEventHandler, final JangineEventHandler engineEventHandler, int width, int height, boolean active) {
+    public JangineScene(final JangineEventHandler windowEventHandler, int width, int height, boolean active) {
         _windowEventHandler = windowEventHandler;
-        _engineEventHandler = engineEventHandler;
 
         _ownEventHandler = new JangineEventHandler();
         _ownEventHandlerListeningPort = _windowEventHandler.register();
@@ -79,7 +78,7 @@ public class JangineScene {
             _windowEventHandler.deregister(port);
         }
         for (JangineEventListeningPort port : _engineListeningPorts) {
-            _engineEventHandler.deregister(port);
+            JangineEngine.get().getEventHandler().deregister(port);
         }
 
         _onKill();
@@ -139,21 +138,6 @@ public class JangineScene {
         _windowListeningPorts.remove(port);
 
         _windowEventHandler.deregister(port);
-    }
-    // Returns a listening-port of the engines' event-handler and keeps a reference to that port,
-    // to delete it, if the scene gets killed.
-    public JangineEventListeningPort getEngineEventListeningPort() {
-        JangineEventListeningPort port;
-
-        port = _engineEventHandler.register();
-
-        _engineListeningPorts.add(port);
-
-        return port;
-    }
-    // Removes a listening-port of the engines' event-handler, also deleted the owned reference.
-    public void removeEngineEventListeningPort(JangineEventListeningPort port) {
-        _engineListeningPorts.remove(port);
     }
     // Returns scenes' event-handler.
     public final JangineEventHandler getEventHandler() {

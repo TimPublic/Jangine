@@ -35,8 +35,6 @@ public class JangineWindow {
     private int _width, _height;
     private String _title;
 
-    private JangineEventHandler _engineEventHandler;
-
     private JangineEventHandler _eventHandler;
     private JangineKeyListener _keyListener;
     private JangineMouseListener _mouseListener;
@@ -48,7 +46,7 @@ public class JangineWindow {
     private JangineScene _activeScene;
 
 
-    public JangineWindow(JangineEngine jangineEngine) {
+    public JangineWindow() {
         _width = 960;
         _height = 540;
 
@@ -61,7 +59,7 @@ public class JangineWindow {
         _setUpKeyListener();
         _setUpMouseListener();
 
-        _setUpEngine(jangineEngine);
+        _setUpEngine();
 
         _scenes = new HashSet<>();
 
@@ -184,11 +182,9 @@ public class JangineWindow {
     }
 
     // Connects the engines' event-handler to the listeners and keeps a reference of the event-handler.
-    private void _setUpEngine(JangineEngine jangineEngine) {
-        _keyListener.addEventHandler(jangineEngine.getEventHandler());
-        _mouseListener.addEventHandler(jangineEngine.getEventHandler());
-
-        _engineEventHandler = jangineEngine.getEventHandler();
+    private void _setUpEngine() {
+        _keyListener.setUpEngine();
+        _mouseListener.setUpEngine();
     }
     // Creates the key-listener and connects this window with it.
     private void _setUpKeyListener() {
@@ -210,7 +206,7 @@ public class JangineWindow {
     protected JangineScene createScene() {
         JangineScene newScene;
 
-        newScene = new JangineScene(_eventHandler, _engineEventHandler, _width, _height, false);
+        newScene = new JangineScene(_eventHandler, _width, _height, false);
 
         _scenes.add(newScene);
 

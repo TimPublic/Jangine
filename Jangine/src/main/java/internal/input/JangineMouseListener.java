@@ -4,6 +4,7 @@ package internal.input;
 import internal.events.JangineEvent;
 import internal.events.JangineEventHandler;
 import internal.events.input.mouse.*;
+import internal.main.JangineEngine;
 import internal.rendering.JangineWindow;
 
 import java.util.ArrayList;
@@ -130,6 +131,10 @@ public class JangineMouseListener {
     // to this event-handler.
     public void rmvEventHandler(JangineEventHandler eventHandler) {
         _eventHandlers.remove(eventHandler);
+    }
+
+    public void setUpEngine() {
+        _eventHandlers.add(JangineEngine.get().getEventHandler());
     }
 
     // Registers mouse-button events and calls respective functions to push those events.

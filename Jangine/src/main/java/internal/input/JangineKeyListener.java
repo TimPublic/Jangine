@@ -6,6 +6,7 @@ import internal.events.JangineEventHandler;
 import internal.events.input.key.JangineKeyContinuedEvent;
 import internal.events.input.key.JangineKeyPressedEvent;
 import internal.events.input.key.JangineKeyReleasedEvent;
+import internal.main.JangineEngine;
 import internal.rendering.JangineWindow;
 
 import java.util.ArrayList;
@@ -75,6 +76,10 @@ public class JangineKeyListener {
     // to this event-handler.
     public void rmvEventHandler(JangineEventHandler eventHandler) {
         _eventHandlers.remove(eventHandler);
+    }
+
+    public void setUpEngine() {
+        _eventHandlers.add(JangineEngine.get().getEventHandler());
     }
 
     // Detects key events and calls respective event-pushes.
