@@ -150,4 +150,4 @@ The scenes that are not active, do not get **updated** and do not **receive even
 as their own event-handler is connected to the windows'
 through a **port** which gets **deactivated** and **activated**.
 
-Scenes can be **switched between windows**, but can only be owned by **one window at a time**, although you could **work around this limitation**.
+Scenes can be **switched between windows**, but can only be owned by **one window at a time**, although you **could work around this limitation**.
