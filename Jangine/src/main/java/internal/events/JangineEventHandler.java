@@ -4,12 +4,21 @@ package internal.events;
 import java.util.ArrayList;
 
 
-// An event-handler distributes events.
-// For that, he gives out listening-ports, that offer an anonymous connection
-// to the event-handler.
-// Those ports can be obtained by calling the register method.
-// If a port is no longer needed, a deregister call must be made, which invalidates the port,
-// which excludes it from all further event-pushes.
+/**
+ * The event-handler distributes events.
+ * In order to this completely anonymously, he gives out
+ * ports.
+ * These can be obtained, by calling the register method of the
+ * event-handler.
+ * In order to remove the port, it has to be deregistered with
+ * the respective method.
+ * <p>
+ * If a port should not be deregistered, although the object
+ * using it is freed, it will result in a memory leak.
+ *
+ * @author Tim Klöpper
+ * @version 1.0
+ */
 public class JangineEventHandler {
 
 
@@ -23,18 +32,31 @@ public class JangineEventHandler {
 
     // -+- EVENT-DISTRIBUTION -+- //
 
-    // Distributes the given event to the registered ports to there be handled further.
-    public void pushEvent(JangineEvent jangineEvent) {
+    /**
+     * Distributes the given event to the registered and active ports to be handled individually.
+     *
+     * @param event Event to be pushed to the ports.
+     *
+     * @author Tim Kloepper
+     */
+    public void pushEvent(JangineEvent event) {
         for (JangineEventListeningPort port : _ports) {
-            port.pushEvent(jangineEvent);
+            port.pushEvent(event);
         }
     }
 
 
     // -+- PORT-MANAGEMENT -+- //
 
-    // Returns a port, that is also saved in this event-handler, where you can then
-    // register callbacks for events.
+    /**
+     * Returns a port, that is also saved in this event-handler.
+     * Please hold a reference to this port at all times.
+     * Upon not using this port anymore, please call the deregister method.
+     *
+     * @return {@link JangineEventListeningPort} to receive events.
+     *
+     * @author Tim Kloepper
+     */
     public JangineEventListeningPort register() {
         JangineEventListeningPort newPort;
 
@@ -44,7 +66,13 @@ public class JangineEventHandler {
 
         return newPort;
     }
-    // Removes a port, which will therefore take no more events.
+    /**
+     * Takes in a port to be removed from event-distribution.
+     *
+     * @param port {@link JangineEventListeningPort} to be removed.
+     *
+     * @author Tim Kloepper
+     */
     public void deregister(JangineEventListeningPort port) {
         _ports.remove(port);
     }

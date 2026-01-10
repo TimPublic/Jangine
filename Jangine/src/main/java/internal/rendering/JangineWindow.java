@@ -19,13 +19,16 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 
-// Is created and managed by the engine directly.
-// Contains and manages scenes, which take on rendering.
-// Only one scene can ever be active at one time.
-// This window, contains key- and mouse-listeners and an own event-handler,
-// to which the listeners push events.
-// But every window also holds a reference to the engines' event-handler on which
-// all occurring events will be pushed as well.
+/**
+ * A window is a simple desktop-window which is created and managed by the {@link JangineEngine}.
+ * It contains an amount of {@link JangineScene} from which only one is active at one time, which
+ * is the only one that gets updated.
+ * A window also always contains a {@link JangineKeyListener} and a {@link JangineMouseListener}
+ * that push their events to the windows' and the engines' {@link JangineEventHandler}.
+ *
+ * @author Tim Kloepper
+ * @version 1.0
+ */
 public class JangineWindow {
 
 
@@ -68,7 +71,13 @@ public class JangineWindow {
 
     // -+- UPDATE-LOOP -+- //
 
-    // Main update call.
+    /**
+     * Main update-loop method, that is called by the {@link JangineEngine}.
+     *
+     * @return will keep running
+     *
+     * @author Tim Kloepper
+     */
     public boolean update() {
         if (glfwWindowShouldClose(_glfw_windowPointer)) {
             // Free the window callbacks and destroy the window
@@ -96,7 +105,11 @@ public class JangineWindow {
         return true;
     }
 
-    // Updates the active scene.
+    /**
+     * Updates the currently active {@link JangineScene}.
+     *
+     * @author Tim Kloepper
+     */
     private void _updateScene() {
         if (_activeScene == null) {return;}
 
@@ -106,7 +119,12 @@ public class JangineWindow {
 
     // -+- INITIALIZATION -+- //
 
-    // Sets up GLFW-related stuff.
+    /**
+     * Initializes the window on the openGL-side.
+     * Copied from the official JWLGL-Website.
+     *
+     * @author Tim Kloepper.
+     */
     private void _init() {
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
