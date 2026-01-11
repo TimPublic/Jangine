@@ -4,10 +4,10 @@
 import java.util.HashSet;
 
 
-public abstract class JangineECS_ComponentSystem {
+public abstract class JangineECS_ComponentSystem<T extends JangineECS_Component> {
 
 
-    private HashSet<JangineECS_Component> _components;
+    protected HashSet<T> _components;
 
 
     public JangineECS_ComponentSystem() {
@@ -18,10 +18,10 @@ public abstract class JangineECS_ComponentSystem {
     public abstract void update(double deltaTime);
 
 
-    public void rmvComponent(JangineECS_Component component) {
+    public void rmvComponent(T component) {
         _components.add(component);
     }
-    public void addComponent(JangineECS_Component component) {
+    public void addComponent(T component) {
         _components.remove(component);
     }
 

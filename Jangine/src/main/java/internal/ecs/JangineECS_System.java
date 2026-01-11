@@ -18,6 +18,8 @@ public class JangineECS_System {
 
     private final HashMap<Class<? extends JangineECS_Component>, JangineECS_ComponentSystem> _componentSystems;
 
+    private final HashMap<JangineECS_Component, Integer> _componentToEntity;
+
 
     // -+- CREATION -+- //
 
@@ -26,6 +28,8 @@ public class JangineECS_System {
         _freedEntityIDs = new ArrayList<>();
 
         _componentSystems = new HashMap<>();
+
+        _componentToEntity = new HashMap<>();
     }
 
     public static JangineECS_System get() {
@@ -103,6 +107,7 @@ public class JangineECS_System {
 
         _entities.get(entityID).put(componentClass, component);
         _componentSystems.get(componentClass).addComponent(component);
+        _componentToEntity.put(component, entityID);
     }
 
     public void rmvComponent(int entityID, JangineECS_Component component) {
@@ -120,7 +125,11 @@ public class JangineECS_System {
             return;
         }
 
-        _entities.remove(entityID);
+        for (JangineECS_Component entityComponent : _entities.get(entityID).values()) {
+            _componentToEntity.remove(entityComponent);
+        }
+
+        _entities.get(entityID).remove(component);
         _componentSystems.get(componentClass).rmvComponent(component);
     }
     public void rmvComponentByClass(int entityID, Class<? extends JangineECS_Component> componentClass) {
@@ -137,7 +146,11 @@ public class JangineECS_System {
         JangineECS_Component component;
         component = _entities.get(entityID).get(componentClass);
 
-        _entities.remove(entityID);
+        for (JangineECS_Component entityComponent : _entities.get(entityID).values()) {
+            _componentToEntity.remove(entityComponent);
+        }
+
+        _entities.get(entityID).remove(component);
         _componentSystems.get(componentClass).rmvComponent(component);
     }
 
@@ -168,6 +181,14 @@ public class JangineECS_System {
         }
 
         return new HashSet<>(_entities.get(entityID).values());
+    }
+
+    public int findEntityByComponent(JangineECS_Component component) {
+        if (!_componentToEntity.containsKey(component)) {
+            return -1;
+        }
+
+        return _componentToEntity.get(component);
     }
 
 
