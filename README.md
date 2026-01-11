@@ -4,7 +4,19 @@
 
 ---
 
-## Main Features
+## Features Overview
+
+- 📬 Event System -> Clean hierachial, port based system
+- 💻 Rendering -> Extensive options for textures, shaders and batching (currently under construction)
+- 👽 Entity Component System -> Simple and reliable (currently under construction)
+- 🖱️ Input System -> Clean, window based system
+- 🪟 Multiple Windows -> Supports any amount of engine orchestrated windows
+- 🎞️ Scene System -> Per window, transferable, own render and update loop
+- 📖 Extensive JavaDoc documentation -> Detailled explanation for every function and class
+
+---
+
+## Main Features Detailled
 
 #### 📬 Event System
 
@@ -87,11 +99,11 @@ shaderProgram.unuse();
 ~~~
 The shader also takes in **uniforms**:
 ~~~
-shaderProgram.upload(int / float / matrix / ...);
+shaderProgram.upload("uniformName", int / float / matrix / ...);
 ~~~
 
 **Camera**
-The camera is currently a nearly one-to-one copy from "Games with Gabe" and all credits for this class, belong to him.
+The camera is currently a nearly one-to-one copy from "Games with Gabe" and all credits for this class should go to him.
 
 To create a camera, do the following:
 ~~~
@@ -164,7 +176,7 @@ keyListener.rmvEngine();
 
 The engine supports **multiple windows**, which get **created** and **managed** by the engine itself.
 
-#### Scene system
+#### 🎞️ Scene system
 
 Every window can contain **scenes**, from which only one can be **active** in every window at one time.
 
