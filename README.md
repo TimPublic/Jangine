@@ -6,7 +6,7 @@
 
 ## Main Features
 
-#### Event System
+#### 📬 Event System
 
 The events get distributed hierachially.
 Every window, the engine and every scene has an own **event-handler**.
@@ -48,7 +48,7 @@ eventHandler.deregister(port);
 port = null;
 ~~~
 
-#### Rendering
+#### 💻 Rendering
 
 **Jangine** contains **extensive rendering options**.
 You can write your **own shaders** and set them up in a **shader-program class**.
@@ -107,11 +107,11 @@ batch.rmvMesh(mesh);
 As you can see, the batch also takes in a **camera**, containing a **projection-** and a **view matrix**. This camera is code nearly copied one-to-one from **"Games with Gabe"**,
 as well as the "default.glsl"-shader.
 
-#### Entity-Component System
+#### 👽 Entity-Component System
 
 Currently under construction.
 
-#### Input System
+#### 🖱️ Input System
 
 Jangine has a ways to identify both **key-** and **mouse events**.
 For that, the **JangineKeyListener** and **JangineMouseListener** are being used.
@@ -138,7 +138,7 @@ keyListener.rmvEngine();
 (Same for the JangineMouseListener)
 ~~~
 
-#### Multiple windows
+#### 🪟 Multiple windows
 
 The engine supports **multiple windows**, which get **created** and **managed** by the engine itself.
 
