@@ -13,6 +13,15 @@ import java.util.List;
 // Scenes manage render-objects and are always home to exactly one window.
 // They have their own event-handler, which only receives events, when
 // the scene is active.
+
+/**
+ * Scenes are contained inside of {@link JangineWindow} and hold own render logic.
+ * They have their own event handler, which only receives events,
+ * when the scene is active.
+ *
+ * @author Tim Klöpper
+ * @version 1.0
+ */
 public class JangineScene {
 
 
@@ -55,22 +64,34 @@ public class JangineScene {
 
     // -+- LIFE-CYCLE -+- //
 
-    // Gets called by the window, when a scene gets active.
-    // Before this call, the event-handler is not distributing events.
+    /**
+     * Gets called by the window, when a scene gets active.
+     * Before this call, the event handler is not distributing events.
+     *
+     * @author Tim Kloepper
+     */
     public final void activate() {
         _ownEventHandlerListeningPort.setActive(true);
 
         _onActivation();
     }
-    // Gets called by the window, when a scene is no longer active.
-    // If this call is not made, the event-handler will keep distributing Events.
+    /**
+     * Gets called by the window, when a scene is no longer active.
+     * If this call is not made, the event handler will keep distributing events.
+     *
+     * @author Tim Kloepper
+     */
     public final void deactivate() {
         _ownEventHandlerListeningPort.setActive(false);
 
         _onDeactivation();
     }
-    // Gets called by the window, right before it is deleted.
-    // Handles deregistering from services such as the windows' event-handler.
+    /**
+     * Gets called by the window, right before this scene is deleted.
+     * Handles deregistering from services such as the windows' event handler.
+     *
+     * @author Tim Kloepper
+     */
     public final void kill() {
         _windowEventHandler.deregister(_ownEventHandlerListeningPort);
 
@@ -84,46 +105,100 @@ public class JangineScene {
         _onKill();
     }
 
-    // OVERWRITE |-> Gets called, every time the scene is activated.
+    /**
+     * OVERWRITE
+     * <p>
+     * Gets called every time, the scene is activated.
+     *
+     * @author Tim Kloepper
+     */
     protected void _onActivation() {}
-    // OVERWRITE |-> Gets called, every time the scene is deactivated.
+    /**
+     * OVERWRITE
+     * <p>
+     * Gets called every time, the scene is deactivated.
+     *
+     * @author Tim Kloepper
+     */
     protected void _onDeactivation() {}
-    // OVERWRITE |-> Gets called once, when the scene is created.
+    /**
+     * OVERWRITE
+     * <p>
+     * Gets called every time, the scene is created.
+     *
+     * @author Tim Kloepper
+     */
     protected void _onCreation() {}
-    // OVERWRITE |-> Gets called once, when the scene is created.
+    /**
+     * OVERWRITE
+     * <p>
+     * Gets called every time, the scene is killed.
+     *
+     * @author Tim Kloepper
+     */
     protected void _onKill() {}
 
 
     // -+- UPDATE-LOOP -+- //
 
-    // Can be overwritten by children to implement custom behaviour on every frame.
+    /**
+     * Gets called by the {@link JangineWindow} on every frame, as long as this scene is active.
+     *
+     * @param deltaTime time passed, since the last frame
+     *
+     * @author Tim Kloepper
+     */
     public final void update(double deltaTime) {
         _onUpdate(deltaTime);
 
         _render();
     }
 
-    // OVERWRITE |-> Gets called every frame inside the update method, to implement custom update logic.
+    /**
+     * OVERWRITE
+     * <p>
+     * Gets called every frame, as long as this scene is active.
+     *
+     * @param deltaTime time passed, since the last frame
+     *
+     * @author Tim Kloepper
+     */
     protected void _onUpdate(double deltaTime) {}
 
 
     // -+- RENDERING -+- //
 
-    // Gets called in the update method, to render general changes to the screen.
+    /**
+     * Gets called every frame and handles basic render logic that every scene does.
+     *
+     * @author Tim Kloepper
+     */
     private void _render() {
         test.run();
 
         _onRender();
     }
 
-    // OVERWRITE |-> Gets called every frame in the render method, to implement custom rendering logic.
+    /**
+     * OVERWRITE
+     * <p>
+     * Gets called every frame in the {@link JangineScene#_render()} method.
+     * Overwrite it, to implement custom render logic.
+     *
+     * @author Tim Kloepper
+     */
     protected void _onRender() {}
 
 
     // -+- EVENT-HANDLING -+- //
 
-    // Returns a listening-port of the windows' event-handler and keeps a reference to that port,
-    // to delete it, if the scene gets killed.
+    /**
+     * Returns a listening port of the windows' event handler.
+     *
+     * @return {@link JangineEventListeningPort}
+     *
+     * @author Tim Kloepper
+     */
     public final JangineEventListeningPort getWindowEventListeningPort() {
         JangineEventListeningPort port;
 
@@ -133,13 +208,25 @@ public class JangineScene {
 
         return port;
     }
-    // Removes a listening-port of the windows' event-handler, also deletes the owned reference.
+    /**
+     * Removes a listing port of the windows' event handler.
+     *
+     * @param port {@link JangineEventListeningPort} to be deleted
+     *
+     * @author Tim Kloepper
+     */
     public final void removeWindowEventListeningPort(JangineEventListeningPort port) {
         _windowListeningPorts.remove(port);
 
         _windowEventHandler.deregister(port);
     }
-    // Returns scenes' event-handler.
+    /**
+     * Returns this scenes' event handler.
+     *
+     * @return {@link JangineEventHandler} of this scene
+     *
+     * @author Tim Kloepper
+     */
     public final JangineEventHandler getEventHandler() {
         return _ownEventHandler;
     }
@@ -147,7 +234,15 @@ public class JangineScene {
 
     // -+- CAMERA-LOGIC -+- //
 
-    // Sets the resolution of the camera to the specified width and height.
+    /**
+     * Sets the resolution of the camera to the specified width and height in 32-by-32 pixels.
+     * (See {@link JangineCamera2D#adjustProjection(int, int)})
+     *
+     * @param width
+     * @param height
+     *
+     * @author Tim Kloepper
+     */
     public void setRes(int width, int height) {
         _camera.adjustProjection(width, height);
     }

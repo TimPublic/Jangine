@@ -19,6 +19,17 @@ import static org.lwjgl.opengl.GL20.*;
 // If any of those are missing, the engine crashes.
 // Then it compiles itself to a program which can then be used and unused
 // with the use- and unuse-method calls.
+
+/**
+ * The shader program wraps around an GLFW-program linked with a vertex- and fragment shader.
+ * Both shaders need to be contained in one glsl-file, marked with #type (vertex / fragment).
+ * This file needs to be provided in the constructor and the program then compiles instantly.
+ * <p>
+ * The program can be bound by calling {@link JangineShaderProgram#use()} or {@link JangineShaderProgram#unuse()} for unbinding it.
+ *
+ * @author Tim Kloepper
+ * @version 1.0
+ */
 public class JangineShaderProgram {
 
 
@@ -46,11 +57,17 @@ public class JangineShaderProgram {
 
     // -+- USE-STATE MANAGEMENT -+- //
 
-    // Sets the used program of GLFW to this shader.
+    /**
+     * Sets the used program of GLFW to this shader.
+     *
+     * @author Tim Kloepper
+     */
     public void use() {
         glUseProgram(_programID);
     }
-    // Sets the used program of GLFW to 0, which means, that no program is used.
+    /**
+     * Sets the used program of GLFW to 0, effectively unbinding any program.
+     */
     public void unuse() {
         glUseProgram(0);
     }
@@ -58,8 +75,17 @@ public class JangineShaderProgram {
 
     // -+- SHADER-RETRIEVAL -+- //
 
-    // Retrieves the shader-string form the file at the specified path.
-    // Then filters out the two separate shaders and saves them.
+    /**
+     * Retrieves the shader-string from the file at the specified path.
+     * Then filters out the two separate shaders and saves them.
+     * <p>
+     * Crashes if either the file is not a glsl-file or any shader, fragment or vertex,
+     * could not be found.
+     *
+     * @param path path to the file
+     *
+     * @author Tim Kloepper
+     * */
     private void _retrieveShadersFromPath(String path) {
         if (!path.endsWith(".glsl")) {
             System.err.println("[SHADER ERROR] : Given shader file is not of '.glsl!'");
@@ -96,7 +122,13 @@ public class JangineShaderProgram {
             System.exit(1);
         }
     }
-    // Filters the two separate shaders from the string and saves them.
+    /**
+     * Filters the two separate shaders from the string and saves them.
+     *
+     * @param from string that contains the shaders
+     *
+     * @author Tim Kloepper
+     */
     private void _retrieveShadersFromString(String from) {
         String[] splitContents = from.split("(#type)( )+");
 
@@ -114,7 +146,12 @@ public class JangineShaderProgram {
 
     // -+- COMPILING -+- //
 
-    // Compiles both shaders.
+    /**
+     * Compiles both shaders.
+     * Crashes if compilation fails.
+     *
+     * @author Tim Kloepper
+     */
     private void _compileShaders() {
         // Vertex
         _vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
@@ -130,7 +167,13 @@ public class JangineShaderProgram {
 
         _checkForShaderCompileErrors(_fragmentShaderID);
     }
-    // Checks for shader compile-errors.
+    /**
+     * Checks for shader compile errors and crashes if any are found.
+     *
+     * @param shaderID
+     *
+     * @author Tim Kloepper
+     */
     private void _checkForShaderCompileErrors(int shaderID) {
         if (glGetShaderi(shaderID, GL_COMPILE_STATUS) != GL_FALSE) {return;}
 
@@ -147,7 +190,11 @@ public class JangineShaderProgram {
 
     // -+- PROGRAM CREATION AND LINKING -+- //
 
-    // Creates the actual program and links the shaders.
+    /**
+     * Creates the actual program this class warps around and links the shaders.
+     *
+     * @author Tim Kloepper
+     */
     private void _createAndLinkProgram() {
         _programID = glCreateProgram();
 
@@ -158,7 +205,13 @@ public class JangineShaderProgram {
 
         _checkForProgramLinkingErrors(_programID);
     }
-    // Checks for linking-errors.
+    /**
+     * Checks for linking errors and crashes if any are found.
+     *
+     * @param programID id of the actual GLFW-program
+     *
+     * @author Tim Kloepper
+     */
     private void _checkForProgramLinkingErrors(int programID) {
         if (glGetProgrami(programID, GL_LINK_STATUS) != GL_FALSE) {return;}
 
@@ -175,25 +228,46 @@ public class JangineShaderProgram {
 
     // -+- UNIFORMS -+- //
 
-    // Uploads an integer-uniform to the shader.
-    // If the name of the uniform is invalid, the
-    // engine will crash.
+    /**
+     * Uploads an integer uniform to the shader.
+     * If the name of the uniform is invalid,
+     * the engine will crash.
+     *
+     * @param name name of the uniform
+     * @param value to be uploaded value
+     *
+     * @author Tim Kloepper
+     */
     public void upload(String name, int value) {
         use();
 
         glUniform1i(_getUniformPosition(name), value);
     }
-    // Uploads a float-uniform to the shader.
-    // If the name of the uniform is invalid, the
-    // engine will crash.
+    /**
+     * Uploads an integer uniform to the shader.
+     * If the name of the uniform is invalid,
+     * the engine will crash.
+     *
+     * @param name name of the uniform
+     * @param value to be uploaded value
+     *
+     * @author Tim Kloepper
+     */
     public void upload(String name, float value) {
         use();
 
         glUniform1f(_getUniformPosition(name), value);
     }
-    // Uploads a matrix2f-uniform to the shader.
-    // If the name of the uniform is invalid, the
-    // engine will crash.
+    /**
+     * Uploads a matrix2f uniform to the shader.
+     * If the name of the uniform is invalid,
+     * the engine will crash.
+     *
+     * @param name name of the uniform
+     * @param matrix2f to be uploaded value
+     *
+     * @author Tim Kloepper
+     */
     public void upload(String name, Matrix2f matrix2f) {
         use();
 
@@ -204,9 +278,16 @@ public class JangineShaderProgram {
 
         glUniformMatrix2fv(_getUniformPosition(name), false, matrixBuffer);
     }
-    // Uploads a matrix3f-uniform to the shader.
-    // If the name of the uniform is invalid, the
-    // engine will crash.
+    /**
+     * Uploads a matrix3f uniform to the shader.
+     * If the name of the uniform is invalid,
+     * the engine will crash.
+     *
+     * @param name name of the uniform
+     * @param matrix3f to be uploaded value
+     *
+     * @author Tim Kloepper
+     */
     public void upload(String name, Matrix3f matrix3f) {
         use();
 
@@ -217,9 +298,16 @@ public class JangineShaderProgram {
 
         glUniformMatrix3fv(_getUniformPosition(name), false, matrixBuffer);
     }
-    // Uploads a matrix4f-uniform to the shader.
-    // If the name of the uniform is invalid, the
-    // engine will crash.
+    /**
+     * Uploads a matrix4f uniform to the shader.
+     * If the name of the uniform is invalid,
+     * the engine will crash.
+     *
+     * @param name name of the uniform
+     * @param matrix4f to be uploaded value
+     *
+     * @author Tim Kloepper
+     */
     public void upload(String name, Matrix4f matrix4f) {
         use();
 
@@ -230,25 +318,46 @@ public class JangineShaderProgram {
 
         glUniformMatrix4fv(_getUniformPosition(name), false, matrixBuffer);
     }
-    // Uploads a vector2f-uniform to the shader.
-    // If the name of the uniform is invalid, the
-    // engine will crash.
+    /**
+     * Uploads a vector2f uniform to the shader.
+     * If the name of the uniform is invalid,
+     * the engine will crash.
+     *
+     * @param name name of the uniform
+     * @param vector2f to be uploaded value
+     *
+     * @author Tim Kloepper
+     */
     public void upload(String name, Vector2f vector2f) {
         use();
 
         glUniform2f(_getUniformPosition(name), vector2f.x, vector2f.y);
     }
-    // Uploads a vector3f-uniform to the shader.
-    // If the name of the uniform is invalid, the
-    // engine will crash.
+    /**
+     * Uploads a vector3f uniform to the shader.
+     * If the name of the uniform is invalid,
+     * the engine will crash.
+     *
+     * @param name name of the uniform
+     * @param vector3f to be uploaded value
+     *
+     * @author Tim Kloepper
+     */
     public void upload(String name, Vector3f vector3f) {
         use();
 
         glUniform3f(_getUniformPosition(name), vector3f.x, vector3f.y, vector3f.z);
     }
-    // Uploads a vector4f-uniform to the shader.
-    // If the name of the uniform is invalid, the
-    // engine will crash.
+    /**
+     * Uploads a vector4f uniform to the shader.
+     * If the name of the uniform is invalid,
+     * the engine will crash.
+     *
+     * @param name name of the uniform
+     * @param vector4f to be uploaded value
+     *
+     * @author Tim Kloepper
+     */
     public void upload(String name, Vector4f vector4f) {
         use();
 
@@ -258,6 +367,19 @@ public class JangineShaderProgram {
     // Retrieves the internal shader uniform-position.
     // If the name is invalid, the engine crashes.
     // The name is stripped of all leading and trailing whitespaces.
+
+    /**
+     * Retrieves the internal shader uniform position of the program.
+     * If the name is invalid, the engine crashes.
+     * <p>
+     * The name is stripped of all leading and trailing whitespaces.
+     *
+     * @param name name of the uniform to be found
+     *
+     * @return internal position of the uniform
+     *
+     * @author Tim Kloepper
+     */
     private int _getUniformPosition(String name) {
         int position;
 
@@ -272,7 +394,7 @@ public class JangineShaderProgram {
 
         System.exit(1);
 
-        return -1;
+        return -1; // Is actually never reached, but needs to be here because of intelliSense (:.
     }
 
 

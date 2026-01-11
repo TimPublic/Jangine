@@ -6,9 +6,16 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 
-// Specifies the viewport for the rendering.
-// This is a temporary class, which will be refactored in the future to
-// be more efficient and better integrated, is currently just a one-on-one copy.
+/**
+ * Specifies the viewport used in rendering.
+ * <p>
+ * This is a temporary class, which weill be refactored in the future to
+ * be more efficient and better integrated.
+ * Currently, it is a nearly one-on-one copy from "Games with Gabe".
+ *
+ * @author Tim Klöpper
+ * @version 0.9
+ */
 public class JangineCamera2D {
 
 
@@ -29,7 +36,16 @@ public class JangineCamera2D {
 
     // -+- PROJECTION-LOGIC -+- //
 
-    // Adjust how much the camera can see in 32-by-32 pixels.
+    /**
+     * Adjust how much this camera can see in 32-by-32 pixels.
+     *
+     * @param width
+     * @param height
+     *
+     * @return this, for linked calls.
+     *
+     * @author Tim Kloepper
+     */
     public JangineCamera2D adjustProjection(int width, int height) {
         _projectionMatrix.identity();
 
@@ -41,7 +57,13 @@ public class JangineCamera2D {
 
     // -+- GETTERS -+- //
 
-    // Returns the view-matrix.
+    /**
+     * Returns the view matrix.
+     *
+     * @return view matrix
+     *
+     * @author Tim Kloepper
+     */
     public Matrix4f getViewMatrix() {
         Vector3f cameraFront;
         Vector3f cameraUp;
@@ -58,12 +80,24 @@ public class JangineCamera2D {
 
         return _viewMatrix;
     }
-    // Returns the projection-matrix.
+    /**
+     * Returns the projection matrix.
+     *
+     * @return projection matrix
+     *
+     * @author Tim Kloepper
+     */
     public Matrix4f getProjectionMatrix() {
         return _projectionMatrix;
     }
 
-    // Returns the position.
+    /**
+     * Returns the current position of this camera.
+     *
+     * @return position
+     *
+     * @author Tim Kloepper
+     */
     public Vector2f getPosition() {
         return _position;
     }
