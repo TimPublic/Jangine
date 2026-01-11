@@ -13,6 +13,7 @@
 - 🪟 Multiple Windows -> Supports any amount of engine orchestrated windows
 - 🎞️ Scene System -> Per window, transferable, own render and update loop
 - 📖 Extensive JavaDoc documentation -> Detailled explanation for every function and class
+- 📁 Package speration -> Clear and clean seperation of concerns in clearly named packages
 
 ---
 
