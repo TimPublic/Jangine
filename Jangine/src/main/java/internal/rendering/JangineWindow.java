@@ -76,7 +76,7 @@ public class JangineWindow {
      *
      * @author Tim Kloepper
      */
-    public boolean update() {
+    public boolean update(double deltaTime) {
         if (glfwWindowShouldClose(_glfw_windowPointer)) {
             // Free the window callbacks and destroy the window
             glfwFreeCallbacks(_glfw_windowPointer);
@@ -89,7 +89,7 @@ public class JangineWindow {
 
         glfwMakeContextCurrent(_glfw_windowPointer);
 
-        _updateScene();
+        _updateScene(deltaTime);
 
         glfwSwapBuffers(_glfw_windowPointer); // swap the color buffers
 
@@ -108,10 +108,10 @@ public class JangineWindow {
      *
      * @author Tim Kloepper
      */
-    private void _updateScene() {
+    private void _updateScene(double deltaTime) {
         if (_activeScene == null) {return;}
 
-        _activeScene.update(44); // 44 is just a placeholder.
+        _activeScene.update(deltaTime); // 44 is just a placeholder.
     }
 
 
