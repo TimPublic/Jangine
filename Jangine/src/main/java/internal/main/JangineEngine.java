@@ -1,6 +1,7 @@
 package internal.main;
 
 
+import internal.ecs.JangineECS_System;
 import internal.events.JangineEventHandler;
 import internal.rendering.JangineWindow;
 import internal.util.JangineDeltaTimer;
@@ -34,6 +35,8 @@ public class JangineEngine {
 
     private boolean _shouldClose;
 
+    private double _currentDeltaTime;
+
 
     private JangineEngine() {
         _eventHandler = new JangineEventHandler();
@@ -41,6 +44,8 @@ public class JangineEngine {
         _windows = new HashSet<>();
 
         _shouldClose = false;
+
+        _currentDeltaTime = 0;
     }
 
 
@@ -57,6 +62,10 @@ public class JangineEngine {
         createWindow();
 
         while (!_shouldClose) {
+            _currentDeltaTime = JangineDeltaTimer.get().getDeltaTime();
+
+            JangineECS_System.get().update(_currentDeltaTime);
+
             _shouldClose = _updateWindows();
 
             JangineDeltaTimer.get().update(); // At the end, otherwise delta time is always 0.
@@ -134,10 +143,8 @@ public class JangineEngine {
 
         windowsSize = _windows.size();
 
-        deltaTime = JangineDeltaTimer.get().getDeltaTime();
-
         for (JangineWindow window : _windows) {
-            if (window.update(deltaTime)) {continue;}
+            if (window.update(_currentDeltaTime)) {continue;}
 
             deletionQueue.add(window);
         }
