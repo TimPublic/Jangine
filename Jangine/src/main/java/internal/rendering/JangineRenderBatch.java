@@ -1,7 +1,6 @@
 package internal.rendering;
 
 
-import internal.rendering.mock.JangineMesh;
 import internal.rendering.texture.JangineTexture;
 import org.lwjgl.BufferUtils;
 

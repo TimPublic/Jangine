@@ -4,6 +4,13 @@ package internal.rendering.texture.dependencies;
 import static org.lwjgl.opengl.GL11.*;
 
 
+/**
+ * An interface used in the {@link internal.rendering.texture.JangineTexture} class, used
+ * for uploading textures to the gpu.
+ *
+ * @author Tim Kloepper
+ * @version 1.0
+ */
 public interface I_JangineTextureLoader {
 
 

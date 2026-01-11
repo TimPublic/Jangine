@@ -15,12 +15,28 @@ import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.stb.STBImage.stbi_load;
 
 
+/**
+ * An interface implementation of the interface {@link I_JangineTextureLoader},
+ * used for uploading textures to the gpu with the STBI-library.
+ * <p>
+ * Is a singleton, as there is no reason for multiple instances.
+ *
+ * @author Tim Kloepper
+ * @version 1.0
+ */
 public class STBI_TextureLoader implements I_JangineTextureLoader {
 
 
     private static STBI_TextureLoader _instance;
 
 
+    /**
+     * Returns the singleton instance.
+     *
+     * @return singleton instance
+     *
+     * @author Tim Kloepper
+     */
     public static STBI_TextureLoader get() {
         if (_instance == null) {
             _instance = new STBI_TextureLoader();
