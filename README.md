@@ -52,60 +52,82 @@ port = null;
 
 **Jangine** contains **extensive rendering options**.
 You can write your **own shaders** and set them up in a **shader-program class**.
-**Jangine** also provides a **texture-** as well as a **render-batch class**.
+**Jangine** also provides a **texture-**, a **camera-** as well as a **render-batch class**.
 
+**Texture**
+Textures can be created as follows:
+~~~
+JangineTexture texture;
+
+texture = new JangineTexture("texturepath/texture.png", imageLoaderImpl);
+~~~
+They can be bound and unbound as follows:
+~~~
+glActiveTexture(GL_TEXTURE0);
+texture.bind();
+
+...
+
+texture.unbind();
+~~~
+
+**Shader Program**
+Shaders can be created as follows:
+~~~
+JangineShaderProgram shaderProgram;
+
+// This will automatically compile and link.
+shaderProgram = new JangineShaderProgram("shaderpath/shader.glsl"); // Needs to be glsl-file.
+~~~
 The shader-program can simply be bound with a single method and is then used:
 ~~~
 shaderProgram.use();
 
 shaderProgram.unuse();
 ~~~
-
-Same with the texture:
-~~~
-glActiveTexture(GL_TEXTURE0);
-_texture.bind();
-
-texture.unbind();
-~~~
-
-Textures take, additionally to the file-path, in a **texture-loader**.
-That way, you can define what method is used to load your image.
-
 The shader also takes in **uniforms**:
 ~~~
 shaderProgram.upload(int / float / matrix / ...);
 ~~~
 
-The render-batch takes in any **mesh** that follows the premise of a **four-float vertex**:
-x, y, uvX and uvY.
-It also contains a texture and a shader that every mesh given is rendered with.
+**Camera**
+The camera is currently a nearly one-to-one copy from "Games with Gabe" and all credits for this class, belong to him.
 
-Meshes can be **updated** too.
-
-You can also **remove meshes**, but currently they only get removed from updates
-and are still rendered.
-
-Example:
+To create a camera, do the following:
 ~~~
-// Creating.
-batch = new JangineRenderBatch(shaderProgram, texture, camera);
+JangineCamera2D camera;
 
-// Adding.
-batch.addMesh(mesh);
-
-// Rendering.
-batch.render();
-
-// Updating.
-batch.updateMesh(mesh);
-
-// Removing.
-batch.rmvMesh(mesh);
+// Width and height currently in 32-by-32 pixels.
+camera = new JangineCamera2D(width, height);
+~~~
+If you want to change the projection, do the following:
+~~~
+camera.adjustProjection(width, height);
+~~~
+The view matrix gets updated upon calling:
+~~~
+viewMatrix = camera.getViewMatrix();
 ~~~
 
-As you can see, the batch also takes in a **camera**, containing a **projection-** and a **view matrix**. This camera is code nearly copied one-to-one from **"Games with Gabe"**,
-as well as the "default.glsl"-shader.
+**Render Batch**
+Render batches can be created as follows:
+~~~
+JangineRenderBatch renderBatch;
+
+renderBatch = new JangineRenderBatch(shaderProgram, texture, camera);
+~~~
+You can then add and remove meshes freely, those need to follow the following premise of a **four-float vertex**: x, y, uvX and uvY:
+~~~
+renderBatch.addMesh(mesh);
+
+renderBatch.updateMesh(mesh);
+
+renderBatch.rmvMesh(mesh);
+~~~
+To render a batch, simply call:
+~~~
+renderBatch.render();
+~~~
 
 #### 👽 Entity-Component System
 
