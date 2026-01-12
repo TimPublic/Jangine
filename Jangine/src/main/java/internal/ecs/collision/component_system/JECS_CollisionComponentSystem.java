@@ -68,7 +68,7 @@ public abstract class JECS_CollisionComponentSystem<T extends JangineECS_Compone
     protected final void _pushWindowCollision(JangineCollisionData.COLLISION_AXIS collisionAxis, JECS_CollisionComponent component) {
         JangineWindowCollisionData data;
 
-        data = new JangineWindowCollisionData(collisionAxis, JangineECS_System.get().findEntityByComponent(component));
+        data = new JangineWindowCollisionData(collisionAxis, JangineECS_System.findEntityByComponent(component));
 
         for (Consumer<JangineWindowCollisionData> callback : _resolutionCallbacksWindow) {
             callback.accept(data);
@@ -77,7 +77,7 @@ public abstract class JECS_CollisionComponentSystem<T extends JangineECS_Compone
     protected final void _pushComponentCollision(JangineCollisionData.COLLISION_AXIS collisionAxis, JECS_CollisionComponent firstComponent, JECS_CollisionComponent secondComponent) {
         JangineComponentCollisionData data;
 
-        data = new JangineComponentCollisionData(collisionAxis, JangineECS_System.get().findEntityByComponent(firstComponent), JangineECS_System.get().findEntityByComponent(secondComponent));
+        data = new JangineComponentCollisionData(collisionAxis, JangineECS_System.findEntityByComponent(firstComponent), JangineECS_System.findEntityByComponent(secondComponent));
 
         for (Consumer<JangineComponentCollisionData> callback : _resolutionCallbacksComponent) {
             callback.accept(data);

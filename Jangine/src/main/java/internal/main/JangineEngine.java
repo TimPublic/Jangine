@@ -64,8 +64,6 @@ public class JangineEngine {
         while (!_shouldClose) {
             _currentDeltaTime = JangineDeltaTimer.get().getDeltaTime();
 
-            JangineECS_System.get().update(_currentDeltaTime);
-
             _shouldClose = _updateWindows();
 
             JangineDeltaTimer.get().update(); // At the end, otherwise delta time is always 0.

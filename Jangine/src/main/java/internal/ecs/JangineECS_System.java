@@ -9,35 +9,23 @@ import java.util.HashSet;
 public class JangineECS_System {
 
 
-    private static JangineECS_System _instance;
-
-
     private final HashMap<Integer, HashMap<Class<? extends JangineECS_Component>, JangineECS_Component>> _entities;
     private final ArrayList<Integer> _freedEntityIDs;
     private int _nextEntityID;
 
     private final HashMap<Class<? extends JangineECS_Component>, JangineECS_ComponentSystem> _componentSystems;
 
-    private final HashMap<JangineECS_Component, Integer> _componentToEntity;
+    // This will have duplicate entity ids, but we do not care about that, because we have unique keys.
+    private static final HashMap<JangineECS_Component, Integer> _componentToEntity = new HashMap<>();
 
 
     // -+- CREATION -+- //
 
-    private JangineECS_System() {
+    public JangineECS_System() {
         _entities = new HashMap<>();
         _freedEntityIDs = new ArrayList<>();
 
         _componentSystems = new HashMap<>();
-
-        _componentToEntity = new HashMap<>();
-    }
-
-    public static JangineECS_System get() {
-        if (_instance == null) {
-            _instance = new JangineECS_System();
-        }
-
-        return _instance;
     }
 
 
@@ -183,7 +171,7 @@ public class JangineECS_System {
         return new HashSet<>(_entities.get(entityID).values());
     }
 
-    public int findEntityByComponent(JangineECS_Component component) {
+    public static int findEntityByComponent(JangineECS_Component component) {
         if (!_componentToEntity.containsKey(component)) {
             return -1;
         }
