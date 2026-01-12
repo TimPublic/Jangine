@@ -96,12 +96,14 @@ public class JangineECS_System {
             currentComponent = entityComponentMap.get(componentClass);
 
             currentComponent.kill(this);
+            //noinspection unchecked
             _componentSystems.get(componentClass).rmvComponent(currentComponent);
         }
 
         component.init(this);
 
         _entities.get(entityID).put(componentClass, component);
+        //noinspection unchecked
         _componentSystems.get(componentClass).addComponent(component);
         _componentToEntity.put(component, entityID);
     }
@@ -128,6 +130,7 @@ public class JangineECS_System {
         component.kill(this);
 
         _entities.get(entityID).remove(component);
+        //noinspection unchecked
         _componentSystems.get(componentClass).rmvComponent(component);
     }
     public void rmvComponentByClass(int entityID, Class<? extends JangineECS_Component> componentClass) {
@@ -150,14 +153,16 @@ public class JangineECS_System {
 
         component.kill(this);
 
+        //noinspection SuspiciousMethodCalls
         _entities.get(entityID).remove(component);
+        //noinspection unchecked
         _componentSystems.get(componentClass).rmvComponent(component);
     }
 
 
     // -+- COMPONENT SYSTEM MANAGEMENT -+- //
 
-    public void addComponentSystem(Class<? extends JangineECS_Component> componentClass, JangineECS_ComponentSystem componentSystem, boolean overwrite) {
+    public void addComponentSystem(Class<? extends JangineECS_Component> componentClass, JangineECS_ComponentSystem<? extends JangineECS_Component> componentSystem, boolean overwrite) {
         if (_componentSystems.containsKey(componentClass) && !overwrite) {
             return;
         }
