@@ -32,7 +32,7 @@ public class QuadTree implements I_SpatialPartitioning {
 
     private final HashSet<JECS_CollisionComponent> _components;
 
-    private QuadTreeNode _rootNode;
+    private final QuadTreeNode _rootNode;
 
 
     public QuadTree(Vector2d position, double width, double height) {
@@ -184,7 +184,7 @@ class QuadTreeNode {
      * @author Tim Kloepper
      */
     public boolean hasChildren() {
-        return children[0] == null; // If one is null, all are null
+        return children[0] != null; // If one is null, all are null
     }
 
 
@@ -202,7 +202,7 @@ class QuadTreeNode {
     public void getPossibleCollision(HashSet<JECS_CollisionComponent> set, JECS_CollisionComponent forObject) {
         if (hasChildren()) {
             for (int index = 0; index < QuadTree.CHILDREN_AMOUNT; index++) {
-                getPossibleCollision(set, forObject);
+                children[index].getPossibleCollision(set, forObject);
             }
 
             return;
@@ -335,8 +335,8 @@ class QuadTreeNode {
         heightH = height / 2;
 
         children[0] = new QuadTreeNode(new Vector2d(position).add(0, 0), widthH, heightH, objects); // Top Left
-        children[1] = new QuadTreeNode(new Vector2d(position).add(widthH, 1), widthH, heightH, objects); // Top Right
-        children[2] = new QuadTreeNode(new Vector2d(position).add(1, heightH), widthH, heightH, objects); // Bottom Left
+        children[1] = new QuadTreeNode(new Vector2d(position).add(widthH, 0), widthH, heightH, objects); // Top Right
+        children[2] = new QuadTreeNode(new Vector2d(position).add(0, heightH), widthH, heightH, objects); // Bottom Left
         children[3] = new QuadTreeNode(new Vector2d(position).add(widthH, heightH), widthH, heightH, objects); // Bottom Right
 
         objects.clear();
