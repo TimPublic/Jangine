@@ -19,10 +19,10 @@ public abstract class JangineECS_ComponentSystem<T extends JangineECS_Component>
 
 
     public void rmvComponent(T component) {
-        _components.add(component);
+        _components.remove(component);
     }
     public void addComponent(T component) {
-        _components.remove(component);
+        _components.add(component);
     }
 
 

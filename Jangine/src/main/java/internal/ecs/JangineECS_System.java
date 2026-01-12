@@ -18,6 +18,9 @@ public class JangineECS_System {
     // This will have duplicate entity ids, but we do not care about that, because we have unique keys.
     private static final HashMap<JangineECS_Component, Integer> _componentToEntity = new HashMap<>();
 
+    private final HashMap<Class<? extends JangineECS_Component>, JangineECS_Component> _bufferedCreationMap;
+    private boolean _isCreatingBuffered;
+
 
     // -+- CREATION -+- //
 
@@ -26,6 +29,8 @@ public class JangineECS_System {
         _freedEntityIDs = new ArrayList<>();
 
         _componentSystems = new HashMap<>();
+
+        _bufferedCreationMap = new HashMap<>();
     }
 
 
@@ -65,12 +70,117 @@ public class JangineECS_System {
     }
 
 
+    // -+- BUFFERED ENTITY CREATION -+- //
+
+    /**
+     * Starts the process of a buffered entity creation.
+     * Meaning, that you first provide the system with components
+     * with {@link JangineECS_System#addComponentToCreation(JangineECS_Component, boolean)}
+     * to then call {@link JangineECS_System#endEntityCreation()}, which will then
+     * actually generate an entity id as well as initialize the components
+     * (see {@link JangineECS_Component#init(JangineECS_System)}).
+     *
+     * @author Tim Kloepper
+     */
+    public void startEntityCreation() {
+        if (_isCreatingBuffered) {
+            System.err.println("[ECS ERROR] : Tried starting new buffered creation while still doing another!");
+
+            System.exit(1);
+
+            return;
+        }
+
+        _bufferedCreationMap.clear();
+
+        _isCreatingBuffered = true;
+    }
+    /**
+     * Is part of the buffered entity creation process.
+     * Should be only called after {@link JangineECS_System#startEntityCreation()}
+     * to add components to the buffer.
+     * For the case of a component of the same class already existing in the buffer,
+     * you can choose to overwrite it, or not to add the new component.
+     *
+     * @param component component to be added
+     * @param overwrite whether a component of the same type should be overwritten if already existing
+     *
+     * @author Tim Kloepper
+     */
+    public void addComponentToCreation(JangineECS_Component component, boolean overwrite) {
+        Class<? extends JangineECS_Component> componentClass;
+
+        _checkComponentExists(component);
+
+        componentClass = component.getClass();
+
+        if (!_componentSystems.containsKey(componentClass)) {
+            return;
+        }
+
+        if (_bufferedCreationMap.containsKey(componentClass) && !overwrite) {
+            return;
+        }
+
+        _bufferedCreationMap.put(componentClass, component);
+    }
+    /**
+     * Stops the buffered entity creation process, generates an entity id and handles further component
+     * initialization (see {@link JangineECS_Component#init(JangineECS_System)}).
+     *
+     * @return the entity id
+     *
+     * @author Tim Kloepper
+     */
+    public int endEntityCreation() {
+        int entityID;
+
+        if (!_isCreatingBuffered) {
+            System.err.println("[ECS ERROR] : Tried to end buffered creation without starting it!");
+
+            System.exit(1);
+
+            return -1;
+        }
+
+        _isCreatingBuffered = false;
+
+        if (_freedEntityIDs.isEmpty()) {
+            entityID = _nextEntityID;
+            _nextEntityID++;
+        } else {
+            entityID = _freedEntityIDs.get(0);
+            _freedEntityIDs.remove(entityID);
+        }
+
+        _entities.put(entityID, _bufferedCreationMap);
+
+        for (JangineECS_Component component : _bufferedCreationMap.values()) {
+            component.init(this);
+        }
+
+        return entityID;
+    }
+    /**
+     * Breaks the entity creation process, deleting all added components and loosing all accumulated data.
+     *
+     * @author Tim Kloepper
+     */
+    public void breakEntityCreation() {
+        _bufferedCreationMap.clear();
+
+        _isCreatingBuffered = false;
+    }
+
+
     // -+- COMPONENT MANAGEMENT -+- //
 
     public void addComponent(int entityID, JangineECS_Component component, boolean overwrite) {
         if (!_entities.containsKey(entityID)) {
             return;
         }
+
+        _checkComponentExists(component);
 
         Class<? extends JangineECS_Component> componentClass;
         HashMap<Class<? extends JangineECS_Component>, JangineECS_Component> entityComponentMap;
@@ -132,6 +242,7 @@ public class JangineECS_System {
         _entities.get(entityID).remove(component);
         //noinspection unchecked
         _componentSystems.get(componentClass).rmvComponent(component);
+        _componentToEntity.remove(component);
     }
     public void rmvComponentByClass(int entityID, Class<? extends JangineECS_Component> componentClass) {
         if (!_entities.containsKey(entityID)) { // Entity does not exist
@@ -157,6 +268,7 @@ public class JangineECS_System {
         _entities.get(entityID).remove(component);
         //noinspection unchecked
         _componentSystems.get(componentClass).rmvComponent(component);
+        _componentToEntity.remove(component);
     }
 
 
@@ -212,6 +324,16 @@ public class JangineECS_System {
         }
 
         return _entities.get(entityID).containsValue(component);
+    }
+
+    private void _checkComponentExists(JangineECS_Component component) {
+        if (_componentToEntity.containsKey(component)) {
+            System.err.println("[ECS ERROR] : Component is already assigned to an entity!");
+            System.err.println("|-> Component : " + component);
+            System.err.println("|-> Entity : " + _componentToEntity.get(component));
+
+            System.exit(1);
+        }
     }
 
 

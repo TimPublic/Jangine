@@ -18,6 +18,8 @@ public class JECS_AABB_ComponentSystem<T extends JangineECS_Component> extends J
 
     @Override
     public void update(double deltaTime) {
+        _partitioner.update();
+
         for (T component : _components) {
             _tryWindowCollision((JECS_CollisionComponent) component);
 
@@ -47,10 +49,10 @@ public class JECS_AABB_ComponentSystem<T extends JangineECS_Component> extends J
         boolean xCollision, yCollision;
 
         cPos = component.position;
-        cPosExtended = component.position.add(component.width, component.height);
+        cPosExtended = new Vector2d(component.position).add(component.width, component.height);
 
         wPos = withComponent.position;
-        wPosExtended = withComponent.position.add(component.width, component.height);
+        wPosExtended = new Vector2d(withComponent.position).add(component.width, component.height);
 
         xCollision = (cPos.x < wPosExtended.x && cPosExtended.x > wPos.x);
         yCollision = (cPos.y < wPosExtended.y && cPosExtended.y > wPos.y);
