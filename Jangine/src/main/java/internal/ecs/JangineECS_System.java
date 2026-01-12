@@ -90,8 +90,16 @@ public class JangineECS_System {
                 return;
             }
 
-            _componentSystems.get(componentClass).rmvComponent(component);
+            // Basically rmvComponent, but this is faster, as we already did checks and gathered information such as the class.
+
+            JangineECS_Component currentComponent;
+            currentComponent = entityComponentMap.get(componentClass);
+
+            currentComponent.kill(this);
+            _componentSystems.get(componentClass).rmvComponent(currentComponent);
         }
+
+        component.init(this);
 
         _entities.get(entityID).put(componentClass, component);
         _componentSystems.get(componentClass).addComponent(component);
@@ -117,6 +125,8 @@ public class JangineECS_System {
             _componentToEntity.remove(entityComponent);
         }
 
+        component.kill(this);
+
         _entities.get(entityID).remove(component);
         _componentSystems.get(componentClass).rmvComponent(component);
     }
@@ -137,6 +147,8 @@ public class JangineECS_System {
         for (JangineECS_Component entityComponent : _entities.get(entityID).values()) {
             _componentToEntity.remove(entityComponent);
         }
+
+        component.kill(this);
 
         _entities.get(entityID).remove(component);
         _componentSystems.get(componentClass).rmvComponent(component);
