@@ -8,7 +8,7 @@
 
 - 📬 Event System -> Clean hierachial, port based system
 - 💻 Rendering -> Extensive options for textures, shaders and batching (currently under construction)
-- 👽 Entity Component System -> Simple and reliable (currently under construction)
+- 👽 Entity Component System -> Simple and reliable, scene based, anonymous, lighweight (currently under construction)
 - 🖱️ Input System -> Clean, window based system
 - 🪟 Multiple Windows -> Supports any amount of engine orchestrated windows
 - 🎞️ Scene System -> Per window, transferable, own render and update loop
@@ -144,7 +144,19 @@ renderBatch.render();
 
 #### 👽 Entity-Component System
 
-Currently under construction.
+The entity component system is a per-scene system.
+Meaning every scene has its own ecs.
+The system is very anonymous, with as few coupling as possible.
+This generates more need for memory than a few other implementations,
+but ensures reference and memory safety.
+
+Entities are not a class, but simply an integer, coupled with components.
+The componentes do not know about the system, other components, the scene or the entity.
+In special cases, where component communication is needed, it is done through callbacks.
+A good example for this is the collision component, which needs a way to notify interested
+components about collisions, for that every component can look inside a static registry,
+if there is a collision component they are interested in and can then register a callback there.
+This is why the only time a component knows about the system, is during creation.
 
 #### 🖱️ Input System
 
