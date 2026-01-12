@@ -5,6 +5,7 @@ import internal.ecs.JangineECS_Component;
 import internal.ecs.JangineECS_ComponentSystem;
 import internal.ecs.JangineECS_System;
 import internal.ecs.collision.component.JECS_CollisionComponent;
+import internal.ecs.collision.help.I_SpatialPartitioning;
 import internal.ecs.collision.help.JangineCollisionData;
 import internal.ecs.collision.help.JangineComponentCollisionData;
 import internal.ecs.collision.help.JangineWindowCollisionData;
@@ -34,8 +35,20 @@ import java.util.function.Consumer;
 public abstract class JECS_CollisionComponentSystem<T extends JangineECS_Component> extends JangineECS_ComponentSystem<T> {
 
 
+    protected final I_SpatialPartitioning _partitioner;
+
+    protected final double _winWidth, _winHeight;
+
     private HashSet<Consumer<JangineWindowCollisionData>> _resolutionCallbacksWindow = new HashSet<>();
     private HashSet<Consumer<JangineComponentCollisionData>> _resolutionCallbacksComponent = new HashSet<>();
+
+
+    public JECS_CollisionComponentSystem(I_SpatialPartitioning partitioner, double winWidth, double winHeight) {
+        _partitioner = partitioner;
+
+        _winWidth = winWidth;
+        _winHeight = winHeight;
+    }
 
 
     public final void addResolutionCallbackWindow(Consumer<JangineWindowCollisionData> callback) {

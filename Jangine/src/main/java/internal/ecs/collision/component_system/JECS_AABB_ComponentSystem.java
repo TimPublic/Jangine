@@ -11,16 +11,8 @@ import org.joml.Vector2d;
 public class JECS_AABB_ComponentSystem<T extends JangineECS_Component> extends JECS_CollisionComponentSystem<T> {
 
 
-    private I_SpatialPartitioning _partitioner;
-
-    private final double _winWidth, _winHeight;
-
-
     public JECS_AABB_ComponentSystem(I_SpatialPartitioning partitioner, double winWidth, double winHeight) {
-        _partitioner = partitioner;
-
-        _winWidth = winWidth;
-        _winHeight = winHeight;
+        super(partitioner, winWidth, winHeight);
     }
 
 
