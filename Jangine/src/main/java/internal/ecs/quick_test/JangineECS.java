@@ -6,6 +6,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 
+/**
+ * The entity component system provides a lightweight and flexible way,
+ * of assigning behaviour to entities.
+ * You can easily add new entities, components or component systems.
+ *
+ * @author Tim Kloepper
+ * @version 1.0
+ */
 public class JangineECS {
 
 
@@ -39,15 +47,31 @@ public class JangineECS {
 
     // -+- ENTITY -+- //
 
+    /**
+     * Adds an entity to the system.
+     * As the entity is just a number with assigned {@link internal.ecs.quick_test.JangineECS_Component}
+     * a number is returned, which represents that integer.
+     *
+     * @return the id of the entity
+     *
+     * @author Tim Kloepper
+     */
     public final int addEntity() {
         int entityID;
 
         entityID = _generateEntityID();
 
-        _activeEntities.add(entityID);
-
         return entityID;
     }
+
+    /**
+     * Removes an entity from the system.
+     * If the provided entity id is not valid, nothing happens.
+     *
+     * @param entityID the id of the entity that is to be removed
+     *
+     * @author Tim Kloepper
+     */
     public final void rmvEntity(int entityID) {
         if (!_activeEntities.contains(entityID)) {return;}
 
@@ -57,17 +81,47 @@ public class JangineECS {
         _freeEntityIDs.add(entityID);
     }
 
+    /**
+     * Takes a free id and returns it to be used as a new entity id.
+     * By storing freed ids, the numbers do not grow too large.
+     * This method adds the id to the active entities and removes it
+     * from the freed ids, if necessary.
+     *
+     * @return free entity id you can use
+     *
+     * @author Tim Kloepper
+     */
     private int _generateEntityID() {
+        int id;
+
         if (!_freeEntityIDs.isEmpty()) {
-            return _freeEntityIDs.get(0);
+            id = _freeEntityIDs.get(0);
+
+            _freeEntityIDs.remove(id);
+        } else {
+            id = _nextEntityID++; // First returned, then incremented.
         }
 
-        return _nextEntityID++; // First returned, then incremented
+        _activeEntities.add(id);
+
+        return id;
     }
 
 
     // -+- COMPONENT SYSTEM -+- //
 
+    /**
+     * Adds a {@link JangineECS_ComponentSystem} to the system.
+     * You have to specify what to do in case of a system already being registered
+     * for your provided {@link JangineECS_Component} subclass:
+     * overwrite or return.
+     *
+     * @param componentClass class the component system is to be registered for
+     * @param system the component system that is to be registered
+     * @param overwrite whether a possible old component system should be overwritten or not
+     *
+     * @author Tim Kloepper
+     */
     public final void addComponentSystem(Class<? extends JangineECS_Component> componentClass, JangineECS_ComponentSystem system, boolean overwrite) {
         boolean alreadyHasSystem;
 
@@ -80,12 +134,31 @@ public class JangineECS {
 
         _systems.put(componentClass, system);
     }
+    /**
+     * Removes a {@link JangineECS_ComponentSystem} by specifying the {@link JangineECS_Component} subclass
+     * it is registered for.
+     * If no component system is registered for that subclass, nothing happens.
+     *
+     * @param componentClass subclass that the component system is registered for
+     *
+     * @author Tim Kloepper
+     */
     public final void rmvComponentSystem(Class<? extends JangineECS_Component> componentClass) {
         if (!_systems.containsKey(componentClass)) {return;}
 
         // Proper kill.
     }
 
+    /**
+     * Finds a {@link JangineECS_ComponentSystem} based on the {@link JangineECS_Component} subclass it is registered for.
+     * If the is no component system registered for that subclass, null is returned.
+     *
+     * @param componentClass subclass the searched component system is registered for
+     *
+     * @return the component system
+     *
+     * @author Tim Kloepper
+     */
     public JangineECS_ComponentSystem findComponentSystem(Class<? extends JangineECS_Component> componentClass) {
         return _systems.get(componentClass);
     }
@@ -93,6 +166,16 @@ public class JangineECS {
 
     // -+- COMPONENT -+- //
 
+    /**
+     * Adds a {@link JangineECS_Component} to the specified entity.
+     * If the entity does not exist, or the entity already contains a component of that class,
+     * nothing happens.
+     *
+     * @param entityID id of the entity the component is to be added to
+     * @param component component that is to be added to the specified entity
+     *
+     * @author Tim Kloepper
+     */
     public final void addComponent(int entityID, JangineECS_Component component) {
         Class<? extends JangineECS_Component> componentClass;
 
@@ -104,8 +187,19 @@ public class JangineECS {
 
         _systems.get(componentClass); // Add component to system.
     }
+
+    /**
+     * Removes a {@link JangineECS_Component} to the specified entity.
+     * If the entity does not exist, or the component is not registered for that entity,
+     * nothing happens.
+     *
+     * @param entityID id of the entity the component is to be removed from
+     * @param component component that is to be removed from the specified entity
+     */
     public final void rmvComponent(int entityID, JangineECS_Component component) {
         Class<? extends JangineECS_Component> componentClass;
+
+        if (component.entityID != entityID) {return;} // Quick and easy check. If this fails, we can spare ourselves of any other checks.
 
         if (!_activeEntities.contains(entityID)) {return;}
 
