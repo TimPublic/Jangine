@@ -78,11 +78,11 @@ public abstract class JangineECS_ComponentSystem {
     /**
      * Called for every active {@link JangineECS_Component} every frame.
      *
-     * @param component active component
+     * @param ignoredComponent active component. "ignored" is for IntelliJs' intelliSense
      *
      * @author Tim Kloepper
      */
-    protected void _onUpdateComponent(JangineECS_Component component) {}
+    protected void _onUpdateComponent(JangineECS_Component ignoredComponent) {}
 
 
     // -+- COMPONENT -+- //
@@ -106,7 +106,7 @@ public abstract class JangineECS_ComponentSystem {
 
         if (alreadyHasComponentForEntity && !overwrite) {return;}
         if (alreadyHasComponentForEntity) {
-            // Kill old component properly.
+            _components.get(entityID).kill(entityID);
         }
 
         component.init(entityID);

@@ -124,14 +124,23 @@ public class JangineECS {
      */
     public final void addComponentSystem(Class<? extends JangineECS_Component> componentClass, JangineECS_ComponentSystem system, boolean overwrite) {
         boolean alreadyHasSystem;
+        JangineECS_ComponentSystem oldSystem;
 
         alreadyHasSystem = _systems.containsKey(componentClass);
 
         if (alreadyHasSystem && !overwrite) {return;}
         if (alreadyHasSystem) {
-            // Convert components and kill system properly.
+            oldSystem = _systems.get(componentClass);
+
+            for (int entityID : oldSystem._components.keySet()) {
+                oldSystem.rmvComponent(entityID, oldSystem._components.get(entityID));
+                system.addComponent(entityID, oldSystem._components.get(entityID), false);
+            }
+
+            oldSystem.kill(this);
         }
 
+        system.init(this);
         _systems.put(componentClass, system);
     }
     /**
@@ -144,9 +153,14 @@ public class JangineECS {
      * @author Tim Kloepper
      */
     public final void rmvComponentSystem(Class<? extends JangineECS_Component> componentClass) {
+        JangineECS_ComponentSystem system;
+
         if (!_systems.containsKey(componentClass)) {return;}
 
-        // Proper kill.
+        system = _systems.get(componentClass);
+
+        system.kill(this);
+        _systems.remove(componentClass);
     }
 
     /**
@@ -208,6 +222,13 @@ public class JangineECS {
         if (!_systems.containsKey(componentClass)) {return;}
 
         _systems.get(componentClass); // Remove component from system.
+    }
+
+
+    // -+- CHECKERS -+- //
+
+    public boolean hasEntity(int entityID) {
+        return _activeEntities.contains(entityID);
     }
 
 
