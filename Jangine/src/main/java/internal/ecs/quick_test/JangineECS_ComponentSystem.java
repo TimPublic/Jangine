@@ -2,6 +2,8 @@
 
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.function.Consumer;
 
 
 /**
@@ -17,8 +19,15 @@ public abstract class JangineECS_ComponentSystem {
     protected final HashMap<Integer, JangineECS_Component> _components;
 
 
+    private final HashSet<Consumer<JangineECS_Component>> _componentDeletedCallbacks;
+    private final HashSet<Consumer<JangineECS_Component>> _componentAddedCallbacks;
+
+
     public JangineECS_ComponentSystem() {
         _components = new HashMap<>();
+
+        _componentDeletedCallbacks = new HashSet<>();
+        _componentAddedCallbacks = new HashSet<>();
     }
 
 
@@ -73,6 +82,8 @@ public abstract class JangineECS_ComponentSystem {
                 _onUpdateComponent(component);
             }
         }
+
+        _onAllComponentsUpdated();
     }
 
     /**
@@ -83,6 +94,7 @@ public abstract class JangineECS_ComponentSystem {
      * @author Tim Kloepper
      */
     protected void _onUpdateComponent(JangineECS_Component ignoredComponent) {}
+    protected void _onAllComponentsUpdated() {}
 
 
     // -+- COMPONENT -+- //
@@ -114,6 +126,10 @@ public abstract class JangineECS_ComponentSystem {
         _components.put(entityID, component);
 
         _onAddComponent(component);
+
+        for (Consumer<JangineECS_Component> callback : _componentAddedCallbacks) {
+            callback.accept(component);
+        }
     }
 
     /**
@@ -135,6 +151,10 @@ public abstract class JangineECS_ComponentSystem {
         _components.remove(entityID);
 
         _onRmvComponent(component);
+
+        for (Consumer<JangineECS_Component> callback : _componentDeletedCallbacks) {
+            callback.accept(component);
+        }
     }
 
     /**
@@ -158,6 +178,20 @@ public abstract class JangineECS_ComponentSystem {
      * @author Tim Kloepper
      */
     protected void _onRmvComponent(JangineECS_Component component) {}
+
+    public void registerComponentAddedCallback(Consumer<JangineECS_Component> callback) {
+        _componentAddedCallbacks.add(callback);
+    }
+    public void registerComponentDeletedCallback(Consumer<JangineECS_Component> callback) {
+        _componentDeletedCallbacks.add(callback);
+    }
+
+
+    // -+- GETTERS -+- //
+
+    public JangineECS_Component getComponentByEntity(int entityID) {
+        return _components.get(entityID);
+    }
 
 
 }
