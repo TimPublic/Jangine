@@ -8,6 +8,7 @@ import internal.main.JangineEngine;
 import internal.rendering.JangineWindow;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -36,8 +37,8 @@ public class JangineMouseListener {
     private boolean _isDragging;
     private boolean _prevIsDragging;
 
-    private boolean[] _mouseButtonsPressed = new boolean[3];
-    private boolean[] _prevMouseButtonsPressed = new boolean[3];
+    private HashSet<Integer> _mouseButtonsPressed;
+    private HashSet<Integer> _prevMouseButtonsPressed;
 
 
     public JangineMouseListener() {
@@ -66,13 +67,7 @@ public class JangineMouseListener {
         _yPos = yPos;
 
         // If the mouse has moved AND any button is down, a drag is happening.
-        for (int index = 0; index < _mouseButtonsPressed.length; index++) {
-            if (!_mouseButtonsPressed[index]) {continue;}
-
-            _isDragging = true;
-
-            break;
-        }
+        if (!_prevMouseButtonsPressed.isEmpty()) {_isDragging = true;}
     }
     /**
      * Callback for when a mouse button is pressed.
@@ -80,17 +75,19 @@ public class JangineMouseListener {
      * @param windowPointer window the event occurred in
      * @param button the key code of the pressed button
      * @param action the action made with this mouse button
-     * @param mods ?
+     * @param ignoredMods ?
      *
      * @author Tim Kloepper
      */
-    public void mouseButtonCallback(long windowPointer, int button, int action, int mods) {
-        if (action == GLFW_PRESS && _isKnownMouseButton(button)) {
-            _mouseButtonsPressed[button] = true;
-        }
-        else if (action == GLFW_RELEASE && _isKnownMouseButton(button)) {
-            _mouseButtonsPressed[button] = false;
-            _isDragging = false; // Could also be only if all are not pressed.
+    public void mouseButtonCallback(long windowPointer, int button, int action, int ignoredMods) {
+        switch (action) {
+            case GLFW_PRESS:
+                _mouseButtonsPressed.add(button);
+                break;
+            case GLFW_RELEASE:
+                _mouseButtonsPressed.remove(button);
+                _isDragging = false;
+                break;
         }
     }
     /**
@@ -105,19 +102,6 @@ public class JangineMouseListener {
     public void scrollCallback(long windowPointer, double xOffset, double yOffset) {
         _scrollOffsetX = xOffset;
         _scrollOffsetY = yOffset;
-    }
-
-    /**
-     * Checks if the mouse button is known to the mouse-listener.
-     *
-     * @param mouseButton key code of the mouse button
-     *
-     * @return valid button or not
-     *
-     * @author Tim Kloepper
-     */
-    private boolean _isKnownMouseButton(int mouseButton) {
-        return mouseButton < _mouseButtonsPressed.length;
     }
 
     /**
@@ -220,21 +204,20 @@ public class JangineMouseListener {
      * @author Tim Kloepper
      */
     private void _manageButtonEvents() {
-        for (int index = 0; index < _mouseButtonsPressed.length; index++) {
-            if (!_prevMouseButtonsPressed[index] && _mouseButtonsPressed[index]) {
-                _pushPressed(index);
-                continue;
-            }
-            if (_prevMouseButtonsPressed[index] && _mouseButtonsPressed[index]) {
-                _pushContinued(index);
-                continue;
-            }
-            if (_prevMouseButtonsPressed[index] && !_mouseButtonsPressed[index]) {
-                _pushReleased(index);
+        for (Integer key : _mouseButtonsPressed) {
+            if (_prevMouseButtonsPressed.contains(key)) {continue;}
+
+            _pushPressed(key);
+        }
+        for (Integer key : _prevMouseButtonsPressed) {
+            if (_mouseButtonsPressed.contains(key)) {
+                _pushContinued(key);
+            } else {
+                _pushReleased(key);
             }
         }
 
-        _prevMouseButtonsPressed = _mouseButtonsPressed.clone();
+        _prevMouseButtonsPressed = (HashSet<Integer>) _mouseButtonsPressed.clone();
     }
     /**
      * Scans for scroll events and issues respective pushes of {@link JangineMouseScrollEvent}.

@@ -141,7 +141,6 @@ public class JangineKeyListener {
             if (_prevKeyPressedBuffer.contains(key)) {continue;}
 
             _pushPressed(key);
-            System.out.println("PRESS");
         }
         for (Integer key : _prevKeyPressedBuffer) {
             if (_keyPressedBuffer.contains(key)) {
