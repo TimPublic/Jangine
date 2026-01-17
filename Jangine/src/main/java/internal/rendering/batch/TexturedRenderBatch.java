@@ -431,7 +431,6 @@ public class TexturedRenderBatch {
     public JangineShaderProgram getShaderProgram() {
         return _shaderProgram;
     }
-
     /**
      * Returns all textures, used by this batch.
      *
@@ -441,6 +440,42 @@ public class TexturedRenderBatch {
      */
     public JangineTexture[] getTextures() {
         return _textures;
+    }
+
+    /**
+     * Returns the texture at the provided index.
+     * If the index is out of bounds or no texture is assigned
+     * to this index, null is returned.
+     *
+     * @param index index of the searched texture
+     *
+     * @return texture assigned to the specified index
+     *
+     * @author Tim Kloepper
+     */
+    public JangineTexture getTextureAt(int index) {
+        if (index >= _textures.length) {return null;}
+
+        return _textures[index];
+    }
+
+    /**
+     * Returns the index of the specified texture.
+     * If the texture is not registered in this batch,
+     * -1 is returned.
+     *
+     * @param texture texture that is searched for
+     *
+     * @return index of the searched for texture
+     *
+     * @author Tim Kloepper
+     */
+    public int getIndexOfTexture(JangineTexture texture) {
+        for (int index = 0; index < _textures.length; index++) {
+            if (_textures[index] == texture) {return index;}
+        }
+
+        return -1;
     }
 
 
