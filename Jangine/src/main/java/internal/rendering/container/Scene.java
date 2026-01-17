@@ -1,10 +1,12 @@
-package internal.rendering;
+package internal.rendering.container;
 
 
-import internal.events.JangineEventListeningPort;
-import internal.events.JangineEvent;
-import internal.events.JangineEventHandler;
-import internal.main.JangineEngine;
+import internal.events.EventListeningPort;
+import internal.events.Event;
+import internal.events.EventHandler;
+import internal.main.Engine;
+import internal.rendering.camera.Camera2D;
+import internal.rendering.shader.ShaderTest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +24,13 @@ import java.util.List;
 public class Scene {
 
 
-    private final JangineEventHandler _windowEventHandler;
+    private final EventHandler _windowEventHandler;
 
-    private final JangineEventHandler _ownEventHandler;
-    private final JangineEventListeningPort _ownEventHandlerListeningPort;
+    private final EventHandler _ownEventHandler;
+    private final EventListeningPort _ownEventHandlerListeningPort;
 
-    private ArrayList<JangineEventListeningPort> _windowListeningPorts;
-    private ArrayList<JangineEventListeningPort> _engineListeningPorts;
+    private ArrayList<EventListeningPort> _windowListeningPorts;
+    private ArrayList<EventListeningPort> _engineListeningPorts;
 
 
     private Camera2D _camera;
@@ -40,12 +42,12 @@ public class Scene {
     // private ArrayList<RenderObject> _renderObjects;
 
 
-    public Scene(final JangineEventHandler windowEventHandler, int width, int height, boolean active) {
+    public Scene(final EventHandler windowEventHandler, int width, int height, boolean active) {
         _windowEventHandler = windowEventHandler;
 
-        _ownEventHandler = new JangineEventHandler();
+        _ownEventHandler = new EventHandler();
         _ownEventHandlerListeningPort = _windowEventHandler.register();
-        _ownEventHandlerListeningPort.registerFunction(_ownEventHandler::pushEvent, List.of(JangineEvent.class));
+        _ownEventHandlerListeningPort.registerFunction(_ownEventHandler::pushEvent, List.of(Event.class));
         _ownEventHandlerListeningPort.setActive(active);
 
         _windowListeningPorts = new ArrayList<>();
@@ -92,11 +94,11 @@ public class Scene {
     public final void kill() {
         _windowEventHandler.deregister(_ownEventHandlerListeningPort);
 
-        for (JangineEventListeningPort port : _windowListeningPorts) {
+        for (EventListeningPort port : _windowListeningPorts) {
             _windowEventHandler.deregister(port);
         }
-        for (JangineEventListeningPort port : _engineListeningPorts) {
-            JangineEngine.get().getEventHandler().deregister(port);
+        for (EventListeningPort port : _engineListeningPorts) {
+            Engine.get().getEventHandler().deregister(port);
         }
 
         _onKill();
@@ -192,12 +194,12 @@ public class Scene {
     /**
      * Returns a listening port of the windows' event handler.
      *
-     * @return {@link JangineEventListeningPort}
+     * @return {@link EventListeningPort}
      *
      * @author Tim Kloepper
      */
-    public final JangineEventListeningPort getWindowEventListeningPort() {
-        JangineEventListeningPort port;
+    public final EventListeningPort getWindowEventListeningPort() {
+        EventListeningPort port;
 
         port = _windowEventHandler.register();
 
@@ -208,11 +210,11 @@ public class Scene {
     /**
      * Removes a listing port of the windows' event handler.
      *
-     * @param port {@link JangineEventListeningPort} to be deleted
+     * @param port {@link EventListeningPort} to be deleted
      *
      * @author Tim Kloepper
      */
-    public final void removeWindowEventListeningPort(JangineEventListeningPort port) {
+    public final void removeWindowEventListeningPort(EventListeningPort port) {
         _windowListeningPorts.remove(port);
 
         _windowEventHandler.deregister(port);
@@ -220,11 +222,11 @@ public class Scene {
     /**
      * Returns this scenes' event handler.
      *
-     * @return {@link JangineEventHandler} of this scene
+     * @return {@link EventHandler} of this scene
      *
      * @author Tim Kloepper
      */
-    public final JangineEventHandler getEventHandler() {
+    public final EventHandler getEventHandler() {
         return _ownEventHandler;
     }
 

@@ -9,14 +9,14 @@ package internal.events.input.mouse;
  * @author Tim Klöpper
  * @version 1.0
  */
-public class JangineMouseScrollEvent extends JangineMouseEvent {
+public class MouseScrollEvent extends MouseEvent {
 
 
     private final double _SCROLLED_X;
     private final double _SCROLLED_Y;
 
 
-    public JangineMouseScrollEvent(double scrolledX, double scrolledY) {
+    public MouseScrollEvent(double scrolledX, double scrolledY) {
         _SCROLLED_X = scrolledX;
         _SCROLLED_Y = scrolledY;
     }

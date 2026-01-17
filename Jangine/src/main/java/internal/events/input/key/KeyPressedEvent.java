@@ -8,10 +8,10 @@ package internal.events.input.key;
  * @author Tim Kloepper
  * @version 1.0
  */
-public class JangineKeyPressedEvent extends JangineKeyEvent {
+public class KeyPressedEvent extends KeyEvent {
 
 
-    public JangineKeyPressedEvent(int keyCode) {
+    public KeyPressedEvent(int keyCode) {
         super(keyCode);
     }
 

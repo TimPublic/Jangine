@@ -1,6 +1,7 @@
-package internal.rendering;
+package internal.rendering.shader;
 
 
+import internal.rendering.camera.Camera2D;
 import internal.rendering.batch.TexturedRenderBatch;
 import internal.rendering.mesh.TexturedMesh;
 import internal.rendering.texture.JangineTexture;

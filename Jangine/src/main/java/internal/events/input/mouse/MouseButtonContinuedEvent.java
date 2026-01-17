@@ -7,10 +7,10 @@ package internal.events.input.mouse;
  * @author Tim Klöpper
  * @version 1.0
  */
-public class JangineMouseButtonContinuedEvent extends JangineMouseButtonEvent {
+public class MouseButtonContinuedEvent extends MouseButtonEvent {
 
 
-    public JangineMouseButtonContinuedEvent(int keyCode) {
+    public MouseButtonContinuedEvent(int keyCode) {
         super(keyCode);
     }
 

@@ -1,8 +1,8 @@
 package internal.rendering.batch;
 
 
-import internal.rendering.Camera2D;
-import internal.rendering.ShaderProgram;
+import internal.rendering.camera.Camera2D;
+import internal.rendering.shader.ShaderProgram;
 import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;

@@ -8,9 +8,9 @@ import java.util.function.Consumer;
 
 
 /**
- * A port that is created and stored by a {@link JangineEventHandler}.
- * This port takes in a {@link Consumer} of a {@link JangineEvent} and subclasses
- * of the {@link JangineEvent}.
+ * A port that is created and stored by a {@link EventHandler}.
+ * This port takes in a {@link Consumer} of a {@link Event} and subclasses
+ * of the {@link Event}.
  * These consumers get called, when the port receives an event of a subclass
  * that were registered with those consumers.
  * The port can also be activated and deactivated.
@@ -18,16 +18,16 @@ import java.util.function.Consumer;
  * @author Tim Kloepper
  * @version 1.0
  */
-public class JangineEventListeningPort {
+public class EventListeningPort {
 
 
-    private HashMap<Class<? extends JangineEvent>, ArrayList<Consumer<JangineEvent>>> _callbacks;
+    private HashMap<Class<? extends Event>, ArrayList<Consumer<Event>>> _callbacks;
 
 
     private boolean _active;
 
 
-    public JangineEventListeningPort() {
+    public EventListeningPort() {
         _callbacks = new HashMap<>();
 
         _active = true;
@@ -63,19 +63,19 @@ public class JangineEventListeningPort {
 
     /**
      * Gets called by the owning event-handler and distributes the given event to the callbacks,
-     * registered with this {@link JangineEvent} subclass.
+     * registered with this {@link Event} subclass.
      *
      * @param event to be distributed.
      *
      * @author Tim Kloepper
      */
-    public void pushEvent(JangineEvent event) {
+    public void pushEvent(Event event) {
         if (!_active) {return;}
 
-        for (Class<? extends JangineEvent> subClass : _callbacks.keySet()) {
+        for (Class<? extends Event> subClass : _callbacks.keySet()) {
             if (!(subClass.isInstance(event))) {continue;}
 
-            for (Consumer<JangineEvent> function : _callbacks.get(subClass)) {
+            for (Consumer<Event> function : _callbacks.get(subClass)) {
                 function.accept(event);
             }
         }
@@ -85,7 +85,7 @@ public class JangineEventListeningPort {
     // -+- REGISTRATION -+- //
 
     /**
-     * Takes in a {@link Consumer} of a {@link JangineEvent} and a {@link List} of subclasses of the jangine-event class.
+     * Takes in a {@link Consumer} of a {@link Event} and a {@link List} of subclasses of the jangine-event class.
      * This consumer gets called whenever the port distributes a jangine-event of the subclasses this consumer
      * got registered with.
      *
@@ -94,8 +94,8 @@ public class JangineEventListeningPort {
      *
      * @author Tim Kloepper
      */
-    public void registerFunction(Consumer<JangineEvent> function, List<Class<? extends JangineEvent>> validSubClasses) {
-        for (Class<? extends JangineEvent> subClass : validSubClasses) {
+    public void registerFunction(Consumer<Event> function, List<Class<? extends Event>> validSubClasses) {
+        for (Class<? extends Event> subClass : validSubClasses) {
             if (!_callbacks.containsKey(subClass)) {
                 _callbacks.put(subClass, new ArrayList<>());
             }

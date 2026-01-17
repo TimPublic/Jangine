@@ -1,25 +1,26 @@
 package internal.events.input.key;
 
 
-import internal.events.JangineEvent;
+import internal.events.Event;
+import internal.input.KeyListener;
 
 
 /**
  * Simple key-event.
  * If this event gets distributed, it means anything has happened with a key.
  * <p>
- * This {@link JangineEvent} subclass gets usually pushed by a {@link internal.input.JangineKeyListener}.
+ * This {@link Event} subclass gets usually pushed by a {@link KeyListener}.
  *
  * @author Tim Klöpper
  * @version 1.0
  */
-public abstract class JangineKeyEvent extends JangineEvent {
+public abstract class KeyEvent extends Event {
 
 
     private final int _KEY_CODE;
 
 
-    public JangineKeyEvent(int keyCode) {
+    public KeyEvent(int keyCode) {
         _KEY_CODE = keyCode;
     }
 

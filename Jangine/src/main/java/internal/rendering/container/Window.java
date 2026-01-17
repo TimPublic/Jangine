@@ -1,10 +1,10 @@
-package internal.rendering;
+package internal.rendering.container;
 
 
-import internal.events.JangineEventHandler;
-import internal.input.JangineKeyListener;
-import internal.input.JangineMouseListener;
-import internal.main.JangineEngine;
+import internal.events.EventHandler;
+import internal.input.KeyListener;
+import internal.input.MouseListener;
+import internal.main.Engine;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
@@ -20,11 +20,11 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 
 /**
- * A window is a simple desktop-window which is created and managed by the {@link JangineEngine}.
+ * A window is a simple desktop-window which is created and managed by the {@link Engine}.
  * It contains an amount of {@link Scene} from which only one is active at one time, which
  * is the only one that gets updated.
- * A window also always contains a {@link JangineKeyListener} and a {@link JangineMouseListener}
- * that push their events to the windows' and the engines' {@link JangineEventHandler}.
+ * A window also always contains a {@link KeyListener} and a {@link MouseListener}
+ * that push their events to the windows' and the engines' {@link EventHandler}.
  *
  * @author Tim Kloepper
  * @version 1.0
@@ -35,9 +35,9 @@ public class Window {
     private int _width, _height;
     private String _title;
 
-    private JangineEventHandler _eventHandler;
-    private JangineKeyListener _keyListener;
-    private JangineMouseListener _mouseListener;
+    private EventHandler _eventHandler;
+    private KeyListener _keyListener;
+    private MouseListener _mouseListener;
 
     private long _glfw_windowPointer;
 
@@ -52,7 +52,7 @@ public class Window {
 
         _title = "Jangine Window";
 
-        _eventHandler = new JangineEventHandler();
+        _eventHandler = new EventHandler();
 
         _init();
 
@@ -70,7 +70,7 @@ public class Window {
     // -+- UPDATE-LOOP -+- //
 
     /**
-     * Main update-loop method, that is called by the {@link JangineEngine}.
+     * Main update-loop method, that is called by the {@link Engine}.
      *
      * @return will keep running
      *
@@ -188,13 +188,13 @@ public class Window {
     }
     // Creates the key-listener and connects this window with it.
     private void _setUpKeyListener() {
-        _keyListener = new JangineKeyListener();
+        _keyListener = new KeyListener();
 
         _keyListener.setUpWindow(this);
     }
     // Creates the mouse-listener and connect this window with it.
     private void _setUpMouseListener() {
-        _mouseListener = new JangineMouseListener();
+        _mouseListener = new MouseListener();
 
         _mouseListener.setUpWindow(this);
     }
@@ -293,7 +293,7 @@ public class Window {
     }
 
     // Returns this windows' event-handler.
-    public JangineEventHandler getEventHandler() {
+    public EventHandler getEventHandler() {
         return _eventHandler;
     }
 

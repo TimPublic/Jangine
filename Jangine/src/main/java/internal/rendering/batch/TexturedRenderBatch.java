@@ -1,8 +1,8 @@
 package internal.rendering.batch;
 
 
-import internal.rendering.Camera2D;
-import internal.rendering.ShaderProgram;
+import internal.rendering.camera.Camera2D;
+import internal.rendering.shader.ShaderProgram;
 import internal.rendering.mesh.TexturedMesh;
 import internal.rendering.texture.JangineTexture;
 import internal.rendering.texture.dependencies.implementations.STBI_TextureLoader;

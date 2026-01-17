@@ -1,4 +1,4 @@
-package internal.rendering;
+package internal.rendering.shader;
 
 
 import org.joml.*;

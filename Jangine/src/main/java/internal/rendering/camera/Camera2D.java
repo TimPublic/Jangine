@@ -1,4 +1,4 @@
-package internal.rendering;
+package internal.rendering.camera;
 
 
 import org.joml.Matrix4f;

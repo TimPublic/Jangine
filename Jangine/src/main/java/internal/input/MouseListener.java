@@ -1,11 +1,11 @@
 package internal.input;
 
 
-import internal.events.JangineEvent;
-import internal.events.JangineEventHandler;
+import internal.events.Event;
+import internal.events.EventHandler;
 import internal.events.input.mouse.*;
-import internal.main.JangineEngine;
-import internal.rendering.Window;
+import internal.main.Engine;
+import internal.rendering.container.Window;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,7 +14,7 @@ import static org.lwjgl.glfw.GLFW.*;
 
 
 /**
- * Listens for mouse events in set-up windows, converts them to {@link internal.events.input.mouse.JangineMouseEvent} and pushes them to registered event handlers.
+ * Listens for mouse events in set-up windows, converts them to {@link MouseEvent} and pushes them to registered event handlers.
  * The mouse listener does not buffer events.
  * <p>
  * Currently, the mouse listener only supports three buttons:
@@ -23,10 +23,10 @@ import static org.lwjgl.glfw.GLFW.*;
  * @author Tim Kloepper
  * @version 1.0
  */
-public class JangineMouseListener {
+public class MouseListener {
 
 
-    private ArrayList<JangineEventHandler> _eventHandlers;
+    private ArrayList<EventHandler> _eventHandlers;
 
 
     private double _xPos, _yPos;
@@ -41,7 +41,7 @@ public class JangineMouseListener {
     private HashSet<Integer> _prevMouseButtonsPressed;
 
 
-    public JangineMouseListener() {
+    public MouseListener() {
         _eventHandlers = new ArrayList<>();
 
         _xPos = 0.0;
@@ -141,7 +141,7 @@ public class JangineMouseListener {
     // -+- UPDATE-LOOP -+- //
 
     /**
-     * Called every frame to identify and push {@link JangineMouseEvent} instantly.
+     * Called every frame to identify and push {@link MouseEvent} instantly.
      *
      * @author Tim Kloepper
      */
@@ -164,45 +164,45 @@ public class JangineMouseListener {
     // -+- EVENT-MANAGEMENT -+- //
 
     /**
-     * Adds a {@link JangineEventHandler} to receive events created and pushed by this mouse listener.
+     * Adds a {@link EventHandler} to receive events created and pushed by this mouse listener.
      *
      * @param eventHandler
      *
      * @author Tim Kloepper
      */
-    public void addEventHandler(JangineEventHandler eventHandler) {
+    public void addEventHandler(EventHandler eventHandler) {
         _eventHandlers.add(eventHandler);
     }
     /**
-     * Removes a {@link JangineEventHandler} to no longer receive events created and pushed by this mouse listener.
+     * Removes a {@link EventHandler} to no longer receive events created and pushed by this mouse listener.
      *
      * @param eventHandler
      *
      * @author Tim Kloepper
      */
-    public void rmvEventHandler(JangineEventHandler eventHandler) {
+    public void rmvEventHandler(EventHandler eventHandler) {
         _eventHandlers.remove(eventHandler);
     }
 
     /**
-     * Adds the {@link JangineEventHandler} of the {@link JangineEngine} to this mouse listener (see {@link JangineMouseListener#addEventHandler(JangineEventHandler)}).
+     * Adds the {@link EventHandler} of the {@link Engine} to this mouse listener (see {@link MouseListener#addEventHandler(EventHandler)}).
      *
      * @author Tim Kloepper
      */
     public void addEngine() {
-        _eventHandlers.add(JangineEngine.get().getEventHandler());
+        _eventHandlers.add(Engine.get().getEventHandler());
     }
     /**
-     * Removes the {@link JangineEventHandler} of the {@link JangineEngine} to this mouse listener (see {@link JangineKeyListener#rmvEventHandler(JangineEventHandler)}).
+     * Removes the {@link EventHandler} of the {@link Engine} to this mouse listener (see {@link KeyListener#rmvEventHandler(EventHandler)}).
      *
      * @author Tim Kloepper
      */
     public void rmvEngine() {
-        _eventHandlers.remove(JangineEngine.get().getEventHandler());
+        _eventHandlers.remove(Engine.get().getEventHandler());
     }
 
     /**
-     * Scans for mouse button events and issues respective pushes of {@link JangineMouseButtonEvent}.
+     * Scans for mouse button events and issues respective pushes of {@link MouseButtonEvent}.
      *
      * @author Tim Kloepper
      */
@@ -223,87 +223,87 @@ public class JangineMouseListener {
         _prevMouseButtonsPressed = (HashSet<Integer>) _mouseButtonsPressed.clone();
     }
     /**
-     * Scans for scroll events and issues respective pushes of {@link JangineMouseScrollEvent}.
+     * Scans for scroll events and issues respective pushes of {@link MouseScrollEvent}.
      *
      * @author Tim Kloepper
      */
     private void _manageScrollEvent() {
         if (_scrollOffsetX == 0 && _scrollOffsetY == 0) {return;}
 
-        _pushEvent(new JangineMouseScrollEvent(_scrollOffsetX, _scrollOffsetY));
+        _pushEvent(new MouseScrollEvent(_scrollOffsetX, _scrollOffsetY));
     }
     /**
-     * Scans for dragging events and issues respective pushes of {@link JangineMouseDraggingEvent}.
+     * Scans for dragging events and issues respective pushes of {@link MouseDraggingEvent}.
      *
      * @author Tim Kloepper
      */
     private void _manageDragEvents() {
         if (_prevIsDragging && _isDragging) {
-            _pushEvent(new JangineMouseDraggingEvent());
+            _pushEvent(new MouseDraggingEvent());
             return;
         }
         if (!_prevIsDragging && _isDragging) {
-            _pushEvent(new JangineMouseDraggingStartedEvent());
+            _pushEvent(new MouseDraggingStartedEvent());
             return;
         }
         if (_prevIsDragging) {
-            _pushEvent(new JangineMouseDraggingEndedEvent());
+            _pushEvent(new MouseDraggingEndedEvent());
         }
     }
 
     /**
-     * Scans for move events and issues respective pushes of {@link JangineMouseMovedEvent}.
+     * Scans for move events and issues respective pushes of {@link MouseMovedEvent}.
      *
      * @author Tim Kloepper
      */
     private void _manageMoveEvent() {
         if (_prevY == _yPos && _prevX == _xPos) {return;}
 
-        _pushEvent(new JangineMouseMovedEvent(_prevX, _prevY, _xPos, _yPos));
+        _pushEvent(new MouseMovedEvent(_prevX, _prevY, _xPos, _yPos));
     }
 
     /**
-     * Pushes a {@link JangineMouseButtonPressedEvent} for the specified key.
+     * Pushes a {@link MouseButtonPressedEvent} for the specified key.
      *
      * @param index index of the key
      *
      * @author Tim Kloepper
      */
     private void _pushPressed(int index) {
-        _pushEvent(new JangineMouseButtonPressedEvent(index));
+        _pushEvent(new MouseButtonPressedEvent(index));
     }
 
     /**
-     * Pushes a {@link JangineMouseButtonContinuedEvent} for the specified key.
+     * Pushes a {@link MouseButtonContinuedEvent} for the specified key.
      *
      * @param index index of the key
      *
      * @author Tim Kloepper
      */
     private void _pushContinued(int index) {
-        _pushEvent(new JangineMouseButtonContinuedEvent(index));
+        _pushEvent(new MouseButtonContinuedEvent(index));
     }
 
     /**
-     * Pushes a {@link JangineMouseButtonReleasedEvent} for the specified key.
+     * Pushes a {@link MouseButtonReleasedEvent} for the specified key.
      *
      * @param index index of the key
      *
      * @author Tim Kloepper
      */
     private void _pushReleased(int index) {
-        _pushEvent(new JangineMouseButtonReleasedEvent(index));
+        _pushEvent(new MouseButtonReleasedEvent(index));
     }
 
     /**
-     * Pushes the given event to all registered {@link JangineEventHandler}.
+     * Pushes the given event to all registered {@link EventHandler}.
      *
      * @param event event to be pushed
      *
      * @author Tim Kloepper
      */
-    private void _pushEvent(JangineEvent event) {
-        for (JangineEventHandler eventHandler : _eventHandlers) {
+    private void _pushEvent(Event event) {
+        for (EventHandler eventHandler : _eventHandlers) {
             eventHandler.pushEvent(event);
         }
     }

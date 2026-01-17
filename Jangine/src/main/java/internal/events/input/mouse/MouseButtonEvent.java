@@ -7,13 +7,13 @@ package internal.events.input.mouse;
  * @author Tim Klöpper
  * @version 1.0
  */
-public abstract class JangineMouseButtonEvent extends JangineMouseEvent {
+public abstract class MouseButtonEvent extends MouseEvent {
 
 
     private final int _KEY_CODE;
 
 
-    public JangineMouseButtonEvent(int keyCode) {
+    public MouseButtonEvent(int keyCode) {
         _KEY_CODE = keyCode;
     }
 

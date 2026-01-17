@@ -1,8 +1,8 @@
 package internal.main;
 
 
-import internal.events.JangineEventHandler;
-import internal.rendering.Window;
+import internal.events.EventHandler;
+import internal.rendering.container.Window;
 import internal.util.JangineDeltaTimer;
 
 import java.util.HashSet;
@@ -22,13 +22,13 @@ import static org.lwjgl.glfw.GLFW.glfwTerminate;
  * @author Tim Kloepper
  * @version 1.0
  */
-public class JangineEngine {
+public class Engine {
 
 
-    private static JangineEngine _instance;
+    private static Engine _instance;
 
 
-    private JangineEventHandler _eventHandler;
+    private EventHandler _eventHandler;
 
     private Set<Window> _windows;
 
@@ -37,8 +37,8 @@ public class JangineEngine {
     private double _currentDeltaTime;
 
 
-    private JangineEngine() {
-        _eventHandler = new JangineEventHandler();
+    private Engine() {
+        _eventHandler = new EventHandler();
 
         _windows = new HashSet<>();
 
@@ -76,13 +76,13 @@ public class JangineEngine {
     /**
      * Returns the singleton instance of this engine.
      *
-     * @return this {@link JangineEngine}
+     * @return this {@link Engine}
      *
      * @author Tim Kloepper
      */
-    public static JangineEngine get() {
+    public static Engine get() {
         if (_instance == null) {
-            _instance = new JangineEngine();
+            _instance = new Engine();
         }
 
         return _instance;
@@ -94,11 +94,11 @@ public class JangineEngine {
     /**
      * Returns the engines' event handler.
      *
-     * @return {@link JangineEventHandler}
+     * @return {@link EventHandler}
      *
      * @author Tim Kloepper
      */
-    public JangineEventHandler getEventHandler() {
+    public EventHandler getEventHandler() {
         return _eventHandler;
     }
 

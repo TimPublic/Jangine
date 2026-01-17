@@ -1,6 +1,8 @@
 package internal.util;
 
 
+import internal.main.Engine;
+
 /**
  * The delta timer is a singleton, providing the delta time,
  * meaning the time between the last {@link JangineDeltaTimer#update()} call and now.
@@ -39,7 +41,7 @@ public class JangineDeltaTimer {
 
     /**
      * Should be called every frame, in order to keep track of the time,
-     * the {@link internal.main.JangineEngine} is already running.
+     * the {@link Engine} is already running.
      *
      * @author Tim Kloepper
      */

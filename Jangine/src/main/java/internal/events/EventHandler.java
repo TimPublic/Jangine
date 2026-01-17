@@ -19,13 +19,13 @@ import java.util.ArrayList;
  * @author Tim Klöpper
  * @version 1.0
  */
-public class JangineEventHandler {
+public class EventHandler {
 
 
-    private ArrayList<JangineEventListeningPort> _ports;
+    private ArrayList<EventListeningPort> _ports;
 
 
-    public JangineEventHandler() {
+    public EventHandler() {
         _ports = new ArrayList<>();
     }
 
@@ -39,8 +39,8 @@ public class JangineEventHandler {
      *
      * @author Tim Kloepper
      */
-    public void pushEvent(JangineEvent event) {
-        for (JangineEventListeningPort port : _ports) {
+    public void pushEvent(Event event) {
+        for (EventListeningPort port : _ports) {
             port.pushEvent(event);
         }
     }
@@ -53,14 +53,14 @@ public class JangineEventHandler {
      * Please hold a reference to this port at all times.
      * Upon not using this port anymore, please call the deregister method.
      *
-     * @return {@link JangineEventListeningPort} to receive events.
+     * @return {@link EventListeningPort} to receive events.
      *
      * @author Tim Kloepper
      */
-    public JangineEventListeningPort register() {
-        JangineEventListeningPort newPort;
+    public EventListeningPort register() {
+        EventListeningPort newPort;
 
-        newPort = new JangineEventListeningPort();
+        newPort = new EventListeningPort();
 
         _ports.add(newPort);
 
@@ -69,11 +69,11 @@ public class JangineEventHandler {
     /**
      * Takes in a port to be removed from event-distribution.
      *
-     * @param port {@link JangineEventListeningPort} to be removed.
+     * @param port {@link EventListeningPort} to be removed.
      *
      * @author Tim Kloepper
      */
-    public void deregister(JangineEventListeningPort port) {
+    public void deregister(EventListeningPort port) {
         _ports.remove(port);
     }
 

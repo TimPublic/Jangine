@@ -8,14 +8,14 @@ package internal.events.input.mouse;
  * @author Tim Klöpper
  * @version 1.0
  */
-public class JangineMouseMovedEvent extends JangineMouseEvent {
+public class MouseMovedEvent extends MouseEvent {
 
 
     private final double _PREV_X, _PREV_Y;
     private final double _NEW_X, _NEW_Y;
 
 
-    public JangineMouseMovedEvent(double prevX, double prevY, double newX, double newY) {
+    public MouseMovedEvent(double prevX, double prevY, double newX, double newY) {
         _PREV_X = prevX;
         _PREV_Y = prevY;
 
