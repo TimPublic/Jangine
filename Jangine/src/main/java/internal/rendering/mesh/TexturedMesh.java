@@ -1,7 +1,7 @@
 ﻿package internal.rendering.mesh;
 
 
-public class TexturedMesh {
+public class TexturedMesh extends Mesh {
 
 
     /*
@@ -10,8 +10,15 @@ public class TexturedMesh {
      */
 
 
-    public float[] vertices;
-    public int[] indices;
+    public TexturedMesh(float[] vertices, int[] indices) {
+        super(vertices, indices);
+    }
+
+
+    @Override
+    protected boolean _areValidVertices(float[] vertices) {
+        return (vertices.length % 5 == 0);
+    }
 
 
 }

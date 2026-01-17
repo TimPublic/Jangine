@@ -28,11 +28,9 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
  * @author Tim Kloepper
  * @version 1.0
  */
-public class TexturedRenderBatch {
+public class TexturedRenderBatch extends RenderBatch {
 
 
-    public static final int MAX_INDEX_AMOUNT = 444;
-    public static final int MAX_VERTEX_AMOUNT = 444;
     public static final int MAX_TEXTURE_AMOUNT = 8;
     public static final int VERTEX_SIZE = 5;
 
@@ -42,69 +40,29 @@ public class TexturedRenderBatch {
 
     private final JangineTexture[] _textures;
     private final JangineTexture _placeHolderTexture;
-    private final JangineShaderProgram _shaderProgram;
-    private final JangineCamera2D _camera;
 
     private final HashMap<TexturedMesh, JangineTexture> _activeMeshesAndTextures;
-    private int _indexPointer;
-    private int _vertexPointer;
-
-    private boolean _rebuiltRequired;
-
-    private int _vaoID, _eboID, _vboID;
 
 
     // -+- CREATION -+- //
 
-    public TexturedRenderBatch(String shaderPath) {
+    public TexturedRenderBatch(String shaderPath, JangineCamera2D camera) {
+        super(shaderPath, camera);
+
         _textures = new JangineTexture[MAX_TEXTURE_AMOUNT];
         _placeHolderTexture = new JangineTexture(PLACEHOLDER_TEXTURE_PATH, new STBI_TextureLoader());
-        _shaderProgram = new JangineShaderProgram(shaderPath);
-        _camera = new JangineCamera2D(41, 41);
 
         _activeMeshesAndTextures = new HashMap<>();
-        _indexPointer = 0;
-        _vertexPointer = 0;
-
-        _rebuiltRequired = false;
-
-        _initObjects();
     }
-    public TexturedRenderBatch(JangineShaderProgram shaderProgram) {
+    public TexturedRenderBatch(JangineShaderProgram shaderProgram, JangineCamera2D camera) {
+        super(shaderProgram, camera);
+
         _textures = new JangineTexture[MAX_TEXTURE_AMOUNT];
         _placeHolderTexture = new JangineTexture(PLACEHOLDER_TEXTURE_PATH, new STBI_TextureLoader());
-        _shaderProgram = shaderProgram;
-        _camera = new JangineCamera2D(41, 41);
 
         _activeMeshesAndTextures = new HashMap<>();
-        _indexPointer = 0;
-        _vertexPointer = 0;
-
-        _rebuiltRequired = false;
-
-        _initObjects();
     }
 
-    /**
-     * Generates all GPU objects:
-     * <ul>
-     *     <li>Vertex Array Object</li>
-     *     <li>Element Buffer Object</li>
-     *     <li>Vertex Buffer Object</li>
-     * </ul>
-     *
-     * The ids generated, will be put in the corresponding variables.
-     *
-     * @author Tim Kloepper
-     */
-    private void _initObjects() {
-        _vaoID = _genVertexArrayObject();
-        _eboID = _genElementBufferObject();
-        _vboID = _genVertexBufferObject();
-
-        glBindVertexArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-    }
     /**
      * Generates the Vertex Array Object,
      * with both Vertex Attribute Pointers.
@@ -113,7 +71,8 @@ public class TexturedRenderBatch {
      *
      * @author Tim Kloepper
      */
-    private int _genVertexArrayObject() {
+    @Override
+    protected int _genVertexArrayObject() {
         int id;
 
         id = glGenVertexArrays();
@@ -122,52 +81,6 @@ public class TexturedRenderBatch {
 
         glVertexAttribPointer(0, 2, GL_FLOAT, false, VERTEX_SIZE * Float.BYTES, 0);
         glVertexAttribPointer(1, 2, GL_FLOAT, false, VERTEX_SIZE * Float.BYTES, 2 * Float.BYTES);
-
-        return id;
-    }
-    /**
-     * Generates the Element Buffer Object and fills
-     * it with an empty {@link FloatBuffer}.
-     *
-     * @return id of the Element Buffer Object
-     *
-     * @author Tim Kloepper
-     */
-    private int _genElementBufferObject() {
-        int id;
-
-        id = glGenBuffers();
-
-        IntBuffer indexBuffer;
-
-        indexBuffer = BufferUtils.createIntBuffer(MAX_INDEX_AMOUNT);
-        indexBuffer.put(new int[MAX_INDEX_AMOUNT]).flip();
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, id);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL_DYNAMIC_DRAW);
-
-        return id;
-    }
-    /**
-     * Generates the Vertex Buffer Object and fills
-     * it with an empty {@link IntBuffer}.
-     *
-     * @return id of the Vertex Buffer Object
-     *
-     * @author Tim Kloepper
-     */
-    private int _genVertexBufferObject() {
-        int id;
-
-        id = glGenBuffers();
-
-        FloatBuffer vertexBuffer;
-
-        vertexBuffer = BufferUtils.createFloatBuffer(MAX_VERTEX_AMOUNT);
-        vertexBuffer.put(new float[MAX_VERTEX_AMOUNT]).flip();
-
-        glBindBuffer(GL_ARRAY_BUFFER, id);
-        glBufferData(GL_ARRAY_BUFFER, vertexBuffer, GL_DYNAMIC_DRAW);
 
         return id;
     }
@@ -246,6 +159,9 @@ public class TexturedRenderBatch {
      * should be rendered with.
      * If the texture is not already in the batch, the batch tries to add it,
      * if this fails, false is returned.
+     * If the mesh is already in the batch, the mesh will be updated by
+     * calling {@link TexturedRenderBatch#updateMesh(TexturedMesh, JangineTexture)},
+     * which will cause a {@link TexturedRenderBatch#_rebuild()} call.
      *
      * @param mesh mesh to be added
      * @param texture texture the mesh is to be rendered with
@@ -258,6 +174,8 @@ public class TexturedRenderBatch {
         IntBuffer subIndexBuffer;
 
         int textureIndex;
+
+        if (_activeMeshesAndTextures.containsKey(mesh)) {updateMesh(mesh, texture); return true;}
 
         textureIndex = registerTexture(texture, false);
         if (textureIndex == -1) {return false;}
@@ -294,6 +212,13 @@ public class TexturedRenderBatch {
 
         return true;
     }
+    public void updateMesh(TexturedMesh mesh, JangineTexture texture) {
+        if (!_activeMeshesAndTextures.containsKey(mesh)) {return;}
+
+        _rebuiltRequired = true;
+
+        _activeMeshesAndTextures.put(mesh, texture);
+    }
     /**
      * Removes a mesh from the batch.
      * This action will result in a rebuilt on the next {@link TexturedRenderBatch#update()} call,
@@ -315,65 +240,33 @@ public class TexturedRenderBatch {
     // -+- BATCH MANAGEMENT -+- //
 
     /**
-     * Clears the batch from all meshes.
-     *
-     * @author Tim Klopper
-     */
-    public void flush() {
-        _flushBuffers();
-
-        _activeMeshesAndTextures.clear();
-    }
-    /**
-     * Clears the buffers and resets the pointer.
-     * Should only be called individually if you know
-     * what you are doing.
-     *
-     * @author Tim Kloepper
-     */
-    private void _flushBuffers() {
-        _vertexPointer = 0;
-        _indexPointer = 0;
-
-        glBindBuffer(GL_ARRAY_BUFFER, _vboID);
-        glBufferData(GL_ARRAY_BUFFER, BufferUtils.createFloatBuffer(MAX_VERTEX_AMOUNT).put(new float[MAX_VERTEX_AMOUNT]).flip(), GL_DYNAMIC_DRAW);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _eboID);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, BufferUtils.createIntBuffer(MAX_INDEX_AMOUNT).put(new int[MAX_INDEX_AMOUNT]).flip(), GL_DYNAMIC_DRAW);
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-    }
-
-    /**
      * Rebuilds the buffers by clearing them and then
      * adding all active meshes back in.
      *
      * @author Tim Kloepper
      */
-    private void _rebuild() {
-        _flushBuffers();
+    @Override
+    protected void _rebuild() {
+        HashMap<TexturedMesh, JangineTexture> meshes;
 
-        // This rebuilds the active meshes, as all meshes get overwritten with the new pointer values.
-        for (TexturedMesh mesh : _activeMeshesAndTextures.keySet()) {
-            addMesh(mesh, _activeMeshesAndTextures.get(mesh));
+        meshes = new HashMap<>(_activeMeshesAndTextures);
+
+        flush();
+
+
+        for (TexturedMesh mesh : meshes.keySet()) {
+            addMesh(mesh, meshes.get(mesh));
         }
+
+        _rebuiltRequired = false;
+    }
+    @Override
+    protected void _clearMeshHolders() {
+        _activeMeshesAndTextures.clear();
     }
 
 
     // -+- UPDATE LOOP -+- //
-
-    /**
-     * Called every frame,
-     * will render and rebuilt if required.
-     *
-     * @author Tim Kloepper
-     */
-    public void update() {
-        if (_rebuiltRequired) {
-            _rebuild();}
-
-        render();
-    }
 
 
     // -+- RENDER -+- //
@@ -383,6 +276,7 @@ public class TexturedRenderBatch {
      *
      * @author Tim Kloepper
      */
+    @Override
     public void render() {
         glBindVertexArray(_vaoID);
 
@@ -422,16 +316,6 @@ public class TexturedRenderBatch {
     // -+- GETTERS -+- //
 
     /**
-     * Returns the shader program used by this batch.
-     *
-     * @return the used shader program
-     *
-     * @author Tim Kloepper
-     */
-    public JangineShaderProgram getShaderProgram() {
-        return _shaderProgram;
-    }
-    /**
      * Returns all textures, used by this batch.
      *
      * @return all used textures
@@ -458,7 +342,6 @@ public class TexturedRenderBatch {
 
         return _textures[index];
     }
-
     /**
      * Returns the index of the specified texture.
      * If the texture is not registered in this batch,
