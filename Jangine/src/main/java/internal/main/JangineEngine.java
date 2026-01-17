@@ -1,7 +1,6 @@
 package internal.main;
 
 
-import internal.ecs.JangineECS_System;
 import internal.events.JangineEventHandler;
 import internal.rendering.JangineWindow;
 import internal.util.JangineDeltaTimer;

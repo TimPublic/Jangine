@@ -1,4 +1,4 @@
-﻿package internal.util;
+package internal.util;
 
 
 /**

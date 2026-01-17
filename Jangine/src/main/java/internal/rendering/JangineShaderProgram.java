@@ -363,6 +363,11 @@ public class JangineShaderProgram {
 
         glUniform4f(_getUniformPosition(name), vector4f.x, vector4f.y, vector4f.z, vector4f.w);
     }
+    public void upload(String name, int[] values) {
+        use();
+
+        glUniform1iv(_getUniformPosition(name), values);
+    }
 
     // Retrieves the internal shader uniform-position.
     // If the name is invalid, the engine crashes.

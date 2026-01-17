@@ -1,4 +1,4 @@
-﻿package internal.rendering.batch;
+package internal.rendering.batch;
 
 
 import internal.rendering.JangineCamera2D;
@@ -76,15 +76,24 @@ public class TexturedRenderBatch extends RenderBatch {
         int id;
 
         id = glGenVertexArrays();
-
         glBindVertexArray(id);
-
-        glVertexAttribPointer(0, 2, GL_FLOAT, false, VERTEX_SIZE * Float.BYTES, 0);
-        glVertexAttribPointer(1, 2, GL_FLOAT, false, VERTEX_SIZE * Float.BYTES, 2 * Float.BYTES);
 
         return id;
     }
 
+    @Override
+    protected void _genVertexAttribPointers() {
+        glBindVertexArray(_vaoID);
+        glBindBuffer(GL_ARRAY_BUFFER, _vboID);
+
+        glVertexAttribPointer(0, 2, GL_FLOAT, false, VERTEX_SIZE * Float.BYTES, 0);
+        glVertexAttribPointer(1, 2, GL_FLOAT, false, VERTEX_SIZE * Float.BYTES, 2 * Float.BYTES);
+        glVertexAttribPointer(2, 1, GL_FLOAT, false, VERTEX_SIZE * Float.BYTES, 4 * Float.BYTES);
+
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
+    }
     // -+- TEXTURES -+- //
 
     /**
@@ -253,7 +262,6 @@ public class TexturedRenderBatch extends RenderBatch {
 
         flush();
 
-
         for (TexturedMesh mesh : meshes.keySet()) {
             addMesh(mesh, meshes.get(mesh));
         }
@@ -280,10 +288,10 @@ public class TexturedRenderBatch extends RenderBatch {
     public void render() {
         glBindVertexArray(_vaoID);
 
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _eboID);
 
         _shaderProgram.use();
+        _shaderProgram.upload("uTextures", new int[] {0,1,2,3,4,5,6,7});
 
         for (int index = 0; index < MAX_TEXTURE_AMOUNT; index++) {
             glActiveTexture(GL_TEXTURE0 + index);
@@ -301,15 +309,7 @@ public class TexturedRenderBatch extends RenderBatch {
         glDrawElements(GL_TRIANGLES, _indexPointer, GL_UNSIGNED_INT, 0);
 
         glBindVertexArray(0);
-        glDisableVertexAttribArray(0);
-        glDisableVertexAttribArray(1);
         _shaderProgram.unuse();
-        _placeHolderTexture.unbind();
-        for (int index = 0; index < MAX_TEXTURE_AMOUNT; index++) {
-            if (_textures[index] == null) {continue;}
-
-            _textures[index].unbind();
-        }
     }
 
 

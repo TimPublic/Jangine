@@ -1,7 +1,6 @@
 package internal.rendering;
 
 
-import internal.ecs.JangineECS_System;
 import internal.events.JangineEventListeningPort;
 import internal.events.JangineEvent;
 import internal.events.JangineEventHandler;
@@ -35,9 +34,6 @@ public class JangineScene {
     private JangineCamera2D _camera;
 
 
-    private JangineECS_System _ecsSystem;
-
-
     ShaderTest test;
 
 
@@ -58,8 +54,6 @@ public class JangineScene {
         _camera = new JangineCamera2D(width, height);
 
         test = new ShaderTest();
-
-        _ecsSystem = new JangineECS_System();
 
         _onCreation();
     }
@@ -153,8 +147,6 @@ public class JangineScene {
      */
     public final void update(double deltaTime) {
         _onUpdate(deltaTime);
-
-        _ecsSystem.update(deltaTime);
 
         _render();
     }

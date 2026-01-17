@@ -1,4 +1,4 @@
-﻿package internal.rendering.batch;
+package internal.rendering.batch;
 
 
 import internal.rendering.JangineCamera2D;
@@ -72,10 +72,13 @@ public abstract class RenderBatch {
         _eboID = _genElementBufferObject();
         _vboID = _genVertexBufferObject();
 
+        _genVertexAttribPointers();
+
         glBindVertexArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
     protected abstract int _genVertexArrayObject();
+    protected abstract void _genVertexAttribPointers();
     /**
      * Generates the Element Buffer Object and fills
      * it with an empty {@link FloatBuffer}.
@@ -172,7 +175,8 @@ public abstract class RenderBatch {
      */
     public final void update() {
         if (_rebuiltRequired) {
-            _rebuild();}
+            _rebuild();
+        }
 
         render();
     }

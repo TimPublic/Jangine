@@ -1,4 +1,4 @@
-﻿package internal.rendering.batch;
+package internal.rendering.batch;
 
 
 import internal.rendering.JangineCamera2D;
@@ -57,6 +57,18 @@ public class ColoredRenderBatch extends RenderBatch {
         return id;
     }
 
+    @Override
+    protected void _genVertexAttribPointers() {
+        glBindVertexArray(_vaoID);
+
+        glBindBuffer(GL_ARRAY_BUFFER, _vboID);
+
+        glVertexAttribPointer(0, 2, GL_FLOAT, false, VERTEX_SIZE * Float.BYTES, 0);
+        glVertexAttribPointer(1, 4, GL_FLOAT, false, VERTEX_SIZE * Float.BYTES, 2 * Float.BYTES);
+
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+    }
     // -+- MESHES -+- //
 
     /**
@@ -163,9 +175,7 @@ public class ColoredRenderBatch extends RenderBatch {
     @Override
     public void render() {
         glBindVertexArray(_vaoID);
-
-        glEnableVertexAttribArray(0);
-        glEnableVertexAttribArray(1);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _eboID);
 
         _shaderProgram.use();
 

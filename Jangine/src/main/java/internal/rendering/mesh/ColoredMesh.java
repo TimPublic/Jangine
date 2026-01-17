@@ -1,4 +1,4 @@
-﻿package internal.rendering.mesh;
+package internal.rendering.mesh;
 
 
 public class ColoredMesh extends Mesh {

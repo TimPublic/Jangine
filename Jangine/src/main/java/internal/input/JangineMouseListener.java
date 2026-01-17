@@ -48,6 +48,9 @@ public class JangineMouseListener {
         _yPos = 0.0;
         _prevX = 0.0;
         _prevY = 0.0;
+
+        _mouseButtonsPressed = new HashSet<>();
+        _prevMouseButtonsPressed = new HashSet<>();
     }
 
 
