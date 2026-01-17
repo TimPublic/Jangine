@@ -3,7 +3,7 @@ package internal.main;
 
 import internal.events.EventHandler;
 import internal.rendering.container.Window;
-import internal.util.JangineDeltaTimer;
+import internal.util.DeltaTimer;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -61,11 +61,11 @@ public class Engine {
         createWindow();
 
         while (!_shouldClose) {
-            _currentDeltaTime = JangineDeltaTimer.get().getDeltaTime();
+            _currentDeltaTime = DeltaTimer.get().getDeltaTime();
 
             _shouldClose = _updateWindows();
 
-            JangineDeltaTimer.get().update(); // At the end, otherwise delta time is always 0.
+            DeltaTimer.get().update(); // At the end, otherwise delta time is always 0.
         }
 
         // Terminate GLFW and free the error callback

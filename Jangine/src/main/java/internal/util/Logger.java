@@ -13,29 +13,29 @@ import java.util.ArrayList;
  * <p>
  * The logger cam be deactivated and activated.
  * If it is deactivated, the messages can be saved to a buffer,
- * assuming you use the {@link JangineLogger#logSafe(String)} method.
+ * assuming you use the {@link Logger#logSafe(String)} method.
  *
  * @author Tim Kloepper
  * @version 1.0
  */
-public class JangineLogger {
+public class Logger {
 
 
     private boolean _isLogging;
     private ArrayList<String> _messageBuffer;
 
 
-    private static JangineLogger _instance;
+    private static Logger _instance;
 
 
-    private JangineLogger() {
+    private Logger() {
         _isLogging = true;
         _messageBuffer = new ArrayList<>();
     }
 
-    public static JangineLogger get() {
+    public static Logger get() {
         if (_instance == null) {
-            _instance = new JangineLogger();
+            _instance = new Logger();
         }
 
         return _instance;

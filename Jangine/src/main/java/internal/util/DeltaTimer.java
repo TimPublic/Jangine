@@ -5,19 +5,19 @@ import internal.main.Engine;
 
 /**
  * The delta timer is a singleton, providing the delta time,
- * meaning the time between the last {@link JangineDeltaTimer#update()} call and now.
+ * meaning the time between the last {@link DeltaTimer#update()} call and now.
  *
  * @author Tim Kloepper
  * @version 1.0
  */
-public class JangineDeltaTimer {
+public class DeltaTimer {
     private long _runtime;
 
 
-    private static JangineDeltaTimer _instance;
+    private static DeltaTimer _instance;
 
 
-    private JangineDeltaTimer() {
+    private DeltaTimer() {
 
     }
 
@@ -28,9 +28,9 @@ public class JangineDeltaTimer {
      *
      * @author Tim Kloepper
      */
-    public static JangineDeltaTimer get() {
+    public static DeltaTimer get() {
         if (_instance == null) {
-            _instance = new JangineDeltaTimer();
+            _instance = new DeltaTimer();
         }
 
         return _instance;
@@ -53,7 +53,7 @@ public class JangineDeltaTimer {
     // -+- DELTA TIME LOGIC -+- //
 
     /**
-     * Returns the time passed, after the last frame or {@link JangineDeltaTimer#update()} call,
+     * Returns the time passed, after the last frame or {@link DeltaTimer#update()} call,
      * in seconds.
      *
      * @return seconds passed since last frame
