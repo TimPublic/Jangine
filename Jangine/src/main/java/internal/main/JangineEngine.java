@@ -2,7 +2,7 @@ package internal.main;
 
 
 import internal.events.JangineEventHandler;
-import internal.rendering.JangineWindow;
+import internal.rendering.Window;
 import internal.util.JangineDeltaTimer;
 
 import java.util.HashSet;
@@ -30,7 +30,7 @@ public class JangineEngine {
 
     private JangineEventHandler _eventHandler;
 
-    private Set<JangineWindow> _windows;
+    private Set<Window> _windows;
 
     private boolean _shouldClose;
 
@@ -106,16 +106,16 @@ public class JangineEngine {
     // -+- WINDOW-MANAGEMENT -+- //
 
     /**
-     * Creates a {@link JangineWindow} and takes it into the main update loop.
+     * Creates a {@link Window} and takes it into the main update loop.
      *
-     * @return the new {@link JangineWindow}
+     * @return the new {@link Window}
      *
      * @author Tim Kloepper
      */
-    public JangineWindow createWindow() {
-        JangineWindow newWindow;
+    public Window createWindow() {
+        Window newWindow;
 
-        newWindow = new JangineWindow();
+        newWindow = new Window();
 
         _windows.add(newWindow);
 
@@ -130,7 +130,7 @@ public class JangineEngine {
      * @author Tim Kloepper
      */
     private boolean _updateWindows() {
-        Set<JangineWindow> deletionQueue;
+        Set<Window> deletionQueue;
 
         int windowsSize;
 
@@ -140,7 +140,7 @@ public class JangineEngine {
 
         windowsSize = _windows.size();
 
-        for (JangineWindow window : _windows) {
+        for (Window window : _windows) {
             if (window.update(_currentDeltaTime)) {continue;}
 
             deletionQueue.add(window);

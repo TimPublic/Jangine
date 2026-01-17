@@ -21,7 +21,7 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 /**
  * A window is a simple desktop-window which is created and managed by the {@link JangineEngine}.
- * It contains an amount of {@link JangineScene} from which only one is active at one time, which
+ * It contains an amount of {@link Scene} from which only one is active at one time, which
  * is the only one that gets updated.
  * A window also always contains a {@link JangineKeyListener} and a {@link JangineMouseListener}
  * that push their events to the windows' and the engines' {@link JangineEventHandler}.
@@ -29,7 +29,7 @@ import static org.lwjgl.system.MemoryUtil.*;
  * @author Tim Kloepper
  * @version 1.0
  */
-public class JangineWindow {
+public class Window {
 
 
     private int _width, _height;
@@ -42,11 +42,11 @@ public class JangineWindow {
     private long _glfw_windowPointer;
 
 
-    private HashSet<JangineScene> _scenes;
-    private JangineScene _activeScene;
+    private HashSet<Scene> _scenes;
+    private Scene _activeScene;
 
 
-    public JangineWindow() {
+    public Window() {
         _width = 960;
         _height = 540;
 
@@ -104,7 +104,7 @@ public class JangineWindow {
     }
 
     /**
-     * Updates the currently active {@link JangineScene}.
+     * Updates the currently active {@link Scene}.
      *
      * @author Tim Kloepper
      */
@@ -203,10 +203,10 @@ public class JangineWindow {
     // -+- SCENE-MANAGEMENT -+- //
 
     // Creates a new scene in this window and returns it.
-    protected JangineScene createScene() {
-        JangineScene newScene;
+    protected Scene createScene() {
+        Scene newScene;
 
-        newScene = new JangineScene(_eventHandler, _width, _height, false);
+        newScene = new Scene(_eventHandler, _width, _height, false);
 
         _scenes.add(newScene);
 
@@ -215,7 +215,7 @@ public class JangineWindow {
     // Activates a scene.
     // The scene must be home to this window, if not, the engine will crash.
     // If another scene is currently active, it will be deactivated.
-    protected JangineScene activateScene(JangineScene scene) {
+    protected Scene activateScene(Scene scene) {
         if (!_scenes.contains(scene)) {
             System.err.println("[WINDOW ERROR] : Tried to make scene active, which is not home to this window!");
 
@@ -235,7 +235,7 @@ public class JangineWindow {
     // Deactivates a scene.
     // The scene must be home to this window, if not, the engine will crash.
     // After this call, no scene will be active.
-    protected JangineScene deactivateScene(JangineScene scene) {
+    protected Scene deactivateScene(Scene scene) {
         if (!_scenes.contains(scene)) {
             System.err.println("[WINDOW ERROR] : Tried to deactivate scene, which is not home to this window!");
 
@@ -250,14 +250,14 @@ public class JangineWindow {
     }
     // Deactivates a scene and activates another one.
     // Both scenes must be home to this window, if not, the engine will crash.
-    protected void deactivateScene(JangineScene scene, JangineScene newActiveScene) {
+    protected void deactivateScene(Scene scene, Scene newActiveScene) {
         deactivateScene(scene);
         activateScene(scene);
     }
     // Transfers a scene to another window.
     // The scene must be home to this window, if not, the engine will crash.
     // After this call, the scene is home to the specified window and not to this window anymore.
-    public JangineScene transferScene(JangineScene scene, JangineWindow to) {
+    public Scene transferScene(Scene scene, Window to) {
         if (!_scenes.contains(scene)) {
             System.err.println("[WINDOW ERROR] : Tried to transfer scene, which is not home to this window!");
         }
@@ -276,14 +276,14 @@ public class JangineWindow {
 
     // Adds a scene to this window and therefore makes it home to this window.
     // A scene should only ever be home to one window!
-    private void _addScene(JangineScene scene) {
+    private void _addScene(Scene scene) {
         _scenes.add(scene);
     }
 
 
     // -+- GETTERS -+- //
 
-    protected JangineScene getActiveScene() {
+    protected Scene getActiveScene() {
         return _activeScene;
     }
 

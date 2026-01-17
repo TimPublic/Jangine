@@ -1,8 +1,8 @@
 package internal.rendering.batch;
 
 
-import internal.rendering.JangineCamera2D;
-import internal.rendering.JangineShaderProgram;
+import internal.rendering.Camera2D;
+import internal.rendering.ShaderProgram;
 import internal.rendering.mesh.TexturedMesh;
 import internal.rendering.texture.JangineTexture;
 import internal.rendering.texture.dependencies.implementations.STBI_TextureLoader;
@@ -19,7 +19,7 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 
 /**
- * This class is a way to pack together meshes to be rendered with a {@link JangineTexture}, using the same {@link JangineShaderProgram}.
+ * This class is a way to pack together meshes to be rendered with a {@link JangineTexture}, using the same {@link ShaderProgram}.
  * This batch can work with up to eight different textures.
  * You have to provide the texture you want to use when providing the {@link TexturedMesh}, where this batch will then
  * automatically set the correct texture index in the mesh directly, meaning, you should not provide two batches
@@ -46,7 +46,7 @@ public class TexturedRenderBatch extends RenderBatch {
 
     // -+- CREATION -+- //
 
-    public TexturedRenderBatch(String shaderPath, JangineCamera2D camera) {
+    public TexturedRenderBatch(String shaderPath, Camera2D camera) {
         super(shaderPath, camera);
 
         _textures = new JangineTexture[MAX_TEXTURE_AMOUNT];
@@ -54,7 +54,7 @@ public class TexturedRenderBatch extends RenderBatch {
 
         _activeMeshesAndTextures = new HashMap<>();
     }
-    public TexturedRenderBatch(JangineShaderProgram shaderProgram, JangineCamera2D camera) {
+    public TexturedRenderBatch(ShaderProgram shaderProgram, Camera2D camera) {
         super(shaderProgram, camera);
 
         _textures = new JangineTexture[MAX_TEXTURE_AMOUNT];

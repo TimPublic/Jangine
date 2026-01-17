@@ -11,7 +11,7 @@ import java.util.List;
 
 
 /**
- * Scenes are contained inside of {@link JangineWindow} and hold own render logic.
+ * Scenes are contained inside of {@link Window} and hold own render logic.
  * They have their own event handler, which only receives events,
  * when the scene is active.
  * Every scene also has its own entity component system.
@@ -19,7 +19,7 @@ import java.util.List;
  * @author Tim Klöpper
  * @version 1.0
  */
-public class JangineScene {
+public class Scene {
 
 
     private final JangineEventHandler _windowEventHandler;
@@ -31,7 +31,7 @@ public class JangineScene {
     private ArrayList<JangineEventListeningPort> _engineListeningPorts;
 
 
-    private JangineCamera2D _camera;
+    private Camera2D _camera;
 
 
     ShaderTest test;
@@ -40,7 +40,7 @@ public class JangineScene {
     // private ArrayList<RenderObject> _renderObjects;
 
 
-    public JangineScene(final JangineEventHandler windowEventHandler, int width, int height, boolean active) {
+    public Scene(final JangineEventHandler windowEventHandler, int width, int height, boolean active) {
         _windowEventHandler = windowEventHandler;
 
         _ownEventHandler = new JangineEventHandler();
@@ -51,7 +51,7 @@ public class JangineScene {
         _windowListeningPorts = new ArrayList<>();
         _engineListeningPorts = new ArrayList<>();
 
-        _camera = new JangineCamera2D(width, height);
+        _camera = new Camera2D(width, height);
 
         test = new ShaderTest();
 
@@ -139,7 +139,7 @@ public class JangineScene {
     // -+- UPDATE-LOOP -+- //
 
     /**
-     * Gets called by the {@link JangineWindow} on every frame, as long as this scene is active.
+     * Gets called by the {@link Window} on every frame, as long as this scene is active.
      *
      * @param deltaTime time passed, since the last frame
      *
@@ -179,7 +179,7 @@ public class JangineScene {
     /**
      * OVERWRITE
      * <p>
-     * Gets called every frame in the {@link JangineScene#_render()} method.
+     * Gets called every frame in the {@link Scene#_render()} method.
      * Overwrite it, to implement custom render logic.
      *
      * @author Tim Kloepper
@@ -233,7 +233,7 @@ public class JangineScene {
 
     /**
      * Sets the resolution of the camera to the specified width and height in 32-by-32 pixels.
-     * (See {@link JangineCamera2D#adjustProjection(int, int)})
+     * (See {@link Camera2D#adjustProjection(int, int)})
      *
      * @param width
      * @param height

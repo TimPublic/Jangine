@@ -1,9 +1,7 @@
 package internal.rendering;
 
 
-import internal.rendering.batch.ColoredRenderBatch;
 import internal.rendering.batch.TexturedRenderBatch;
-import internal.rendering.mesh.ColoredMesh;
 import internal.rendering.mesh.TexturedMesh;
 import internal.rendering.texture.JangineTexture;
 import internal.rendering.texture.dependencies.implementations.STBI_TextureLoader;
@@ -12,8 +10,8 @@ import internal.rendering.texture.dependencies.implementations.STBI_TextureLoade
 public class ShaderTest {
 
 
-    JangineShaderProgram jangineShaderProgram;
-    JangineCamera2D camera;
+    ShaderProgram shaderProgram;
+    Camera2D camera;
 
     TexturedRenderBatch batch;
 
@@ -25,10 +23,10 @@ public class ShaderTest {
 
 
     public ShaderTest() {
-        jangineShaderProgram = new JangineShaderProgram("assets/default.glsl");
-        camera = new JangineCamera2D(40, 21);
+        shaderProgram = new ShaderProgram("assets/default.glsl");
+        camera = new Camera2D(40, 21);
 
-        batch = new TexturedRenderBatch(jangineShaderProgram, camera);
+        batch = new TexturedRenderBatch(shaderProgram, camera);
 
         camera._position.y -= 50;
 

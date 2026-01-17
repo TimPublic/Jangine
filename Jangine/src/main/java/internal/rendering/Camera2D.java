@@ -16,7 +16,7 @@ import org.joml.Vector3f;
  * @author Tim Klöpper
  * @version 0.9
  */
-public class JangineCamera2D {
+public class Camera2D {
 
 
     private Matrix4f _projectionMatrix, _viewMatrix;
@@ -24,7 +24,7 @@ public class JangineCamera2D {
     public Vector2f _position;
 
 
-    public JangineCamera2D(int width, int height) {
+    public Camera2D(int width, int height) {
         _projectionMatrix = new Matrix4f();
         _viewMatrix = new Matrix4f();
 
@@ -46,7 +46,7 @@ public class JangineCamera2D {
      *
      * @author Tim Kloepper
      */
-    public JangineCamera2D adjustProjection(int width, int height) {
+    public Camera2D adjustProjection(int width, int height) {
         _projectionMatrix.identity();
 
         _projectionMatrix.ortho(0.0f, width * 32.0f, 0.0f, height * 32.0f, 0.0f, 100.0f);

@@ -1,8 +1,8 @@
 package internal.rendering.batch;
 
 
-import internal.rendering.JangineCamera2D;
-import internal.rendering.JangineShaderProgram;
+import internal.rendering.Camera2D;
+import internal.rendering.ShaderProgram;
 import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
@@ -21,8 +21,8 @@ public abstract class RenderBatch {
     public static final int MAX_VERTEX_AMOUNT = 444;
 
 
-    protected JangineShaderProgram _shaderProgram;
-    protected JangineCamera2D _camera;
+    protected ShaderProgram _shaderProgram;
+    protected Camera2D _camera;
 
     protected int _vaoID, _eboID, _vboID;
     protected int _vertexPointer, _indexPointer;
@@ -32,7 +32,7 @@ public abstract class RenderBatch {
 
     // -+- CREATION -+- //
 
-    public RenderBatch(JangineShaderProgram shaderProgram, JangineCamera2D camera) {
+    public RenderBatch(ShaderProgram shaderProgram, Camera2D camera) {
         _shaderProgram = shaderProgram;
         _camera = camera;
 
@@ -43,8 +43,8 @@ public abstract class RenderBatch {
 
         _initObjects();
     }
-    public RenderBatch(String shaderPath, JangineCamera2D camera) {
-        _shaderProgram = new JangineShaderProgram(shaderPath);
+    public RenderBatch(String shaderPath, Camera2D camera) {
+        _shaderProgram = new ShaderProgram(shaderPath);
         _camera = camera;
 
         _vertexPointer = 0;
@@ -191,7 +191,7 @@ public abstract class RenderBatch {
      *
      * @author Tim Kloepper
      */
-    public final JangineShaderProgram getShaderProgram() {
+    public final ShaderProgram getShaderProgram() {
         return _shaderProgram;
     }
 

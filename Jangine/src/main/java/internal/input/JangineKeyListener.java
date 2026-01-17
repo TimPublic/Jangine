@@ -7,7 +7,7 @@ import internal.events.input.key.JangineKeyContinuedEvent;
 import internal.events.input.key.JangineKeyPressedEvent;
 import internal.events.input.key.JangineKeyReleasedEvent;
 import internal.main.JangineEngine;
-import internal.rendering.JangineWindow;
+import internal.rendering.Window;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -69,7 +69,7 @@ public class JangineKeyListener {
      *
      * @author Tim Kloepper
      */
-    public void setUpWindow(JangineWindow window) {
+    public void setUpWindow(Window window) {
         _eventHandlers.add(window.getEventHandler());
 
         glfwSetKeyCallback(window.getPointer(), this::keyCallback);
@@ -83,7 +83,7 @@ public class JangineKeyListener {
      *
      * @author Tim Kloepper
      */
-    public void removeWindow(JangineWindow window) {
+    public void removeWindow(Window window) {
         _eventHandlers.remove(window.getEventHandler());
 
         glfwSetKeyCallback(window.getPointer(), (long windowPointer, int key, int scanCode, int action, int mods) -> {});

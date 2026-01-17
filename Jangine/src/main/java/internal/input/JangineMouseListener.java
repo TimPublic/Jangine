@@ -5,7 +5,7 @@ import internal.events.JangineEvent;
 import internal.events.JangineEventHandler;
 import internal.events.input.mouse.*;
 import internal.main.JangineEngine;
-import internal.rendering.JangineWindow;
+import internal.rendering.Window;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -114,7 +114,7 @@ public class JangineMouseListener {
      *
      * @author Tim Kloepper
      */
-    public void setUpWindow(JangineWindow window) {
+    public void setUpWindow(Window window) {
         _eventHandlers.add(window.getEventHandler());
 
         glfwSetCursorPosCallback(window.getPointer(), this::cursorPositionCallback);
@@ -129,7 +129,7 @@ public class JangineMouseListener {
      *
      * @author Tim Kloepper
      */
-    public void removeWindow(JangineWindow window) {
+    public void removeWindow(Window window) {
         _eventHandlers.remove(window.getEventHandler());
 
         glfwSetCursorPosCallback(window.getPointer(), (long windowPointer, double xPos, double yPos) -> {});

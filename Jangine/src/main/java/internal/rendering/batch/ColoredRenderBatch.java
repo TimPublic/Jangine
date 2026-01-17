@@ -1,8 +1,8 @@
 package internal.rendering.batch;
 
 
-import internal.rendering.JangineCamera2D;
-import internal.rendering.JangineShaderProgram;
+import internal.rendering.Camera2D;
+import internal.rendering.ShaderProgram;
 import internal.rendering.mesh.ColoredMesh;
 import org.lwjgl.BufferUtils;
 
@@ -33,12 +33,12 @@ public class ColoredRenderBatch extends RenderBatch {
 
     // -+- CREATION -+- //
 
-    public ColoredRenderBatch(String shaderPath, JangineCamera2D camera) {
+    public ColoredRenderBatch(String shaderPath, Camera2D camera) {
         super(shaderPath, camera);
 
         _activeMeshes = new HashSet<>();
     }
-    public ColoredRenderBatch(JangineShaderProgram shaderProgram, JangineCamera2D camera) {
+    public ColoredRenderBatch(ShaderProgram shaderProgram, Camera2D camera) {
         super(shaderProgram, camera);
 
         _activeMeshes = new HashSet<>();

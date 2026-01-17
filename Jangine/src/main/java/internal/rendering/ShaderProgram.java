@@ -25,12 +25,12 @@ import static org.lwjgl.opengl.GL20.*;
  * Both shaders need to be contained in one glsl-file, marked with #type (vertex / fragment).
  * This file needs to be provided in the constructor and the program then compiles instantly.
  * <p>
- * The program can be bound by calling {@link JangineShaderProgram#use()} or {@link JangineShaderProgram#unuse()} for unbinding it.
+ * The program can be bound by calling {@link ShaderProgram#use()} or {@link ShaderProgram#unuse()} for unbinding it.
  *
  * @author Tim Kloepper
  * @version 1.0
  */
-public class JangineShaderProgram {
+public class ShaderProgram {
 
 
     public final String VERTEX_TYPE_IDENTIFIER = "vertex";
@@ -46,7 +46,7 @@ public class JangineShaderProgram {
     private int _programID;
 
 
-    public JangineShaderProgram(String filePath) {
+    public ShaderProgram(String filePath) {
         _retrieveShadersFromPath(filePath);
 
         _compileShaders();
@@ -110,13 +110,13 @@ public class JangineShaderProgram {
         }
 
         if (_vertexShaderSource == null) {
-            System.err.println("[SHADER ERROR] : Vertex-JangineShaderProgram could not be found!");
+            System.err.println("[SHADER ERROR] : Vertex-ShaderProgram could not be found!");
             System.err.println("|-> In file : " + path);
 
             System.exit(1);
         }
         if (_fragmentShaderSource == null) {
-            System.err.println("[SHADER ERROR] : Fragment-JangineShaderProgram could not be found!");
+            System.err.println("[SHADER ERROR] : Fragment-ShaderProgram could not be found!");
             System.err.println("|-> In file : " + path);
 
             System.exit(1);
@@ -394,7 +394,7 @@ public class JangineShaderProgram {
 
         if (position != -1) {return position;}
 
-        System.err.println("[SHADER ERROR] : JangineShaderProgram-Program does not contain uniform!");
+        System.err.println("[SHADER ERROR] : ShaderProgram-Program does not contain uniform!");
         System.err.println("|-> Uniform-Name : " + name);
 
         System.exit(1);
