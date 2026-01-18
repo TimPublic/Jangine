@@ -1,4 +1,4 @@
-﻿package internal.ecs.specific.rendering.texture;
+package internal.ecs.specific.rendering.texture;
 
 
 import internal.ecs.ECS;

@@ -85,11 +85,11 @@ public class Window {
             return false;
         }
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-
         glfwMakeContextCurrent(_glfw_windowPointer);
 
-        _updateScene(deltaTime);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
+
+         _updateScene(deltaTime);
 
         glfwSwapBuffers(_glfw_windowPointer); // swap the color buffers
 

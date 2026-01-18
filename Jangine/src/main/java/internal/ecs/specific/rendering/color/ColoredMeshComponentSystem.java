@@ -1,4 +1,4 @@
-﻿package internal.ecs.specific.rendering.color;
+package internal.ecs.specific.rendering.color;
 
 
 import internal.ecs.ECS;

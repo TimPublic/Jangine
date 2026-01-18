@@ -1,11 +1,19 @@
 package internal.rendering.container;
 
 
+import internal.ecs.ECS;
+import internal.ecs.specific.rendering.RenderComponent;
+import internal.ecs.specific.rendering.RenderComponentSystem;
+import internal.ecs.specific.rendering.texture.TexturedMeshComponent;
+import internal.ecs.specific.rendering.texture.TexturedMeshComponentSystem;
+import internal.ecs.specific.texture.TextureComponent;
+import internal.ecs.specific.texture.TextureComponentSystem;
 import internal.events.EventListeningPort;
 import internal.events.Event;
 import internal.events.EventHandler;
 import internal.main.Engine;
 import internal.rendering.camera.Camera2D;
+import internal.rendering.mesh.TexturedMesh;
 import internal.rendering.shader.ShaderTest;
 
 import java.util.ArrayList;
@@ -37,6 +45,8 @@ public class Scene {
 
 
     ShaderTest test;
+    ECS ecs;
+    int entityID;
 
 
     // private ArrayList<RenderObject> _renderObjects;
@@ -56,6 +66,30 @@ public class Scene {
         _camera = new Camera2D(width, height);
 
         test = new ShaderTest();
+
+        float[] vertices = new float[]{
+                /* Position */    /* uvCoordinates */  /* textureIndex */
+                0.0f,   0.0f,   0.0f, 0.0f,          0.0f,
+                100.0f,   0.0f,   1.0f, 0.0f,          1.0f,
+                100.0f, 100.0f,   1.0f, 1.0f,          1.0f,
+                0.0f, 100.0f,   0.0f, 1.0f,          0.0f,
+        };
+        int[] indices = new int[]{
+                0, 1, 2,
+                2, 3, 0,
+        };
+
+        ecs = new ECS();
+
+        ecs.addComponentSystem(new RenderComponentSystem<>(), RenderComponent.class);
+        ecs.addComponentSystem(new TextureComponentSystem<>(), TextureComponent.class);
+        ecs.addComponentSystem(new TexturedMeshComponentSystem<>(), TexturedMeshComponent.class);
+
+        entityID = ecs.addEntity();
+
+        ecs.addComponent(entityID, new RenderComponent(RenderComponent.RENDER_TYPE.TEXTURE));
+        ecs.addComponent(entityID, new TextureComponent("assets/test_image.png"));
+        ecs.addComponent(entityID, new TexturedMeshComponent(new TexturedMesh(vertices, indices)));
 
         _onCreation();
     }
@@ -173,7 +207,9 @@ public class Scene {
      * @author Tim Kloepper
      */
     private void _render() {
-        test.run();
+        // test.run();
+
+        ecs.update();
 
         _onRender();
     }

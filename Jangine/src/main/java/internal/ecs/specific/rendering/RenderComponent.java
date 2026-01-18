@@ -1,4 +1,4 @@
-﻿package internal.ecs.specific.rendering;
+package internal.ecs.specific.rendering;
 
 
 import internal.ecs.ECS_Component;

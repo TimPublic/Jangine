@@ -1,4 +1,4 @@
-﻿package internal.ecs.specific.texture;
+package internal.ecs.specific.texture;
 
 
 import internal.ecs.ECS_Component;
