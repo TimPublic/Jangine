@@ -21,4 +21,11 @@ public class ColoredMesh extends Mesh {
     }
 
 
+    public void changeRed(double ) {
+        for (int index = 2; index < vertices.length; index += 6) {
+
+        }
+    }
+
+
 }

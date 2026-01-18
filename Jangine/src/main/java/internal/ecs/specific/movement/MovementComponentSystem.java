@@ -26,7 +26,7 @@ public class MovementComponentSystem<T extends ECS_Component> extends ECS_Compon
             PositionComponent positionComponent;
 
             positionComponent = positionSystem.getComponent(component.owningEntity);
-            if (positionComponent == null) {return;}
+            if (positionComponent == null) {continue;}
 
             positionComponent.position.add(component.direction.x * component.speed, component.direction.y * component.speed);
         }
