@@ -1,23 +1,9 @@
-
 > Task :compileJava
-Hinweis: Einige Eingabedateien verwenden nicht geprüfte oder unsichere Vorgänge.
-Hinweis: Wiederholen Sie die Kompilierung mit -Xlint:unchecked, um Details zu erhalten.
-
 > Task :processResources NO-SOURCE
 > Task :classes
 
 > Task :Main.main()
-WARNING: A restricted method in java.lang.System has been called
-WARNING: java.lang.System::load has been called by org.lwjgl.system.Library$$Lambda/0x000001d74a005d78 in an unnamed module (file:/C:/Users/Tim%20Kl%c3%b6pper/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl/3.3.6/ce7721d30cfaf47feaed10213e0c43eb55c49d68/lwjgl-3.3.6.jar)
-WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
-WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+( 3,000E+0  3,000E+0)
 
-WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
-WARNING: sun.misc.Unsafe::objectFieldOffset has been called by org.lwjgl.system.MemoryUtil (file:/C:/Users/Tim%20Kl%c3%b6pper/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl/3.3.6/ce7721d30cfaf47feaed10213e0c43eb55c49d68/lwjgl-3.3.6.jar)
-WARNING: Please consider reporting this to the maintainers of class org.lwjgl.system.MemoryUtil
-WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
-
-[Incubating] Problems report is available at: file:///C:/Code/Java/Projects/Jangine/Jangine/build/reports/problems/problems-report.html
-
-BUILD SUCCESSFUL in 16s
+BUILD SUCCESSFUL in 493ms
 2 actionable tasks: 2 executed

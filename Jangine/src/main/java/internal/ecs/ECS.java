@@ -1,4 +1,4 @@
-﻿package internal.ecs;
+package internal.ecs;
 
 
 import java.util.HashMap;
@@ -147,8 +147,15 @@ public class ECS {
      */
     public void update() {
         for (ECS_ComponentSystem<? extends ECS_Component> componentSystem : _componentSystems.values()) {
-            componentSystem.update();
+            componentSystem.update(this);
         }
+    }
+
+
+    // -+- GETTERS -+- //
+
+    public ECS_ComponentSystem<? extends ECS_Component> getComponentSystem(Class<? extends ECS_Component> componentClass) {
+        return _componentSystems.get(componentClass);
     }
 
 

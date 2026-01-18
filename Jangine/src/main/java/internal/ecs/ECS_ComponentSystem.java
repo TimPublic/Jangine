@@ -1,4 +1,4 @@
-﻿package internal.ecs;
+package internal.ecs;
 
 
 import java.util.HashMap;
@@ -15,7 +15,7 @@ import java.util.HashMap;
 public abstract class ECS_ComponentSystem<T extends ECS_Component> {
 
 
-    private HashMap<Integer, T> _components;
+    protected HashMap<Integer, T> _components;
 
 
     // -+- CREATION -+- //
@@ -74,7 +74,7 @@ public abstract class ECS_ComponentSystem<T extends ECS_Component> {
      *
      * @author Tim Kloepper
      */
-    public abstract void update();
+    public abstract void update(ECS system);
 
 
     // -+- COMPONENT MANAGEMENT -+- //
@@ -98,6 +98,13 @@ public abstract class ECS_ComponentSystem<T extends ECS_Component> {
      */
     protected void _onComponentRemoved(T component) {
 
+    }
+
+
+    // -+- GETTERS -+- //
+
+    public T getComponent(int id) {
+        return _components.get(id);
     }
 
 

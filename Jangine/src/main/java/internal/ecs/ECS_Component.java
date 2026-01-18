@@ -1,4 +1,4 @@
-﻿package internal.ecs;
+package internal.ecs;
 
 
 /**
