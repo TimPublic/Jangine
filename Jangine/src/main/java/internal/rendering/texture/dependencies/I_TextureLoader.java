@@ -1,17 +1,19 @@
 package internal.rendering.texture.dependencies;
 
 
+import internal.rendering.texture.Texture;
+
 import static org.lwjgl.opengl.GL11.*;
 
 
 /**
- * An interface used in the {@link internal.rendering.texture.JangineTexture} class, used
+ * An interface used in the {@link Texture} class, used
  * for uploading textures to the gpu.
  *
  * @author Tim Kloepper
  * @version 1.0
  */
-public interface I_JangineTextureLoader {
+public interface I_TextureLoader {
 
 
     // Retrieves and uploads a texture with the given GLFW texture-id from the given file-path.

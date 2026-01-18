@@ -4,7 +4,7 @@ package internal.rendering.shader;
 import internal.rendering.camera.Camera2D;
 import internal.rendering.batch.TexturedRenderBatch;
 import internal.rendering.mesh.TexturedMesh;
-import internal.rendering.texture.JangineTexture;
+import internal.rendering.texture.Texture;
 import internal.rendering.texture.dependencies.implementations.STBI_TextureLoader;
 
 
@@ -19,8 +19,8 @@ public class ShaderTest {
     TexturedMesh firstMesh;
     TexturedMesh secondMesh;
 
-    JangineTexture firstTexture;
-    JangineTexture secondTexture;
+    Texture firstTexture;
+    Texture secondTexture;
 
 
     public ShaderTest() {
@@ -31,8 +31,8 @@ public class ShaderTest {
 
         camera._position.y -= 50;
 
-        firstTexture = new JangineTexture("assets/test_image.png", new STBI_TextureLoader());
-        secondTexture = new JangineTexture("assets/ui.png", new STBI_TextureLoader());
+        firstTexture = new Texture("assets/test_image.png", new STBI_TextureLoader());
+        secondTexture = new Texture("assets/ui.png", new STBI_TextureLoader());
 
         float[] vertices = new float[]{
                 /* Position */    /* uvCoordinates */  /* textureIndex */

@@ -1,7 +1,7 @@
 package internal.rendering.texture.dependencies.implementations;
 
 
-import internal.rendering.texture.dependencies.I_JangineTextureLoader;
+import internal.rendering.texture.dependencies.I_TextureLoader;
 import org.lwjgl.BufferUtils;
 
 import java.nio.ByteBuffer;
@@ -16,7 +16,7 @@ import static org.lwjgl.stb.STBImage.stbi_load;
 
 
 /**
- * An interface implementation of the interface {@link I_JangineTextureLoader},
+ * An interface implementation of the interface {@link I_TextureLoader},
  * used for uploading textures to the gpu with the STBI-library.
  * <p>
  * Is a singleton, as there is no reason for multiple instances.
@@ -24,7 +24,7 @@ import static org.lwjgl.stb.STBImage.stbi_load;
  * @author Tim Kloepper
  * @version 1.0
  */
-public class STBI_TextureLoader implements I_JangineTextureLoader {
+public class STBI_TextureLoader implements I_TextureLoader {
 
 
     private static STBI_TextureLoader _instance;

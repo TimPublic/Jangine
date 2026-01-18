@@ -1,7 +1,7 @@
 package internal.rendering.texture;
 
 
-import internal.rendering.texture.dependencies.I_JangineTextureLoader;
+import internal.rendering.texture.dependencies.I_TextureLoader;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -11,19 +11,19 @@ import static org.lwjgl.opengl.GL11.*;
  * The image gets uploaded to the gpu upon creation automatically.
  * <p>
  * The file path of the image needs to be provided in the constructor,
- * as well as the {@link I_JangineTextureLoader} implementation,
+ * as well as the {@link I_TextureLoader} implementation,
  * that is used for uploading the image to the gpu.
  *
  * @author Tim Kloepper
  * @version 1.0
  */
-public class JangineTexture {
+public class Texture {
 
 
     private final int _textureID;
 
 
-    public JangineTexture(final String filePath, I_JangineTextureLoader textureLoader) {
+    public Texture(final String filePath, I_TextureLoader textureLoader) {
         _textureID = glGenTextures();
 
         bind();

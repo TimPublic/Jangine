@@ -4,7 +4,7 @@ package internal.rendering.batch;
 import internal.rendering.camera.Camera2D;
 import internal.rendering.shader.ShaderProgram;
 import internal.rendering.mesh.TexturedMesh;
-import internal.rendering.texture.JangineTexture;
+import internal.rendering.texture.Texture;
 import internal.rendering.texture.dependencies.implementations.STBI_TextureLoader;
 import org.lwjgl.BufferUtils;
 
@@ -19,7 +19,7 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
 
 /**
- * This class is a way to pack together meshes to be rendered with a {@link JangineTexture}, using the same {@link ShaderProgram}.
+ * This class is a way to pack together meshes to be rendered with a {@link Texture}, using the same {@link ShaderProgram}.
  * This batch can work with up to eight different textures.
  * You have to provide the texture you want to use when providing the {@link TexturedMesh}, where this batch will then
  * automatically set the correct texture index in the mesh directly, meaning, you should not provide two batches
@@ -38,10 +38,10 @@ public class TexturedRenderBatch extends RenderBatch {
     public static final String PLACEHOLDER_TEXTURE_PATH = "assets/placeholder_texture.png";
 
 
-    private final JangineTexture[] _textures;
-    private final JangineTexture _placeHolderTexture;
+    private final Texture[] _textures;
+    private final Texture _placeHolderTexture;
 
-    private final HashMap<TexturedMesh, JangineTexture> _activeMeshesAndTextures;
+    private final HashMap<TexturedMesh, Texture> _activeMeshesAndTextures;
 
 
     // -+- CREATION -+- //
@@ -49,16 +49,16 @@ public class TexturedRenderBatch extends RenderBatch {
     public TexturedRenderBatch(String shaderPath, Camera2D camera) {
         super(shaderPath, camera);
 
-        _textures = new JangineTexture[MAX_TEXTURE_AMOUNT];
-        _placeHolderTexture = new JangineTexture(PLACEHOLDER_TEXTURE_PATH, new STBI_TextureLoader());
+        _textures = new Texture[MAX_TEXTURE_AMOUNT];
+        _placeHolderTexture = new Texture(PLACEHOLDER_TEXTURE_PATH, new STBI_TextureLoader());
 
         _activeMeshesAndTextures = new HashMap<>();
     }
     public TexturedRenderBatch(ShaderProgram shaderProgram, Camera2D camera) {
         super(shaderProgram, camera);
 
-        _textures = new JangineTexture[MAX_TEXTURE_AMOUNT];
-        _placeHolderTexture = new JangineTexture(PLACEHOLDER_TEXTURE_PATH, new STBI_TextureLoader());
+        _textures = new Texture[MAX_TEXTURE_AMOUNT];
+        _placeHolderTexture = new Texture(PLACEHOLDER_TEXTURE_PATH, new STBI_TextureLoader());
 
         _activeMeshesAndTextures = new HashMap<>();
     }
@@ -97,7 +97,7 @@ public class TexturedRenderBatch extends RenderBatch {
     // -+- TEXTURES -+- //
 
     /**
-     * Adds a new {@link JangineTexture} to the batch to be used by meshes.
+     * Adds a new {@link Texture} to the batch to be used by meshes.
      * Returns -1 if no index was free and the function should not overwrite.
      *
      * @param texture texture to be added
@@ -106,7 +106,7 @@ public class TexturedRenderBatch extends RenderBatch {
      *
      * @author Tim Kloepper
      */
-    public int registerTexture(JangineTexture texture, boolean overwrite) {
+    public int registerTexture(Texture texture, boolean overwrite) {
         for (int index = 0; index < MAX_TEXTURE_AMOUNT; index++) {
             if (_textures[index] == texture) {return index;}
         }
@@ -125,7 +125,7 @@ public class TexturedRenderBatch extends RenderBatch {
         return 0;
     }
     /**
-     * Removes the {@link JangineTexture} from the provided index.
+     * Removes the {@link Texture} from the provided index.
      *
      * @param index index of the texture that should be removed
      * @return success
@@ -140,14 +140,14 @@ public class TexturedRenderBatch extends RenderBatch {
         return true;
     }
     /**
-     * Removes the specified {@link JangineTexture} from the batch.
+     * Removes the specified {@link Texture} from the batch.
      *
      * @param texture texture to be removed
      * @return success
      *
      * @author Tim Kloepper
      */
-    public boolean removeTexture(JangineTexture texture) {
+    public boolean removeTexture(Texture texture) {
         for (int index = 0; index < MAX_TEXTURE_AMOUNT; index++) {
             if (_textures[index] != texture) {continue;}
 
@@ -164,12 +164,12 @@ public class TexturedRenderBatch extends RenderBatch {
 
     /**
      * Adds a mesh to the batch.
-     * You also need to provide a {@link JangineTexture} that this mesh
+     * You also need to provide a {@link Texture} that this mesh
      * should be rendered with.
      * If the texture is not already in the batch, the batch tries to add it,
      * if this fails, false is returned.
      * If the mesh is already in the batch, the mesh will be updated by
-     * calling {@link TexturedRenderBatch#updateMesh(TexturedMesh, JangineTexture)},
+     * calling {@link TexturedRenderBatch#updateMesh(TexturedMesh, Texture)},
      * which will cause a {@link TexturedRenderBatch#_rebuild()} call.
      *
      * @param mesh mesh to be added
@@ -178,7 +178,7 @@ public class TexturedRenderBatch extends RenderBatch {
      *
      * @author Tim Kloepper
      */
-    public boolean addMesh(TexturedMesh mesh, JangineTexture texture) {
+    public boolean addMesh(TexturedMesh mesh, Texture texture) {
         FloatBuffer subVertexBuffer;
         IntBuffer subIndexBuffer;
 
@@ -221,7 +221,7 @@ public class TexturedRenderBatch extends RenderBatch {
 
         return true;
     }
-    public void updateMesh(TexturedMesh mesh, JangineTexture texture) {
+    public void updateMesh(TexturedMesh mesh, Texture texture) {
         if (!_activeMeshesAndTextures.containsKey(mesh)) {return;}
 
         _rebuiltRequired = true;
@@ -256,7 +256,7 @@ public class TexturedRenderBatch extends RenderBatch {
      */
     @Override
     protected void _rebuild() {
-        HashMap<TexturedMesh, JangineTexture> meshes;
+        HashMap<TexturedMesh, Texture> meshes;
 
         meshes = new HashMap<>(_activeMeshesAndTextures);
 
@@ -322,7 +322,7 @@ public class TexturedRenderBatch extends RenderBatch {
      *
      * @author Tim Kloepper
      */
-    public JangineTexture[] getTextures() {
+    public Texture[] getTextures() {
         return _textures;
     }
 
@@ -337,7 +337,7 @@ public class TexturedRenderBatch extends RenderBatch {
      *
      * @author Tim Kloepper
      */
-    public JangineTexture getTextureAt(int index) {
+    public Texture getTextureAt(int index) {
         if (index >= _textures.length) {return null;}
 
         return _textures[index];
@@ -353,7 +353,7 @@ public class TexturedRenderBatch extends RenderBatch {
      *
      * @author Tim Kloepper
      */
-    public int getIndexOfTexture(JangineTexture texture) {
+    public int getIndexOfTexture(Texture texture) {
         for (int index = 0; index < _textures.length; index++) {
             if (_textures[index] == texture) {return index;}
         }
