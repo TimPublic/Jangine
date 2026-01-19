@@ -151,7 +151,8 @@ public class KeyListener {
             }
         }
 
-        _prevKeyPressedBuffer = (HashSet<Integer>) _keyPressedBuffer.clone();
+        _prevKeyPressedBuffer.clear();
+        _prevKeyPressedBuffer.addAll(_keyPressedBuffer);
     }
 
     /**
@@ -192,7 +193,7 @@ public class KeyListener {
      *
      * @author Tim Kloepper
      */
-    private void _pushEvent(Event event) {
+    private void _pushEvent(KeyEvent event) {
         for (EventHandler eventHandler : _eventHandlers) {
             eventHandler.pushEvent(event);
         }

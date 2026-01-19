@@ -220,7 +220,8 @@ public class MouseListener {
             }
         }
 
-        _prevMouseButtonsPressed = (HashSet<Integer>) _mouseButtonsPressed.clone();
+        _prevMouseButtonsPressed.clear();
+        _prevMouseButtonsPressed.addAll(_mouseButtonsPressed);
     }
     /**
      * Scans for scroll events and issues respective pushes of {@link MouseScrollEvent}.
@@ -302,7 +303,7 @@ public class MouseListener {
      *
      * @author Tim Kloepper
      */
-    private void _pushEvent(Event event) {
+    private void _pushEvent(MouseEvent event) {
         for (EventHandler eventHandler : _eventHandlers) {
             eventHandler.pushEvent(event);
         }

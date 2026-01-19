@@ -32,7 +32,7 @@ import java.util.List;
 public class Scene {
 
 
-    private final EventHandler _windowEventHandler;
+    private EventHandler _windowEventHandler;
 
     private final EventHandler _ownEventHandler;
     private final EventListeningPort _ownEventHandlerListeningPort;
@@ -79,7 +79,7 @@ public class Scene {
                 2, 3, 0,
         };
 
-        ecs = new ECS();
+        ecs = new ECS(this);
 
         ecs.addComponentSystem(new RenderComponentSystem<>(), RenderComponent.class);
         ecs.addComponentSystem(new TextureComponentSystem<>(), TextureComponent.class);

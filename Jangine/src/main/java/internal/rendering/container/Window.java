@@ -203,7 +203,7 @@ public class Window {
     // -+- SCENE-MANAGEMENT -+- //
 
     // Creates a new scene in this window and returns it.
-    protected Scene createScene() {
+    public Scene createScene() {
         Scene newScene;
 
         newScene = new Scene(_eventHandler, _width, _height, false);
@@ -212,10 +212,17 @@ public class Window {
 
         return newScene;
     }
+    public boolean deleteScene(Scene scene) {
+        if (!_scenes.remove(scene)) {return false;}
+
+        scene.kill();
+
+        return true;
+    }
     // Activates a scene.
     // The scene must be home to this window, if not, the engine will crash.
     // If another scene is currently active, it will be deactivated.
-    protected Scene activateScene(Scene scene) {
+    public Scene activateScene(Scene scene) {
         if (!_scenes.contains(scene)) {
             System.err.println("[WINDOW ERROR] : Tried to make scene active, which is not home to this window!");
 
@@ -235,7 +242,7 @@ public class Window {
     // Deactivates a scene.
     // The scene must be home to this window, if not, the engine will crash.
     // After this call, no scene will be active.
-    protected Scene deactivateScene(Scene scene) {
+    public Scene deactivateScene(Scene scene) {
         if (!_scenes.contains(scene)) {
             System.err.println("[WINDOW ERROR] : Tried to deactivate scene, which is not home to this window!");
 
@@ -250,30 +257,10 @@ public class Window {
     }
     // Deactivates a scene and activates another one.
     // Both scenes must be home to this window, if not, the engine will crash.
-    protected void deactivateScene(Scene scene, Scene newActiveScene) {
+    public void deactivateScene(Scene scene, Scene newActiveScene) {
         deactivateScene(scene);
         activateScene(scene);
     }
-    // Transfers a scene to another window.
-    // The scene must be home to this window, if not, the engine will crash.
-    // After this call, the scene is home to the specified window and not to this window anymore.
-    public Scene transferScene(Scene scene, Window to) {
-        if (!_scenes.contains(scene)) {
-            System.err.println("[WINDOW ERROR] : Tried to transfer scene, which is not home to this window!");
-        }
-
-        if (_activeScene == scene) {
-            _activeScene.deactivate();
-            _activeScene = null;
-        }
-
-        _scenes.remove(scene);
-
-        to._addScene(scene);
-
-        return scene;
-    }
-
     // Adds a scene to this window and therefore makes it home to this window.
     // A scene should only ever be home to one window!
     private void _addScene(Scene scene) {
