@@ -1,6 +1,8 @@
 package internal.ecs;
 
 
+import internal.rendering.container.Scene;
+
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -21,14 +23,18 @@ public class ECS {
 
     private final HashMap<Class<? extends ECS_Component>, ECS_ComponentSystem<? extends ECS_Component>> _componentSystems;
 
+    private final Scene _scene;
+
 
     // -+- CREATION -+- //
 
-    public ECS() {
+    public ECS(Scene scene) {
         _activeEntities = new HashSet<>();
         _nextEntityIndex = 0;
 
         _componentSystems = new HashMap<>();
+
+        _scene = scene;
     }
 
 
@@ -80,6 +86,8 @@ public class ECS {
      */
     public void addComponentSystem(ECS_ComponentSystem<? extends ECS_Component> componentSystem, Class<? extends ECS_Component> componentClass) {
         if (_componentSystems.containsKey(componentClass)) {return;}
+
+        componentSystem.init(_scene.getEventHandler());
 
         _componentSystems.put(componentClass, componentSystem);
     }

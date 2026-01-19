@@ -123,6 +123,17 @@ public class Engine {
     }
 
     /**
+     * Adds a {@link Window} and takes it into the main update loop.
+     *
+     * @param window the window that is to be added
+     *
+     * @author Tim Kloepper
+     */
+    public void addWindow(Window window) {
+        _windows.add(window);
+    }
+
+    /**
      * Updates all the windows.
      *
      * @return if any window closes

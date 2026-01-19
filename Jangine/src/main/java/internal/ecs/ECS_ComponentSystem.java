@@ -1,7 +1,10 @@
 package internal.ecs;
 
 
+import internal.events.EventHandler;
+
 import java.util.HashMap;
+import java.util.HashSet;
 
 
 /**
@@ -17,11 +20,17 @@ public abstract class ECS_ComponentSystem<T extends ECS_Component> {
 
     protected HashMap<Integer, T> _components;
 
+    protected EventHandler _eventHandler;
+
 
     // -+- CREATION -+- //
 
     public ECS_ComponentSystem() {
         _components = new HashMap<>();
+    }
+
+    public void init(EventHandler eventHandler) {
+        _eventHandler = eventHandler;
     }
 
 
