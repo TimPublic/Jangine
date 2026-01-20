@@ -28,6 +28,7 @@ public abstract class ECS_ComponentSystem<T extends ECS_Component> {
 
     public ECS_ComponentSystem() {
         _components = new HashMap<>();
+        _validComponents = new HashSet<>();
     }
 
     public void init(EventHandler eventHandler) {

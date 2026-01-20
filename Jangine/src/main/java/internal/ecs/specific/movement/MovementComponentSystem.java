@@ -33,4 +33,10 @@ public class MovementComponentSystem<T extends ECS_Component> extends ECS_Compon
     }
 
 
+    @Override
+    protected boolean _isComponentValid(MovementComponent component) {
+        return true;
+    }
+
+
 }

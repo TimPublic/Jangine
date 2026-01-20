@@ -3,6 +3,7 @@ package internal.ecs.specific.rendering;
 
 import internal.ecs.ECS;
 import internal.ecs.ECS_ComponentSystem;
+import internal.ecs.specific.position.PositionComponent;
 import internal.ecs.specific.rendering.color.ColoredMeshComponent;
 import internal.ecs.specific.rendering.color.ColoredMeshComponentSystem;
 import internal.ecs.specific.rendering.texture.TexturedMeshComponent;
@@ -34,6 +35,12 @@ public class RenderComponentSystem<T extends RenderComponent> extends ECS_Compon
 
         _coloredRenderBatch.update();
         _texturedRenderBatch.update();
+    }
+
+
+    @Override
+    protected boolean _isComponentValid(RenderComponent component) {
+        return true;
     }
 
 

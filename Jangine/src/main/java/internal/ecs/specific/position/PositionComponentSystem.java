@@ -13,4 +13,10 @@ public class PositionComponentSystem<T extends ECS_Component> extends ECS_Compon
     }
 
 
+    @Override
+    protected boolean _isComponentValid(PositionComponent component) {
+        return true;
+    }
+
+
 }

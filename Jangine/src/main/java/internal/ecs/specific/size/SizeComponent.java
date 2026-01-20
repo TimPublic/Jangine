@@ -1,4 +1,4 @@
-﻿package internal.ecs.specific.size;
+package internal.ecs.specific.size;
 
 
 import internal.ecs.ECS_Component;

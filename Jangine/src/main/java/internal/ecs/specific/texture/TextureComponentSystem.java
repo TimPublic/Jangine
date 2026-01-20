@@ -14,4 +14,10 @@ public class TextureComponentSystem<T extends TextureComponent> extends ECS_Comp
     }
 
 
+    @Override
+    protected boolean _isComponentValid(TextureComponent component) {
+        return true;
+    }
+
+
 }

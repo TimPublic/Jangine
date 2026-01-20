@@ -1,4 +1,4 @@
-﻿package internal.ecs.specific.collision.partitioner;
+package internal.ecs.specific.collision.partitioner;
 
 
 import internal.ecs.specific.collision.CollisionComponent;

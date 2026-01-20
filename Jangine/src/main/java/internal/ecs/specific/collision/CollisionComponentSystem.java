@@ -1,4 +1,4 @@
-﻿package internal.ecs.specific.collision;
+package internal.ecs.specific.collision;
 
 
 import internal.ecs.ECS;

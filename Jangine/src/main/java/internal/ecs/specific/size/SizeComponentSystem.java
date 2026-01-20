@@ -1,4 +1,4 @@
-﻿package internal.ecs.specific.size;
+package internal.ecs.specific.size;
 
 
 import internal.ecs.ECS;
@@ -11,6 +11,12 @@ public class SizeComponentSystem<T extends SizeComponent> extends ECS_ComponentS
     @Override
     protected void _internalUpdate(ECS system) {
 
+    }
+
+
+    @Override
+    protected boolean _isComponentValid(SizeComponent component) {
+        return true;
     }
 
 

@@ -1,4 +1,4 @@
-﻿package internal.events.collision;
+package internal.events.collision;
 
 
 import internal.events.Event;

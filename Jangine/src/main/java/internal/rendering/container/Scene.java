@@ -2,10 +2,16 @@ package internal.rendering.container;
 
 
 import internal.ecs.ECS;
+import internal.ecs.EntityBuilder;
+import internal.ecs.SystemBuilder;
+import internal.ecs.specific.position.PositionComponent;
+import internal.ecs.specific.position.PositionComponentSystem;
 import internal.ecs.specific.rendering.RenderComponent;
 import internal.ecs.specific.rendering.RenderComponentSystem;
 import internal.ecs.specific.rendering.texture.TexturedMeshComponent;
 import internal.ecs.specific.rendering.texture.TexturedMeshComponentSystem;
+import internal.ecs.specific.size.SizeComponent;
+import internal.ecs.specific.size.SizeComponentSystem;
 import internal.ecs.specific.texture.TextureComponent;
 import internal.ecs.specific.texture.TextureComponentSystem;
 import internal.events.EventListeningPort;
@@ -79,17 +85,21 @@ public class Scene {
                 2, 3, 0,
         };
 
-        ecs = new ECS(this);
+        ecs = SystemBuilder.start(this)
+                .add(new RenderComponentSystem<>(), RenderComponent.class)
+                .add(new TextureComponentSystem<>(), TextureComponent.class)
+                .add(new TexturedMeshComponentSystem<>(), TexturedMeshComponent.class)
+                .add(new PositionComponentSystem<>(), PositionComponent.class)
+                .add(new SizeComponentSystem<>(), SizeComponent.class)
+                .finish();
 
-        ecs.addComponentSystem(new RenderComponentSystem<>(), RenderComponent.class);
-        ecs.addComponentSystem(new TextureComponentSystem<>(), TextureComponent.class);
-        ecs.addComponentSystem(new TexturedMeshComponentSystem<>(), TexturedMeshComponent.class);
-
-        entityID = ecs.addEntity();
-
-        ecs.addComponent(entityID, new RenderComponent(RenderComponent.RENDER_TYPE.TEXTURE));
-        ecs.addComponent(entityID, new TextureComponent("assets/test_image.png"));
-        ecs.addComponent(entityID, new TexturedMeshComponent(new TexturedMesh(vertices, indices)));
+        entityID = EntityBuilder.start(ecs)
+                .add(new RenderComponent(RenderComponent.RENDER_TYPE.TEXTURE))
+                .add(new TextureComponent("assets/test_image.png"))
+                .add(new TexturedMeshComponent(new TexturedMesh(vertices, indices)))
+                .add(new PositionComponent(0, 0))
+                .add(new SizeComponent(100, 100))
+                .finish();
 
         _onCreation();
     }

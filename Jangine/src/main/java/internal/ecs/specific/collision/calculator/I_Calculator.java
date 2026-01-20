@@ -1,4 +1,4 @@
-﻿package internal.ecs.specific.collision.calculator;
+package internal.ecs.specific.collision.calculator;
 
 
 import internal.ecs.specific.collision.CollisionComponent;
