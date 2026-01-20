@@ -30,8 +30,8 @@ public class CollisionComponentSystem<T extends CollisionComponent> extends ECS_
     private final I_Calculator _calculator;
     private final I_Partitioner _partitioner;
 
-    private Vector2d containerPosition;
-    private double containerWidth, containerHeight;
+    private Vector2d _containerPosition;
+    private double _containerWidth, _containerHeight;
 
     private PositionComponentSystem<?> _positionSystem;
     private SizeComponentSystem<?> _sizeSystem;
@@ -45,6 +45,8 @@ public class CollisionComponentSystem<T extends CollisionComponent> extends ECS_
 
         _calculator = calculator;
         _partitioner = partitioner;
+
+        _partitioner.init(_containerPosition, _containerWidth, _containerHeight);
     }
 
 
@@ -64,10 +66,10 @@ public class CollisionComponentSystem<T extends CollisionComponent> extends ECS_
         for (CollisionComponent component : _validComponents) {
             pairs.put(component, new HashSet<>());
 
-            if (_calculator.collidesWithContainer(component, containerPosition, containerWidth, containerHeight)) {
+            if (_calculator.collidesWithContainer(component, _containerPosition, _containerWidth, _containerHeight)) {
                 CollisionData.COLLISION_AXIS collisionAxis;
 
-                collisionAxis = _calculator.getCollisionAxisWithContainer(component, containerPosition, containerWidth, containerHeight);
+                collisionAxis = _calculator.getCollisionAxisWithContainer(component, _containerPosition, _containerWidth, _containerHeight);
 
                 _pushContainerCollision(collisionAxis, component);
             }
