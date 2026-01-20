@@ -9,7 +9,7 @@ public class SizeComponentSystem<T extends SizeComponent> extends ECS_ComponentS
 
 
     @Override
-    public void update(ECS system) {
+    protected void _internalUpdate(ECS system) {
 
     }
 

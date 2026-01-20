@@ -9,7 +9,7 @@ public class TexturedMeshComponentSystem<T extends TexturedMeshComponent> extend
 
 
     @Override
-    public void update(ECS system) {
+    protected void _internalUpdate(ECS system) {
 
     }
 

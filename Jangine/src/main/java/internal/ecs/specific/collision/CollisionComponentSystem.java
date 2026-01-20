@@ -51,25 +51,17 @@ public class CollisionComponentSystem<T extends CollisionComponent> extends ECS_
     // -+- UPDATE LOOP -+- //
 
     @Override
-    public void update(ECS system) {
+    protected void _internalUpdate(ECS system) {
+        // Update system references.
         _updatePositionSystemRef(system);
         _updateSizeSystemRef(system);
 
-        HashSet<CollisionComponent> validComponents;
-
-        validComponents = new HashSet<>();
-
-        for (CollisionComponent component : _components.values()) {
-            if (!_isComponentValid(component)) {continue;}
-
-            validComponents.add(component);
-        }
-
+        // Create pairing hashmap-
         HashMap<CollisionComponent, HashSet<CollisionComponent>> pairs;
 
         pairs = new HashMap<>();
 
-        for (CollisionComponent component : validComponents) {
+        for (CollisionComponent component : _validComponents) {
             pairs.put(component, new HashSet<>());
 
             if (_calculator.collidesWithContainer(component, containerPosition, containerWidth, containerHeight)) {
@@ -80,6 +72,12 @@ public class CollisionComponentSystem<T extends CollisionComponent> extends ECS_
                 _pushContainerCollision(collisionAxis, component);
             }
 
+            PositionComponent comPosition, collPosition;
+            SizeComponent comSize, collSize;
+
+            comPosition = _positionSystem.getComponent(component.owningEntity);
+            comSize = _sizeSystem.getComponent(component.owningEntity);
+
             for (CollisionComponent collidingComponent : _partitioner.getPossibleCollisions(component)) {
                 // We do not need to check for the "component" as a key, as it is the loop for the component,
                 // so with this component as the key, no collision will have happened with this "collidingComponent".
@@ -87,7 +85,10 @@ public class CollisionComponentSystem<T extends CollisionComponent> extends ECS_
                 // "component" was already checked in the "collidingComponent"s' loop.
                 if (pairs.containsKey(collidingComponent)) {if (pairs.get(collidingComponent).contains(component)) {continue;}}
 
-                if (_calculator.collidesWithComponent(component, collidingComponent)) {
+                collPosition = _positionSystem.getComponent(collidingComponent.owningEntity);
+                collSize = _sizeSystem.getComponent(collidingComponent.owningEntity);
+
+                if (_calculator.collidesWithComponent(component, comPosition, comSize, collidingComponent, collPosition, collSize)) {
                     pairs.get(component).add(collidingComponent);
                 }
             }
@@ -95,8 +96,11 @@ public class CollisionComponentSystem<T extends CollisionComponent> extends ECS_
             for (CollisionComponent collidingComponent : pairs.get(component)) {
                 CollisionData.COLLISION_AXIS collisionAxis;
 
+                collPosition = _positionSystem.getComponent(collidingComponent.owningEntity);
+                collSize = _sizeSystem.getComponent(collidingComponent.owningEntity);
+
                 // Will obviously collide on the same axis.
-                collisionAxis = _calculator.getCollisionAxisWithComponent(component, collidingComponent);
+                collisionAxis = _calculator.getCollisionAxisWithComponent(component, comPosition, comSize, collidingComponent, collPosition, collSize);
 
                 _pushComponentCollision(collisionAxis, component, collidingComponent);
                 _pushComponentCollision(collisionAxis, collidingComponent, component);
@@ -114,8 +118,7 @@ public class CollisionComponentSystem<T extends CollisionComponent> extends ECS_
         _componentCollisionCallbacks.remove(callback);
     }
     public void registerContainerCollisionCallback(Consumer<ContainerCollisionData> callback) {
-        if (callback != null) {
-            _containerCollisionCallbacks.add(callback);}
+        if (callback != null) {_containerCollisionCallbacks.add(callback);}
     }
     public void deregisterContainerCollisionCallback(Consumer<ContainerCollisionData> callback) {
         _containerCollisionCallbacks.remove(callback);
@@ -145,11 +148,17 @@ public class CollisionComponentSystem<T extends CollisionComponent> extends ECS_
 
 
     @Override
-    protected void _onComponentAdded(CollisionComponent component) {
-        _partitioner.addComponent(component);
+    protected void _onComponentValidated(CollisionComponent component) {
+        PositionComponent positionComponent;
+        SizeComponent sizeComponent;
+
+        positionComponent = _positionSystem.getComponent(component.owningEntity);
+        sizeComponent = _sizeSystem.getComponent(component.owningEntity);
+
+        _partitioner.addComponent(component, positionComponent, sizeComponent);
     }
     @Override
-    protected void _onComponentRemoved(CollisionComponent component) {
+    protected void _onComponentInvalidated(CollisionComponent component) {
         _partitioner.rmvComponent(component);
     }
 

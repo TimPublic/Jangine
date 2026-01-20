@@ -10,6 +10,8 @@ package internal.ecs;
 public class ECS_Component {
 
 
+    public boolean isActive;
+
     public int owningEntity;
 
 
@@ -32,6 +34,8 @@ public class ECS_Component {
     public void init(int id) {
         if (owningEntity != -1) {return;}
 
+        isActive = true;
+
         owningEntity = id;
     }
     /**
@@ -46,6 +50,8 @@ public class ECS_Component {
      */
     public void kill(int id) {
         if (id != owningEntity) {return;}
+
+        isActive = false;
 
         owningEntity = -1;
     }

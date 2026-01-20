@@ -8,7 +8,7 @@ public class PositionComponentSystem<T extends ECS_Component> extends ECS_Compon
 
 
     @Override
-    public void update(ECS system) {
+    protected void _internalUpdate(ECS system) {
 
     }
 

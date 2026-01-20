@@ -28,7 +28,7 @@ public class RenderComponentSystem<T extends RenderComponent> extends ECS_Compon
 
 
     @Override
-    public void update(ECS system) {
+    protected void _internalUpdate(ECS system) {
         _updateColored(system);
         _updateTextured(system);
 

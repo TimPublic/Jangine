@@ -15,7 +15,7 @@ public interface I_Calculator {
     boolean collidesWithContainer(CollisionComponent component, Vector2d containerPosition, double containerWidth, double containerHeight);
 
 
-    CollisionData.COLLISION_AXIS getCollisionAxisWithComponent(CollisionComponent component, CollisionComponent collidingComponent);
+    CollisionData.COLLISION_AXIS getCollisionAxisWithComponent(CollisionComponent component, PositionComponent componentPosition, SizeComponent componentSize, CollisionComponent collidingComponent, PositionComponent collidingPosition, SizeComponent collidingSize);
     CollisionData.COLLISION_AXIS getCollisionAxisWithContainer(CollisionComponent component, Vector2d containerPosition, double containerWidth, double containerHeight);
 
 

@@ -9,7 +9,7 @@ public class TextureComponentSystem<T extends TextureComponent> extends ECS_Comp
 
 
     @Override
-    public void update(ECS system) {
+    protected void _internalUpdate(ECS system) {
 
     }
 

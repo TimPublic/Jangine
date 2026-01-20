@@ -19,6 +19,7 @@ public abstract class ECS_ComponentSystem<T extends ECS_Component> {
 
 
     protected HashMap<Integer, T> _components;
+    protected HashSet<T> _validComponents;
 
     protected EventHandler _eventHandler;
 
@@ -78,12 +79,31 @@ public abstract class ECS_ComponentSystem<T extends ECS_Component> {
 
     // -+- UPDATE LOOP -+- //
 
+
+    public void update(ECS system) {
+        for (T component : _components.values()) {
+            if (!component.isActive || !_isComponentValid(component)) {
+                if (_validComponents.remove(component)) {
+                    _onComponentInvalidated(component);
+                }
+            }
+
+            if (_validComponents.add(component)) {
+                _onComponentValidated(component);
+            }
+        }
+
+        _internalUpdate(system);
+    }
     /**
-     * Is called every frame.
+     * Is called every frame,
+     * for you to overwrite.
+     *
+     * @param system the entity component system that manages this component system
      *
      * @author Tim Kloepper
      */
-    public abstract void update(ECS system);
+    protected abstract void _internalUpdate(ECS system);
 
 
     // -+- COMPONENT MANAGEMENT -+- //
@@ -108,6 +128,11 @@ public abstract class ECS_ComponentSystem<T extends ECS_Component> {
     protected void _onComponentRemoved(T component) {
 
     }
+
+    protected void _onComponentValidated(T component) {}
+    protected void _onComponentInvalidated(T component) {}
+
+    protected abstract boolean _isComponentValid(T component);
 
 
     // -+- GETTERS -+- //

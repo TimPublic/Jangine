@@ -9,7 +9,7 @@ public class ColoredMeshComponentSystem<T extends ColoredMeshComponent> extends 
 
 
     @Override
-    public void update(ECS system) {
+    protected void _internalUpdate(ECS system) {
 
     }
 
