@@ -25,6 +25,8 @@ public class ECS {
 
     private final Scene _scene;
 
+    private final HashMap<Class<? extends ECS_Component>, ECS_ComponentSystem<?>> _bufferedSystems;
+
 
     // -+- CREATION -+- //
 
@@ -35,6 +37,8 @@ public class ECS {
         _componentSystems = new HashMap<>();
 
         _scene = scene;
+
+        _bufferedSystems = new HashMap<>();
     }
 
 
@@ -101,6 +105,22 @@ public class ECS {
      */
     public void rmvComponentSystem(Class<? extends ECS_Component> componentClass) {
         _componentSystems.remove(componentClass);
+    }
+
+    public void addComponentSystemBuffered(ECS_ComponentSystem<?> componentSystem, Class<? extends ECS_Component> componentClass) {
+        _bufferedSystems.put(componentClass, componentSystem);
+    }
+    // TODO : Manage correct failure behaviour.
+    public boolean finishBufferedComponentSystems() {
+        for (Class<? extends ECS_Component> componentClass : _bufferedSystems.keySet()) {
+            for (Class<? extends ECS_Component> requiredComponent : _bufferedSystems.get(componentClass).getRequirements()) {
+                if (!_componentSystems.containsKey(requiredComponent) && !_bufferedSystems.containsKey(requiredComponent)) {return false;}
+
+                _componentSystems.put(componentClass, _bufferedSystems.get(componentClass));
+            }
+        }
+
+        return true;
     }
 
 

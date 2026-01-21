@@ -3,6 +3,7 @@ package internal.ecs;
 
 import internal.events.EventHandler;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -34,6 +35,8 @@ public abstract class ECS_ComponentSystem<T extends ECS_Component> {
     public void init(EventHandler eventHandler) {
         _eventHandler = eventHandler;
     }
+
+    public abstract Collection<Class<? extends ECS_Component>> getRequirements();
 
 
     // -+- ENTITY MANAGEMENT -+- //

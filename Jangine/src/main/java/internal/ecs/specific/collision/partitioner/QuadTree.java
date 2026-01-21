@@ -1,8 +1,7 @@
-﻿package internal.ecs.specific.collision.calculator;
+﻿package internal.ecs.specific.collision.partitioner;
 
 
 import internal.ecs.specific.collision.CollisionComponent;
-import internal.ecs.specific.collision.partitioner.I_Partitioner;
 import internal.ecs.specific.position.PositionComponent;
 import internal.ecs.specific.size.SizeComponent;
 import org.joml.Vector2d;
@@ -13,8 +12,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static internal.ecs.specific.collision.calculator.QuadTree.POOL;
-import static internal.ecs.specific.collision.calculator.QuadTree.SPLIT_THRESHOLD;
+import static internal.ecs.specific.collision.partitioner.QuadTree.POOL;
+import static internal.ecs.specific.collision.partitioner.QuadTree.SPLIT_THRESHOLD;
 
 
 @SuppressWarnings("ClassEscapesDefinedScope")
