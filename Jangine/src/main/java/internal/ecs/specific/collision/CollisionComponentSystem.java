@@ -2,6 +2,7 @@ package internal.ecs.specific.collision;
 
 
 import internal.ecs.ECS;
+import internal.ecs.ECS_Component;
 import internal.ecs.ECS_ComponentSystem;
 import internal.ecs.specific.collision.calculator.I_Calculator;
 import internal.ecs.specific.collision.data.ComponentCollisionData;
@@ -16,8 +17,10 @@ import internal.events.collision.ComponentCollisionEvent;
 import internal.events.collision.WindowCollisionEvent;
 import org.joml.Vector2d;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.function.Consumer;
 
 
@@ -39,9 +42,13 @@ public class CollisionComponentSystem<T extends CollisionComponent> extends ECS_
 
     // -+- CREATION -+- //
 
-    public CollisionComponentSystem(I_Calculator calculator, I_Partitioner partitioner) {
+    public CollisionComponentSystem(Vector2d containerPosition, double containerWidth, double containerHeight, I_Calculator calculator, I_Partitioner partitioner) {
         _componentCollisionCallbacks = new HashSet<>();
         _containerCollisionCallbacks = new HashSet<>();
+
+        _containerPosition = containerPosition;
+        _containerWidth = containerWidth;
+        _containerHeight = containerHeight;
 
         _calculator = calculator;
         _partitioner = partitioner;
@@ -54,9 +61,8 @@ public class CollisionComponentSystem<T extends CollisionComponent> extends ECS_
 
     @Override
     protected void _internalUpdate(ECS system) {
-        // Update system references.
-        _updatePositionSystemRef(system);
-        _updateSizeSystemRef(system);
+        if (_positionSystem == null) {return;}
+        if (_sizeSystem == null) {return;}
 
         // Create pairing hashmap-
         HashMap<CollisionComponent, HashSet<CollisionComponent>> pairs;
@@ -164,38 +170,54 @@ public class CollisionComponentSystem<T extends CollisionComponent> extends ECS_
         _partitioner.rmvComponent(component);
     }
 
-    protected void _updatePositionSystemRef(ECS system) {
-        ECS_ComponentSystem componentSystem;
-
-        componentSystem = system.getComponentSystem(PositionComponent.class);
-        if (componentSystem == null) {
-            _positionSystem = null;
-        }
-        if (!(componentSystem instanceof PositionComponentSystem<?>)) {
-            _positionSystem = null;
-        }
-
-        _positionSystem = (PositionComponentSystem<?>) componentSystem;
-    }
-    protected void _updateSizeSystemRef(ECS system) {
-        ECS_ComponentSystem componentSystem;
-
-        componentSystem = system.getComponentSystem(SizeComponent.class);
-        if (componentSystem == null) {
-            _sizeSystem = null;
-        }
-        if (!(componentSystem instanceof SizeComponentSystem<?>)) {
-            _sizeSystem = null;
-        }
-
-        _sizeSystem = (SizeComponentSystem<?>) componentSystem;
-    }
-
     protected boolean _isComponentValid(CollisionComponent component) {
         if (_positionSystem.getComponent(component.owningEntity) == null) {return false;}
         if (_sizeSystem.getComponent(component.owningEntity) == null) {return false;}
 
         return true;
+    }
+
+
+    // -+- CALLBACKS -+- //
+
+
+    @Override
+    public void onComponentSystemAdded(ECS_ComponentSystem componentSystem) {
+        if (componentSystem == null) {return;}
+
+        if (componentSystem instanceof PositionComponentSystem<?>) {
+            _positionSystem = (PositionComponentSystem<?>) componentSystem;
+
+            return;
+        }
+        if (componentSystem instanceof SizeComponentSystem<?>) {
+            _sizeSystem = (SizeComponentSystem<?>) componentSystem;
+
+            return;
+        }
+    }
+    @Override
+    public void onComponentSystemRemoved(ECS_ComponentSystem componentSystem) {
+        if (componentSystem == null) {return;}
+
+        if (componentSystem instanceof PositionComponentSystem<?>) {
+            _positionSystem = null;
+
+            return;
+        }
+        if (componentSystem instanceof SizeComponentSystem<?>) {
+            _sizeSystem = null;
+
+            return;
+        }
+    }
+
+
+    // -+- GETTERS -+- //
+
+    @Override
+    public Collection<Class<? extends ECS_Component>> getRequirements() {
+        return List.of(PositionComponent.class, SizeComponent.class);
     }
 
 

@@ -88,12 +88,23 @@ public class ECS {
      * @param componentSystem component system to be added
      * @param componentClass subclass of the component that is to be managed by the component system
      */
-    public void addComponentSystem(ECS_ComponentSystem<? extends ECS_Component> componentSystem, Class<? extends ECS_Component> componentClass) {
-        if (_componentSystems.containsKey(componentClass)) {return;}
+    public boolean addComponentSystem(ECS_ComponentSystem<? extends ECS_Component> componentSystem, Class<? extends ECS_Component> componentClass, boolean overwrite) {
+        if (componentSystem == null) {return false;}
+        if (_componentSystems.containsKey(componentClass) && !overwrite) {return false;}
+        // Check requirements
+        for (Class<? extends ECS_Component> requiredClass : componentSystem.getRequirements()) {
+            if (!_componentSystems.containsKey(requiredClass)) {return false;}
+        }
 
         componentSystem.init(_scene.getEventHandler());
 
         _componentSystems.put(componentClass, componentSystem);
+
+        for (ECS_ComponentSystem system : _componentSystems.values()) {
+            system.onComponentSystemAdded(componentSystem);
+        }
+
+        return true;
     }
     /**
      * Removes an {@link ECS_ComponentSystem} based on the subclass of the {@link ECS_Component}
@@ -103,22 +114,19 @@ public class ECS {
      *
      * @author Tim Kloepper
      */
-    public void rmvComponentSystem(Class<? extends ECS_Component> componentClass) {
-        _componentSystems.remove(componentClass);
-    }
+    public boolean rmvComponentSystem(Class<? extends ECS_Component> componentClass) {
+        if (!_componentSystems.containsKey(componentClass)) {return false;}
 
-    public void addComponentSystemBuffered(ECS_ComponentSystem<?> componentSystem, Class<? extends ECS_Component> componentClass) {
-        _bufferedSystems.put(componentClass, componentSystem);
-    }
-    // TODO : Manage correct failure behaviour.
-    public boolean finishBufferedComponentSystems() {
-        for (Class<? extends ECS_Component> componentClass : _bufferedSystems.keySet()) {
-            for (Class<? extends ECS_Component> requiredComponent : _bufferedSystems.get(componentClass).getRequirements()) {
-                if (!_componentSystems.containsKey(requiredComponent) && !_bufferedSystems.containsKey(requiredComponent)) {return false;}
+        ECS_ComponentSystem<?> componentSystem;
 
-                _componentSystems.put(componentClass, _bufferedSystems.get(componentClass));
-            }
+        componentSystem = _componentSystems.get(componentClass);
+        if (componentSystem == null) {return false;}
+
+        for (ECS_ComponentSystem<?> system : _componentSystems.values()) {
+            system.onComponentSystemRemoved(componentSystem);
         }
+
+        _componentSystems.remove(componentClass);
 
         return true;
     }

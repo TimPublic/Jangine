@@ -86,11 +86,11 @@ public class Scene {
         };
 
         ecs = SystemBuilder.start(this)
-                .add(new RenderComponentSystem<>(), RenderComponent.class)
-                .add(new TextureComponentSystem<>(), TextureComponent.class)
-                .add(new TexturedMeshComponentSystem<>(), TexturedMeshComponent.class)
-                .add(new PositionComponentSystem<>(), PositionComponent.class)
-                .add(new SizeComponentSystem<>(), SizeComponent.class)
+                .add(new RenderComponentSystem<>(), RenderComponent.class, false)
+                .add(new TextureComponentSystem<>(), TextureComponent.class, false)
+                .add(new TexturedMeshComponentSystem<>(), TexturedMeshComponent.class, false)
+                .add(new PositionComponentSystem<>(), PositionComponent.class, false)
+                .add(new SizeComponentSystem<>(), SizeComponent.class, false)
                 .finish();
 
         entityID = EntityBuilder.start(ecs)

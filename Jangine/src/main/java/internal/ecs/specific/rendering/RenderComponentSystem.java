@@ -2,8 +2,8 @@ package internal.ecs.specific.rendering;
 
 
 import internal.ecs.ECS;
+import internal.ecs.ECS_Component;
 import internal.ecs.ECS_ComponentSystem;
-import internal.ecs.specific.position.PositionComponent;
 import internal.ecs.specific.rendering.color.ColoredMeshComponent;
 import internal.ecs.specific.rendering.color.ColoredMeshComponentSystem;
 import internal.ecs.specific.rendering.texture.TexturedMeshComponent;
@@ -14,12 +14,19 @@ import internal.rendering.batch.ColoredRenderBatch;
 import internal.rendering.batch.TexturedRenderBatch;
 import internal.rendering.camera.Camera2D;
 
+import java.util.Collection;
+import java.util.List;
+
 
 public class RenderComponentSystem<T extends RenderComponent> extends ECS_ComponentSystem<RenderComponent> {
 
 
     private final ColoredRenderBatch _coloredRenderBatch;
     private final TexturedRenderBatch _texturedRenderBatch;
+
+    private TexturedMeshComponentSystem<?> _texturedMeshSystem;
+    private ColoredMeshComponentSystem<?> _coloredSystem;
+    private TextureComponentSystem<?> _textureSystem;
 
 
     public RenderComponentSystem() {
@@ -30,11 +37,38 @@ public class RenderComponentSystem<T extends RenderComponent> extends ECS_Compon
 
     @Override
     protected void _internalUpdate(ECS system) {
-        _updateColored(system);
-        _updateTextured(system);
+        for (RenderComponent component : _components.values()) {
+            switch (component.renderType) {
+                case TEXTURE:
+                    if (_texturedMeshSystem == null) {continue;}
+
+                    TexturedMeshComponent texturedMeshComponent;
+                    texturedMeshComponent = _texturedMeshSystem.getComponent(component.owningEntity);
+                    if (texturedMeshComponent == null) {continue;}
+
+                    TextureComponent textureComponent;
+                    textureComponent = _textureSystem.getComponent(component.owningEntity);
+                    if (texturedMeshComponent == null) {continue;}
+
+                    _texturedRenderBatch.addMesh(texturedMeshComponent.mesh, textureComponent.texture);
+
+                    break;
+                case COLOR:
+                    if (_coloredSystem == null) {continue;}
+
+                    ColoredMeshComponent coloredMeshComponent;
+                    coloredMeshComponent = _coloredSystem.getComponent(component.owningEntity);
+                    if (coloredMeshComponent == null) {continue;}
+
+                    _coloredRenderBatch.addMesh(coloredMeshComponent.mesh);
+
+                    break;
+            }
+        }
 
         _coloredRenderBatch.update();
         _texturedRenderBatch.update();
+
     }
 
 
@@ -44,61 +78,55 @@ public class RenderComponentSystem<T extends RenderComponent> extends ECS_Compon
     }
 
 
-    private void _updateColored(ECS system) {
-        ECS_ComponentSystem<?> componentSystem;
+    // -+- CALLBACKS -+- //
 
-        componentSystem = system.getComponentSystem(ColoredMeshComponent.class);
+    @Override
+    public void onComponentSystemAdded(ECS_ComponentSystem componentSystem) {
         if (componentSystem == null) {return;}
-        if (!(componentSystem instanceof ColoredMeshComponentSystem<?>)) {return;}
 
-        ColoredMeshComponentSystem<?> coloredMeshSystem;
+        if (componentSystem instanceof TexturedMeshComponentSystem<?>) {
+            _texturedMeshSystem = (TexturedMeshComponentSystem<?>) componentSystem;
 
-        coloredMeshSystem = (ColoredMeshComponentSystem<?>) componentSystem;
+            return;
+        }
+        if (componentSystem instanceof ColoredMeshComponentSystem<?>) {
+            _coloredSystem = (ColoredMeshComponentSystem<?>) componentSystem;
 
-        for (RenderComponent component : _components.values()) {
-            if (component.renderType != RenderComponent.RENDER_TYPE.COLOR) {continue;}
+            return;
+        }
+        if (componentSystem instanceof TextureComponentSystem<?>) {
+            _textureSystem = (TextureComponentSystem<?>) componentSystem;
 
-            ColoredMeshComponent coloredMeshComponent;
-
-            coloredMeshComponent = coloredMeshSystem.getComponent(component.owningEntity);
-            if (coloredMeshComponent == null) {continue;}
-
-            _coloredRenderBatch.addMesh(coloredMeshComponent.mesh);
+            return;
         }
     }
-    private void _updateTextured(ECS system) {
-        ECS_ComponentSystem<?> componentSystem;
-
-        componentSystem = system.getComponentSystem(TexturedMeshComponent.class);
+    @Override
+    public void onComponentSystemRemoved(ECS_ComponentSystem componentSystem) {
         if (componentSystem == null) {return;}
-        if (!(componentSystem instanceof TexturedMeshComponentSystem<?>)) {return;}
 
-        TexturedMeshComponentSystem<?> texturedMeshSystem;
+        if (componentSystem instanceof TexturedMeshComponentSystem<?>) {
+            _texturedMeshSystem = null;
 
-        texturedMeshSystem = (TexturedMeshComponentSystem<?>) componentSystem;
-
-        componentSystem = system.getComponentSystem(TextureComponent.class);
-        if (componentSystem == null) {return;}
-        if (!(componentSystem instanceof TextureComponentSystem<?>)) {return;}
-
-        TextureComponentSystem<?> textureSystem;
-
-        textureSystem = (TextureComponentSystem<?>) componentSystem;
-
-        for (RenderComponent component : _components.values()) {
-            if (component.renderType != RenderComponent.RENDER_TYPE.TEXTURE) {continue;}
-
-            TexturedMeshComponent texturedMeshComponent;
-
-            texturedMeshComponent = texturedMeshSystem.getComponent(component.owningEntity);
-            if (texturedMeshComponent == null) {continue;}
-
-            TextureComponent textureComponent;
-            textureComponent = textureSystem.getComponent(component.owningEntity);
-            if (textureComponent == null) {continue;}
-
-            _texturedRenderBatch.addMesh(texturedMeshComponent.mesh, textureComponent.texture);
+            return;
         }
+        if (componentSystem instanceof ColoredMeshComponentSystem<?>) {
+            _coloredSystem = null;
+
+            return;
+        }
+        if (componentSystem instanceof TextureComponentSystem<?>) {
+            _textureSystem = null;
+
+            return;
+        }
+    }
+
+
+    // -+- GETTERS -+- //
+
+    @Override
+    public Collection<Class<? extends ECS_Component>> getRequirements() {
+        return List.of(ColoredMeshComponent.class, TexturedMeshComponent.class); // NOT REALLY.
     }
 
 

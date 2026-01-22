@@ -36,8 +36,6 @@ public abstract class ECS_ComponentSystem<T extends ECS_Component> {
         _eventHandler = eventHandler;
     }
 
-    public abstract Collection<Class<? extends ECS_Component>> getRequirements();
-
 
     // -+- ENTITY MANAGEMENT -+- //
 
@@ -139,11 +137,19 @@ public abstract class ECS_ComponentSystem<T extends ECS_Component> {
     protected abstract boolean _isComponentValid(T component);
 
 
+    // -+- CALLBACKS -+- //
+
+    public abstract void onComponentSystemAdded(ECS_ComponentSystem componentSystem);
+    public abstract void onComponentSystemRemoved(ECS_ComponentSystem componentSystem);
+
+
     // -+- GETTERS -+- //
 
     public T getComponent(int id) {
         return _components.get(id);
     }
+
+    public abstract Collection<Class<? extends ECS_Component>> getRequirements();
 
 
 }
