@@ -1,108 +1,176 @@
 ﻿package internal.entity_component_system.specifics.collision.dependencies.calculator;
 
 
-import internal.ecs.specific.collision.calculator.I_Calculator;
-import internal.ecs.specific.collision.data.data.CollisionData;
-import internal.ecs.specific.collision.data.object.CircleObject;
-import internal.ecs.specific.collision.data.object.RectangleObject;
+import internal.entity_component_system.specifics.collision.data.A_CollisionData;
+import internal.entity_component_system.specifics.collision.data.ObjectData;
+import internal.entity_component_system.specifics.hitbox.A_HitboxComponent;
+import internal.entity_component_system.specifics.hitbox.CircleHitboxComponent;
+import internal.entity_component_system.specifics.hitbox.RectangleHitboxComponent;
 import internal.rendering.container.Container;
 import org.joml.Vector2d;
 
 
-public class AABB_Calculator implements I_Calculator {
+public class AABB_Calculator implements I_CollisionCalculator {
 
 
     // -+- GETTERS -+- //
 
     @Override
-    public CollisionData.COLLISION_AXIS getCollisionAxis(RectangleObject objA, RectangleObject objB) {
+    public A_CollisionData.COLLISION_AXIS getCollisionAxis(ObjectData objA, ObjectData objB) {
+        A_HitboxComponent hitboxA, hitboxB;
+        Vector2d positionA, positionB;
+
+        hitboxA = objA.hitboxComponent;
+        hitboxB = objB.hitboxComponent;
+        positionA = objA.positionComponent.position;
+        positionB = objB.positionComponent.position;
+
+        if (hitboxA instanceof RectangleHitboxComponent && hitboxB instanceof RectangleHitboxComponent) return h_getCollisionAxis((RectangleHitboxComponent) hitboxA, positionA, (RectangleHitboxComponent) hitboxB, positionB);
+        if (hitboxA instanceof RectangleHitboxComponent && hitboxB instanceof CircleHitboxComponent) return h_getCollisionAxis((RectangleHitboxComponent) hitboxA, positionA, (CircleHitboxComponent) hitboxB, positionB);
+        if (hitboxA instanceof CircleHitboxComponent && hitboxB instanceof RectangleHitboxComponent) return h_getCollisionAxis((CircleHitboxComponent) hitboxA, positionA, (RectangleHitboxComponent) hitboxB, positionB);
+        if (hitboxA instanceof CircleHitboxComponent && hitboxB instanceof CircleHitboxComponent) return h_getCollisionAxis((CircleHitboxComponent) hitboxA, positionA, (CircleHitboxComponent) hitboxB, positionB);
+
+        return null;
+    }
+    @Override
+    public A_CollisionData.COLLISION_AXIS getCollisionAxis(ObjectData objA, Container container) {
+        A_HitboxComponent hitboxA;
+
+        hitboxA = objA.hitboxComponent;
+
+        if (hitboxA instanceof RectangleHitboxComponent) return h_getCollisionAxis((RectangleHitboxComponent) hitboxA, objA.positionComponent.position, container);
+        if (hitboxA instanceof CircleHitboxComponent) return h_getCollisionAxis((CircleHitboxComponent) hitboxA, objA.positionComponent.position, container);
+
+        return null;
+    }
+
+    private A_CollisionData.COLLISION_AXIS h_getCollisionAxis(RectangleHitboxComponent objA, Vector2d posA, RectangleHitboxComponent objB, Vector2d posB) {
         double xOverlap, yOverlap;
 
-        xOverlap = Math.min(objA.position.x + objA.width, objB.position.x + objB.width) - Math.max(objA.position.x, objB.position.x);
-        yOverlap = Math.min(objA.position.y + objA.height, objB.position.y + objB.height) - Math.max(objA.position.y, objB.position.y);
+        xOverlap = Math.min(posA.x + objA.width, posB.x + objB.width) - Math.max(posA.x, posB.x);
+        yOverlap = Math.min(posA.y + objA.height, posB.y + objB.height) - Math.max(posA.y, posB.y);
 
         if (xOverlap > yOverlap) {
-            return CollisionData.COLLISION_AXIS.X;
+            return A_CollisionData.COLLISION_AXIS.X;
         }
 
-        return CollisionData.COLLISION_AXIS.Y;
+        return A_CollisionData.COLLISION_AXIS.Y;
     }
-    @Override
-    public CollisionData.COLLISION_AXIS getCollisionAxis(RectangleObject objA, CircleObject objB) {
+    private A_CollisionData.COLLISION_AXIS h_getCollisionAxis(RectangleHitboxComponent objA, Vector2d posA, CircleHitboxComponent objB, Vector2d posB) {
         double xOverlap, yOverlap;
 
-        xOverlap = Math.min(objA.position.x + objA.width, objB.position.x + objB.radius) - Math.max(objA.position.x, objB.position.x - objB.radius);
-        yOverlap = Math.min(objA.position.y + objA.height, objB.position.y + objB.radius) - Math.max(objA.position.y, objB.position.y - objB.radius);
+        xOverlap = Math.min(posA.x + objA.width, posB.x + objB.radius) - Math.max(posA.x, posB.x - objB.radius);
+        yOverlap = Math.min(posA.y + objA.height, posB.y + objB.radius) - Math.max(posA.y, posB.y - objB.radius);
 
         if (xOverlap > yOverlap) {
-            return CollisionData.COLLISION_AXIS.X;
+            return A_CollisionData.COLLISION_AXIS.X;
         }
 
-        return CollisionData.COLLISION_AXIS.Y;
+        return A_CollisionData.COLLISION_AXIS.Y;
     }
-    @Override
-    public CollisionData.COLLISION_AXIS getCollisionAxis(RectangleObject obj, Container container) {
-        if (obj.position.x < container.getPosition().x || obj.position.x + obj.width > container.getPosition().x + container.getWidth()) return CollisionData.COLLISION_AXIS.X;
+    private A_CollisionData.COLLISION_AXIS h_getCollisionAxis(CircleHitboxComponent objA, Vector2d posA, CircleHitboxComponent objB, Vector2d posB) {
+        double xOverlap, yOverlap;
 
-        return CollisionData.COLLISION_AXIS.Y;
+        xOverlap = Math.min(posA.x + objA.radius, posB.x + objB.radius) - Math.max(posA.x - objA.radius, posB.x - objB.radius);
+        yOverlap = Math.min(posA.y + objA.radius, posB.y + objB.radius) - Math.max(posA.y - objB.radius, posB.y - objB.radius);
+
+        if (xOverlap > yOverlap) {
+            return A_CollisionData.COLLISION_AXIS.X;
+        }
+
+        return A_CollisionData.COLLISION_AXIS.Y;
     }
-    @Override
-    public CollisionData.COLLISION_AXIS getCollisionAxis(CircleObject obj, Container container) {
-        if (obj.position.x - obj.radius < container.getPosition().x || obj.position.x + obj.radius > container.getPosition().x + container.getWidth()) return CollisionData.COLLISION_AXIS.X;
+    private A_CollisionData.COLLISION_AXIS h_getCollisionAxis(CircleHitboxComponent objA, Vector2d posA, RectangleHitboxComponent objB, Vector2d posB) {
+        return h_getCollisionAxis(objB, posB, objA, posA);
+    }
+    private A_CollisionData.COLLISION_AXIS h_getCollisionAxis(RectangleHitboxComponent obj, Vector2d pos, Container container) {
+        if (pos.x < container.getPosition().x || pos.x + obj.width > container.getPosition().x + container.getWidth()) return A_CollisionData.COLLISION_AXIS.X;
 
-        return CollisionData.COLLISION_AXIS.Y;
+        return A_CollisionData.COLLISION_AXIS.Y;
+    }
+    private A_CollisionData.COLLISION_AXIS h_getCollisionAxis(CircleHitboxComponent obj, Vector2d pos, Container container) {
+        if (pos.x - obj.radius < container.getPosition().x || pos.x + obj.radius > container.getPosition().x + container.getWidth()) return A_CollisionData.COLLISION_AXIS.X;
+
+        return A_CollisionData.COLLISION_AXIS.Y;
     }
 
 
     // -+- CHECKERS -+- //
 
     @Override
-    public boolean isColliding(RectangleObject objA, RectangleObject objB) {
+    public boolean isCollidingWith(ObjectData objA, ObjectData objB) {
+        A_HitboxComponent hitboxA, hitboxB;
+        Vector2d positionA, positionB;
+
+        hitboxA = objA.hitboxComponent;
+        hitboxB = objB.hitboxComponent;
+        positionA = objA.positionComponent.position;
+        positionB = objB.positionComponent.position;
+
+        if (hitboxA instanceof RectangleHitboxComponent && hitboxB instanceof RectangleHitboxComponent) return h_isColliding((RectangleHitboxComponent) hitboxA, positionA, (RectangleHitboxComponent) hitboxB, positionB);
+        if (hitboxA instanceof RectangleHitboxComponent && hitboxB instanceof CircleHitboxComponent) return h_isColliding((RectangleHitboxComponent) hitboxA, positionA, (CircleHitboxComponent) hitboxB, positionB);
+        if (hitboxA instanceof CircleHitboxComponent && hitboxB instanceof RectangleHitboxComponent) return h_isColliding((CircleHitboxComponent) hitboxA, positionA, (RectangleHitboxComponent) hitboxB, positionB);
+        if (hitboxA instanceof CircleHitboxComponent && hitboxB instanceof CircleHitboxComponent) return h_isColliding((CircleHitboxComponent) hitboxA, positionA, (CircleHitboxComponent) hitboxB, positionB);
+
+        return false;
+    }
+    @Override
+    public boolean isCollidingWith(ObjectData objA, Container container) {
+        A_HitboxComponent hitboxA;
+
+        hitboxA = objA.hitboxComponent;
+
+        if (hitboxA instanceof RectangleHitboxComponent) return h_isColliding((RectangleHitboxComponent) hitboxA, objA.positionComponent.position, container);
+        if (hitboxA instanceof CircleHitboxComponent) return h_isColliding((CircleHitboxComponent) hitboxA, objA.positionComponent.position, container);
+
+        return false;
+    }
+
+    public boolean h_isColliding(RectangleHitboxComponent objA, Vector2d posA, RectangleHitboxComponent objB, Vector2d posB) {
         boolean xOverlap, yOverlap;
 
-        xOverlap = objA.position.x < objB.position.x + objB.width && objA.position.x + objA.width > objB.position.x;
-        yOverlap = objA.position.y < objB.position.y + objB.height && objA.position.y + objA.height > objB.position.y;
+        xOverlap = posA.x < posB.x + objB.width && posA.x + objA.width > posB.x;
+        yOverlap = posA.y < posB.y + objB.height && posA.y + objA.height > posB.y;
 
         return xOverlap && yOverlap;
     }
-    @Override
-    public boolean isColliding(RectangleObject objA, CircleObject objB) {
+    public boolean h_isColliding(RectangleHitboxComponent objA, Vector2d posA, CircleHitboxComponent objB, Vector2d posB) {
         Vector2d closestPoint;
 
-        closestPoint = new Vector2d(objB.position);
+        closestPoint = new Vector2d(posB);
 
-        if (closestPoint.x > objA.position.x + objA.width) closestPoint.x = objA.position.x + objA.width;
-        else if (closestPoint.x < objA.position.x) closestPoint.x = objA.position.x;
-        if (closestPoint.y > objA.position.y + objA.height) closestPoint.y = objA.position.y + objA.height;
-        else if (closestPoint.y < objA.position.y) closestPoint.y = objA.position.y;
+        if (closestPoint.x > posA.x + objA.width) closestPoint.x = posA.x + objA.width;
+        else if (closestPoint.x < posA.x) closestPoint.x = posA.x;
+        if (closestPoint.y > posA.y + objA.height) closestPoint.y = posA.y + objA.height;
+        else if (closestPoint.y < posA.y) closestPoint.y = posA.y;
 
-        return objB.position.distance(closestPoint) <= objB.radius;
+        return posB.distance(closestPoint) <= objB.radius;
     }
-    @Override
-    public boolean isColliding(CircleObject objA, CircleObject objB) {
-        return objA.position.distance(objB.position) < Math.max(objA.radius, objB.radius);
+    public boolean h_isColliding(CircleHitboxComponent objA, Vector2d posA, RectangleHitboxComponent objB, Vector2d posB) {
+        return h_isColliding(objB, posB, objA, posA);
     }
-    @Override
-    public boolean isColliding(RectangleObject obj, Container container) {
+    public boolean h_isColliding(CircleHitboxComponent objA, Vector2d posA, CircleHitboxComponent objB, Vector2d posB) {
+        return posA.distance(posB) < Math.max(objA.radius, objB.radius);
+    }
+    public boolean h_isColliding(RectangleHitboxComponent obj, Vector2d pos, Container container) {
         boolean xOverlap, yOverlap;
 
-        xOverlap = obj.position.x < container.getPosition().x || obj.position.x + obj.width > container.getPosition().x + container.getWidth();
+        xOverlap = pos.x < container.getPosition().x || pos.x + obj.width > container.getPosition().x + container.getWidth();
 
         if (xOverlap) return true;
 
-        yOverlap = obj.position.y < container.getPosition().y || obj.position.y + obj.height > container.getPosition().y + container.getHeight();
+        yOverlap = pos.y < container.getPosition().y || pos.y + obj.height > container.getPosition().y + container.getHeight();
 
         return yOverlap;
     }
-    @Override
-    public boolean isColliding(CircleObject obj, Container container) {
+    public boolean h_isColliding(CircleHitboxComponent obj, Vector2d pos, Container container) {
         boolean xOverlap, yOverlap;
 
-        xOverlap = obj.position.x - obj.radius < container.getPosition().x || obj.position.x + obj.radius > container.getPosition().x + container.getWidth();
+        xOverlap = pos.x - obj.radius < container.getPosition().x || pos.x + obj.radius > container.getPosition().x + container.getWidth();
 
         if (xOverlap) return true;
 
-        yOverlap = obj.position.y - obj.radius < container.getPosition().y || obj.position.y + obj.radius > container.getPosition().y + container.getHeight();
+        yOverlap = pos.y - obj.radius < container.getPosition().y || pos.y + obj.radius > container.getPosition().y + container.getHeight();
 
         return yOverlap;
     }
