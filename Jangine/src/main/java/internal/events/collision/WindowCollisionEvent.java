@@ -1,7 +1,7 @@
 package internal.events.collision;
 
 
-import internal.ecs.specific.collision.data.ContainerCollisionData;
+import internal.ecs.specific.collision.data.data.ContainerCollisionData;
 
 
 public class WindowCollisionEvent extends CollisionEvent {

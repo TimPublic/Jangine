@@ -19,7 +19,7 @@ import internal.events.Event;
 import internal.events.EventHandler;
 import internal.main.Engine;
 import internal.rendering.camera.Camera2D;
-import internal.rendering.mesh.TexturedMesh;
+import internal.rendering.mesh.TexturedAMesh;
 import internal.rendering.shader.ShaderTest;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ import java.util.List;
  * @author Tim Klöpper
  * @version 1.0
  */
-public class Scene {
+public class Scene extends Container {
 
 
     private EventHandler _windowEventHandler;
@@ -96,7 +96,7 @@ public class Scene {
         entityID = EntityBuilder.start(ecs)
                 .add(new RenderComponent(RenderComponent.RENDER_TYPE.TEXTURE))
                 .add(new TextureComponent("assets/test_image.png"))
-                .add(new TexturedMeshComponent(new TexturedMesh(vertices, indices)))
+                .add(new TexturedMeshComponent(new TexturedAMesh(vertices, indices)))
                 .add(new PositionComponent(0, 0))
                 .add(new SizeComponent(100, 100))
                 .finish();

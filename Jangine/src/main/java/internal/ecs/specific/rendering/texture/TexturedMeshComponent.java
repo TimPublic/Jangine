@@ -2,18 +2,18 @@ package internal.ecs.specific.rendering.texture;
 
 
 import internal.ecs.ECS_Component;
-import internal.rendering.mesh.TexturedMesh;
+import internal.rendering.mesh.TexturedAMesh;
 
 
 public class TexturedMeshComponent extends ECS_Component {
 
 
-    public TexturedMeshComponent(TexturedMesh mesh) {
+    public TexturedMeshComponent(TexturedAMesh mesh) {
         this.mesh = mesh;
     }
 
 
-    public TexturedMesh mesh;
+    public TexturedAMesh mesh;
 
 
 }

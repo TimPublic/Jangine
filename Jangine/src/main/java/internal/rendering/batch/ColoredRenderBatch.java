@@ -2,8 +2,8 @@ package internal.rendering.batch;
 
 
 import internal.rendering.camera.Camera2D;
+import internal.rendering.mesh.ColoredAMesh;
 import internal.rendering.shader.ShaderProgram;
-import internal.rendering.mesh.ColoredMesh;
 import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
@@ -28,7 +28,7 @@ public class ColoredRenderBatch extends RenderBatch {
     public static final int VERTEX_SIZE = 6;
 
 
-    private final HashSet<ColoredMesh> _activeMeshes;
+    private final HashSet<ColoredAMesh> _activeMeshes;
 
 
     // -+- CREATION -+- //
@@ -72,16 +72,16 @@ public class ColoredRenderBatch extends RenderBatch {
     // -+- MESHES -+- //
 
     /**
-     * Adds a mesh to the batch.
-     * If the mesh is already in the batch,
-     * {@link ColoredRenderBatch#updateMesh(ColoredMesh)} is called.
+     * Adds a AMesh to the batch.
+     * If the AMesh is already in the batch,
+     * {@link ColoredRenderBatch#updateMesh(ColoredAMesh)} is called.
      *
-     * @param mesh mesh to be added
+     * @param mesh AMesh to be added
      * @return success
      *
      * @author Tim Kloepper
      */
-    public boolean addMesh(ColoredMesh mesh) {
+    public boolean addMesh(ColoredAMesh mesh) {
         FloatBuffer subVertexBuffer;
         IntBuffer subIndexBuffer;
 
@@ -113,26 +113,26 @@ public class ColoredRenderBatch extends RenderBatch {
 
         return true;
     }
-    public void updateMesh(ColoredMesh mesh) {
+    public void updateMesh(ColoredAMesh mesh) {
         if (!_activeMeshes.contains(mesh)) {return;}
 
         _rebuiltRequired = true;
 
-        // This is maybe not necessary, as it gets rebuilt and all changes on the mesh
+        // This is maybe not necessary, as it gets rebuilt and all changes on the AMesh
         // are also applied to this reference.
         _activeMeshes.remove(mesh);
         _activeMeshes.add(mesh);
     }
     /**
-     * Removes a mesh from the batch.
+     * Removes a AMesh from the batch.
      * This action will result in a rebuilt on the next {@link ColoredRenderBatch#update()} call,
      * which can be expensive if many meshes are inside this batch.
      *
-     * @param mesh mesh to be removed
+     * @param mesh AMesh to be removed
      *
      * @author Tim Kloepper
      */
-    public void rmvMesh(ColoredMesh mesh) {
+    public void rmvMesh(ColoredAMesh mesh) {
         if (!_activeMeshes.remove(mesh)) {return;}
 
         _rebuiltRequired = true;
@@ -144,13 +144,13 @@ public class ColoredRenderBatch extends RenderBatch {
 
     @Override
     protected void _rebuild() {
-        HashSet<ColoredMesh> meshes;
+        HashSet<ColoredAMesh> meshes;
 
         meshes = new HashSet<>(_activeMeshes);
 
         flush();
 
-        for (ColoredMesh mesh : meshes) {
+        for (ColoredAMesh mesh : meshes) {
             addMesh(mesh);
         }
 

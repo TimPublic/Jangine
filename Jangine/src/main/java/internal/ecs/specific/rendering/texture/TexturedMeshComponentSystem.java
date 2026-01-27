@@ -3,24 +3,23 @@ package internal.ecs.specific.rendering.texture;
 
 import internal.ecs.ECS;
 import internal.ecs.ECS_Component;
-import internal.ecs.ECS_ComponentSystem;
-import internal.ecs.specific.position.PositionComponent;
+import internal.ecs.A_ComponentSystem;
 
 import java.util.Collection;
 import java.util.List;
 
 
-public class TexturedMeshComponentSystem<T extends TexturedMeshComponent> extends ECS_ComponentSystem<TexturedMeshComponent> {
+public class TexturedMeshComponentSystem<T extends TexturedMeshComponent> extends A_ComponentSystem<TexturedMeshComponent> {
 
 
     @Override
-    protected void _internalUpdate(ECS system) {
+    protected void p_internalUpdate(ECS system) {
 
     }
 
 
     @Override
-    protected boolean _isComponentValid(TexturedMeshComponent component) {
+    protected boolean p_isComponentValid(TexturedMeshComponent component) {
         return true;
     }
 
@@ -29,11 +28,11 @@ public class TexturedMeshComponentSystem<T extends TexturedMeshComponent> extend
 
 
     @Override
-    public void onComponentSystemAdded(ECS_ComponentSystem componentSystem) {
+    public void onComponentSystemAdded(A_ComponentSystem componentSystem) {
 
     }
     @Override
-    public void onComponentSystemRemoved(ECS_ComponentSystem componentSystem) {
+    public void onComponentSystemRemoved(A_ComponentSystem componentSystem) {
 
     }
 

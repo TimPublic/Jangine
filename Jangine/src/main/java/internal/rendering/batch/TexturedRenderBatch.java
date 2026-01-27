@@ -2,8 +2,8 @@ package internal.rendering.batch;
 
 
 import internal.rendering.camera.Camera2D;
+import internal.rendering.mesh.TexturedAMesh;
 import internal.rendering.shader.ShaderProgram;
-import internal.rendering.mesh.TexturedMesh;
 import internal.rendering.texture.Texture;
 import internal.rendering.texture.dependencies.implementations.STBI_TextureLoader;
 import org.lwjgl.BufferUtils;
@@ -21,9 +21,9 @@ import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 /**
  * This class is a way to pack together meshes to be rendered with a {@link Texture}, using the same {@link ShaderProgram}.
  * This batch can work with up to eight different textures.
- * You have to provide the texture you want to use when providing the {@link TexturedMesh}, where this batch will then
- * automatically set the correct texture index in the mesh directly, meaning, you should not provide two batches
- * with the same mesh.
+ * You have to provide the texture you want to use when providing the {@link TexturedAMesh}, where this batch will then
+ * automatically set the correct texture index in the AMesh directly, meaning, you should not provide two batches
+ * with the same AMesh.
  *
  * @author Tim Kloepper
  * @version 1.0
@@ -41,7 +41,7 @@ public class TexturedRenderBatch extends RenderBatch {
     private final Texture[] _textures;
     private final Texture _placeHolderTexture;
 
-    private final HashMap<TexturedMesh, Texture> _activeMeshesAndTextures;
+    private final HashMap<TexturedAMesh, Texture> _activeMeshesAndTextures;
 
 
     // -+- CREATION -+- //
@@ -163,22 +163,22 @@ public class TexturedRenderBatch extends RenderBatch {
     // -+- MESHES -+- //
 
     /**
-     * Adds a mesh to the batch.
-     * You also need to provide a {@link Texture} that this mesh
+     * Adds a AMesh to the batch.
+     * You also need to provide a {@link Texture} that this AMesh
      * should be rendered with.
      * If the texture is not already in the batch, the batch tries to add it,
      * if this fails, false is returned.
-     * If the mesh is already in the batch, the mesh will be updated by
-     * calling {@link TexturedRenderBatch#updateMesh(TexturedMesh, Texture)},
+     * If the AMesh is already in the batch, the AMesh will be updated by
+     * calling {@link TexturedRenderBatch#updateMesh(TexturedAMesh, Texture)},
      * which will cause a {@link TexturedRenderBatch#_rebuild()} call.
      *
-     * @param mesh mesh to be added
-     * @param texture texture the mesh is to be rendered with
+     * @param mesh AMesh to be added
+     * @param texture texture the AMesh is to be rendered with
      * @return success
      *
      * @author Tim Kloepper
      */
-    public boolean addMesh(TexturedMesh mesh, Texture texture) {
+    public boolean addMesh(TexturedAMesh mesh, Texture texture) {
         FloatBuffer subVertexBuffer;
         IntBuffer subIndexBuffer;
 
@@ -221,7 +221,7 @@ public class TexturedRenderBatch extends RenderBatch {
 
         return true;
     }
-    public void updateMesh(TexturedMesh mesh, Texture texture) {
+    public void updateMesh(TexturedAMesh mesh, Texture texture) {
         if (!_activeMeshesAndTextures.containsKey(mesh)) {return;}
 
         _rebuiltRequired = true;
@@ -229,15 +229,15 @@ public class TexturedRenderBatch extends RenderBatch {
         _activeMeshesAndTextures.put(mesh, texture);
     }
     /**
-     * Removes a mesh from the batch.
+     * Removes a AMesh from the batch.
      * This action will result in a rebuilt on the next {@link TexturedRenderBatch#update()} call,
      * which can be expensive if many meshes are inside this batch.
      *
-     * @param mesh mesh to be removed
+     * @param mesh AMesh to be removed
      *
      * @author Tim Kloepper
      */
-    public void rmvMesh(TexturedMesh mesh) {
+    public void rmvMesh(TexturedAMesh mesh) {
         if (!_activeMeshesAndTextures.containsKey(mesh)) {return;}
 
         _activeMeshesAndTextures.remove(mesh);
@@ -256,13 +256,13 @@ public class TexturedRenderBatch extends RenderBatch {
      */
     @Override
     protected void _rebuild() {
-        HashMap<TexturedMesh, Texture> meshes;
+        HashMap<TexturedAMesh, Texture> meshes;
 
         meshes = new HashMap<>(_activeMeshesAndTextures);
 
         flush();
 
-        for (TexturedMesh mesh : meshes.keySet()) {
+        for (TexturedAMesh mesh : meshes.keySet()) {
             addMesh(mesh, meshes.get(mesh));
         }
 

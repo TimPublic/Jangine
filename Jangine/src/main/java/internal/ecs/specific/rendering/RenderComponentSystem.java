@@ -3,7 +3,7 @@ package internal.ecs.specific.rendering;
 
 import internal.ecs.ECS;
 import internal.ecs.ECS_Component;
-import internal.ecs.ECS_ComponentSystem;
+import internal.ecs.A_ComponentSystem;
 import internal.ecs.specific.rendering.color.ColoredMeshComponent;
 import internal.ecs.specific.rendering.color.ColoredMeshComponentSystem;
 import internal.ecs.specific.rendering.texture.TexturedMeshComponent;
@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.List;
 
 
-public class RenderComponentSystem<T extends RenderComponent> extends ECS_ComponentSystem<RenderComponent> {
+public class RenderComponentSystem<T extends RenderComponent> extends A_ComponentSystem<RenderComponent> {
 
 
     private final ColoredRenderBatch _coloredRenderBatch;
@@ -36,8 +36,8 @@ public class RenderComponentSystem<T extends RenderComponent> extends ECS_Compon
 
 
     @Override
-    protected void _internalUpdate(ECS system) {
-        for (RenderComponent component : _components.values()) {
+    protected void p_internalUpdate(ECS system) {
+        for (RenderComponent component : p_components.values()) {
             switch (component.renderType) {
                 case TEXTURE:
                     if (_texturedMeshSystem == null) {continue;}
@@ -73,7 +73,7 @@ public class RenderComponentSystem<T extends RenderComponent> extends ECS_Compon
 
 
     @Override
-    protected boolean _isComponentValid(RenderComponent component) {
+    protected boolean p_isComponentValid(RenderComponent component) {
         return true;
     }
 
@@ -81,7 +81,7 @@ public class RenderComponentSystem<T extends RenderComponent> extends ECS_Compon
     // -+- CALLBACKS -+- //
 
     @Override
-    public void onComponentSystemAdded(ECS_ComponentSystem componentSystem) {
+    public void onComponentSystemAdded(A_ComponentSystem componentSystem) {
         if (componentSystem == null) {return;}
 
         if (componentSystem instanceof TexturedMeshComponentSystem<?>) {
@@ -101,7 +101,7 @@ public class RenderComponentSystem<T extends RenderComponent> extends ECS_Compon
         }
     }
     @Override
-    public void onComponentSystemRemoved(ECS_ComponentSystem componentSystem) {
+    public void onComponentSystemRemoved(A_ComponentSystem componentSystem) {
         if (componentSystem == null) {return;}
 
         if (componentSystem instanceof TexturedMeshComponentSystem<?>) {

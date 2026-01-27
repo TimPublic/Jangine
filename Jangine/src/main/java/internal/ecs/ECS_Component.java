@@ -2,7 +2,7 @@ package internal.ecs;
 
 
 /**
- * Is a data container managed by an {@link ECS_ComponentSystem}.
+ * Is a data container managed by an {@link A_ComponentSystem}.
  *
  * @author Tim Kloepper
  * @version 1.0

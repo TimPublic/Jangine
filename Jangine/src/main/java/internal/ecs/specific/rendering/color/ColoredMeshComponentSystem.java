@@ -3,23 +3,23 @@ package internal.ecs.specific.rendering.color;
 
 import internal.ecs.ECS;
 import internal.ecs.ECS_Component;
-import internal.ecs.ECS_ComponentSystem;
+import internal.ecs.A_ComponentSystem;
 
 import java.util.Collection;
 import java.util.List;
 
 
-public class ColoredMeshComponentSystem<T extends ColoredMeshComponent> extends ECS_ComponentSystem<ColoredMeshComponent> {
+public class ColoredMeshComponentSystem<T extends ColoredMeshComponent> extends A_ComponentSystem<ColoredMeshComponent> {
 
 
     @Override
-    protected void _internalUpdate(ECS system) {
+    protected void p_internalUpdate(ECS system) {
 
     }
 
 
     @Override
-    protected boolean _isComponentValid(ColoredMeshComponent component) {
+    protected boolean p_isComponentValid(ColoredMeshComponent component) {
         return true;
     }
 
@@ -27,11 +27,11 @@ public class ColoredMeshComponentSystem<T extends ColoredMeshComponent> extends 
     // -+- CALLBACKS -+- //
 
     @Override
-    public void onComponentSystemAdded(ECS_ComponentSystem componentSystem) {
+    public void onComponentSystemAdded(A_ComponentSystem componentSystem) {
 
     }
     @Override
-    public void onComponentSystemRemoved(ECS_ComponentSystem componentSystem) {
+    public void onComponentSystemRemoved(A_ComponentSystem componentSystem) {
 
     }
 

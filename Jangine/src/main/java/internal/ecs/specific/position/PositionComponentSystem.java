@@ -7,17 +7,17 @@ import java.util.Collection;
 import java.util.List;
 
 
-public class PositionComponentSystem<T extends ECS_Component> extends ECS_ComponentSystem<PositionComponent> {
+public class PositionComponentSystem<T extends ECS_Component> extends A_ComponentSystem<PositionComponent> {
 
 
     @Override
-    protected void _internalUpdate(ECS system) {
+    protected void p_internalUpdate(ECS system) {
 
     }
 
 
     @Override
-    protected boolean _isComponentValid(PositionComponent component) {
+    protected boolean p_isComponentValid(PositionComponent component) {
         return true;
     }
 
@@ -26,11 +26,11 @@ public class PositionComponentSystem<T extends ECS_Component> extends ECS_Compon
 
 
     @Override
-    public void onComponentSystemAdded(ECS_ComponentSystem componentSystem) {
+    public void onComponentSystemAdded(A_ComponentSystem componentSystem) {
 
     }
     @Override
-    public void onComponentSystemRemoved(ECS_ComponentSystem componentSystem) {
+    public void onComponentSystemRemoved(A_ComponentSystem componentSystem) {
 
     }
 

@@ -2,18 +2,18 @@ package internal.ecs.specific.rendering.color;
 
 
 import internal.ecs.ECS_Component;
-import internal.rendering.mesh.ColoredMesh;
+import internal.rendering.mesh.ColoredAMesh;
 
 
 public class ColoredMeshComponent extends ECS_Component {
 
 
-    public ColoredMeshComponent(ColoredMesh mesh) {
+    public ColoredMeshComponent(ColoredAMesh mesh) {
         this.mesh = mesh;
     }
 
 
-    public ColoredMesh mesh;
+    public ColoredAMesh mesh;
 
 
 }

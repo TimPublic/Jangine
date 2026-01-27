@@ -16,24 +16,24 @@ import java.util.HashSet;
  * @author Tim Kloepper
  * @version 1.0
  */
-public abstract class ECS_ComponentSystem<T extends ECS_Component> {
+public abstract class A_ComponentSystem<T extends ECS_Component> {
 
 
-    protected HashMap<Integer, T> _components;
-    protected HashSet<T> _validComponents;
+    protected HashMap<Integer, T> p_components;
+    protected HashSet<T> p_validComponents;
 
-    protected EventHandler _eventHandler;
+    protected EventHandler p_eventHandler;
 
 
     // -+- CREATION -+- //
 
-    public ECS_ComponentSystem() {
-        _components = new HashMap<>();
-        _validComponents = new HashSet<>();
+    public A_ComponentSystem() {
+        p_components = new HashMap<>();
+        p_validComponents = new HashSet<>();
     }
 
     public void init(EventHandler eventHandler) {
-        _eventHandler = eventHandler;
+        p_eventHandler = eventHandler;
     }
 
 
@@ -48,13 +48,13 @@ public abstract class ECS_ComponentSystem<T extends ECS_Component> {
      * @author Tim Kloepper
      */
     public void addEntity(int id, T component) {
-        if (_components.containsKey(id)) {return;}
+        if (p_components.containsKey(id)) {return;}
 
         component.init(id);
 
-        _components.put(id, component);
+        p_components.put(id, component);
 
-        _onComponentAdded(component);
+        p_onComponentAdded(component);
     }
     /**
      * Removes an entity and therefore the assigned
@@ -67,15 +67,15 @@ public abstract class ECS_ComponentSystem<T extends ECS_Component> {
     public void rmvEntity(int id) {
         ECS_Component component;
 
-        component = _components.get(id);
+        component = p_components.get(id);
 
         if (component == null) {return;}
 
         component.kill(id);
 
-        _components.remove(id);
+        p_components.remove(id);
 
-        _onComponentRemoved((T) component);
+        p_onComponentRemoved((T) component);
     }
 
 
@@ -83,19 +83,19 @@ public abstract class ECS_ComponentSystem<T extends ECS_Component> {
 
 
     public void update(ECS system) {
-        for (T component : _components.values()) {
-            if (!component.isActive || !_isComponentValid(component)) {
-                if (_validComponents.remove(component)) {
-                    _onComponentInvalidated(component);
+        for (T component : p_components.values()) {
+            if (!component.isActive || !p_isComponentValid(component)) {
+                if (p_validComponents.remove(component)) {
+                    p_onComponentInvalidated(component);
                 }
             }
 
-            if (_validComponents.add(component)) {
-                _onComponentValidated(component);
+            if (p_validComponents.add(component)) {
+                p_onComponentValidated(component);
             }
         }
 
-        _internalUpdate(system);
+        p_internalUpdate(system);
     }
     /**
      * Is called every frame,
@@ -105,7 +105,7 @@ public abstract class ECS_ComponentSystem<T extends ECS_Component> {
      *
      * @author Tim Kloepper
      */
-    protected abstract void _internalUpdate(ECS system);
+    protected abstract void p_internalUpdate(ECS system);
 
 
     // -+- COMPONENT MANAGEMENT -+- //
@@ -117,7 +117,7 @@ public abstract class ECS_ComponentSystem<T extends ECS_Component> {
      *
      * @author Tim Kloepper
      */
-    protected void _onComponentAdded(T component) {
+    protected void p_onComponentAdded(T component) {
 
     }
     /**
@@ -127,26 +127,26 @@ public abstract class ECS_ComponentSystem<T extends ECS_Component> {
      *
      * @author Tim Kloepper
      */
-    protected void _onComponentRemoved(T component) {
+    protected void p_onComponentRemoved(T component) {
 
     }
 
-    protected void _onComponentValidated(T component) {}
-    protected void _onComponentInvalidated(T component) {}
+    protected void p_onComponentValidated(T component) {}
+    protected void p_onComponentInvalidated(T component) {}
 
-    protected abstract boolean _isComponentValid(T component);
+    protected abstract boolean p_isComponentValid(T component);
 
 
     // -+- CALLBACKS -+- //
 
-    public abstract void onComponentSystemAdded(ECS_ComponentSystem componentSystem);
-    public abstract void onComponentSystemRemoved(ECS_ComponentSystem componentSystem);
+    protected abstract void onComponentSystemAdded(A_ComponentSystem componentSystem);
+    protected abstract void onComponentSystemRemoved(A_ComponentSystem componentSystem);
 
 
     // -+- GETTERS -+- //
 
     public T getComponent(int id) {
-        return _components.get(id);
+        return p_components.get(id);
     }
 
     public abstract Collection<Class<? extends ECS_Component>> getRequirements();

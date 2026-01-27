@@ -1,7 +1,7 @@
 package internal.rendering.mesh;
 
 
-public class ColoredMesh extends Mesh {
+public class ColoredAMesh extends A_Mesh {
 
 
     /*
@@ -10,13 +10,13 @@ public class ColoredMesh extends Mesh {
      */
 
 
-    public ColoredMesh(float[] vertices, int[] indices) {
+    public ColoredAMesh(float[] vertices, int[] indices) {
         super(vertices, indices);
     }
 
 
     @Override
-    protected boolean _areValidVertices(float[] vertices) {
+    protected boolean p_areValidVertices(float[] vertices) {
         return (vertices.length % 6 == 0);
     }
 

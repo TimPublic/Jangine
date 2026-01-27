@@ -46,7 +46,7 @@ public class SystemBuilder {
         return system;
     }
 
-    public SystemBuilder add(ECS_ComponentSystem<? extends ECS_Component> componentSystem, Class<? extends ECS_Component> componentClass, boolean overwrite) {
+    public SystemBuilder add(A_ComponentSystem<? extends ECS_Component> componentSystem, Class<? extends ECS_Component> componentClass, boolean overwrite) {
         if (componentSystem == null) {return null;}
 
         _ecs.addComponentSystem(componentSystem, componentClass, overwrite);

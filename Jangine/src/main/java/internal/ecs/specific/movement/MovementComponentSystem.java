@@ -3,7 +3,7 @@ package internal.ecs.specific.movement;
 
 import internal.ecs.ECS;
 import internal.ecs.ECS_Component;
-import internal.ecs.ECS_ComponentSystem;
+import internal.ecs.A_ComponentSystem;
 import internal.ecs.specific.position.PositionComponent;
 import internal.ecs.specific.position.PositionComponentSystem;
 
@@ -11,17 +11,17 @@ import java.util.Collection;
 import java.util.List;
 
 
-public class MovementComponentSystem<T extends ECS_Component> extends ECS_ComponentSystem<MovementComponent> {
+public class MovementComponentSystem<T extends ECS_Component> extends A_ComponentSystem<MovementComponent> {
 
 
     private PositionComponentSystem<?> _positionSystem;
 
 
     @Override
-    protected void _internalUpdate(ECS system) {
+    protected void p_internalUpdate(ECS system) {
         if (_positionSystem == null) {return;}
 
-        for (MovementComponent component : _components.values()) {
+        for (MovementComponent component : p_components.values()) {
             PositionComponent positionComponent;
 
             positionComponent = _positionSystem.getComponent(component.owningEntity);
@@ -33,7 +33,7 @@ public class MovementComponentSystem<T extends ECS_Component> extends ECS_Compon
 
 
     @Override
-    protected boolean _isComponentValid(MovementComponent component) {
+    protected boolean p_isComponentValid(MovementComponent component) {
         return true;
     }
 
@@ -42,7 +42,7 @@ public class MovementComponentSystem<T extends ECS_Component> extends ECS_Compon
 
 
     @Override
-    public void onComponentSystemAdded(ECS_ComponentSystem componentSystem) {
+    public void onComponentSystemAdded(A_ComponentSystem componentSystem) {
         if (componentSystem == null) {return;}
 
         if (componentSystem instanceof PositionComponentSystem<?>) {
@@ -50,7 +50,7 @@ public class MovementComponentSystem<T extends ECS_Component> extends ECS_Compon
         }
     }
     @Override
-    public void onComponentSystemRemoved(ECS_ComponentSystem componentSystem) {
+    public void onComponentSystemRemoved(A_ComponentSystem componentSystem) {
         if (componentSystem == null) {return;}
 
         if (componentSystem instanceof PositionComponentSystem<?>) {

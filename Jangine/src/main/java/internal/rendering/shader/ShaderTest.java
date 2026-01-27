@@ -3,7 +3,7 @@ package internal.rendering.shader;
 
 import internal.rendering.camera.Camera2D;
 import internal.rendering.batch.TexturedRenderBatch;
-import internal.rendering.mesh.TexturedMesh;
+import internal.rendering.mesh.TexturedAMesh;
 import internal.rendering.texture.Texture;
 import internal.rendering.texture.dependencies.implementations.STBI_TextureLoader;
 
@@ -16,8 +16,8 @@ public class ShaderTest {
 
     TexturedRenderBatch batch;
 
-    TexturedMesh firstMesh;
-    TexturedMesh secondMesh;
+    TexturedAMesh firstMesh;
+    TexturedAMesh secondMesh;
 
     Texture firstTexture;
     Texture secondTexture;
@@ -54,8 +54,8 @@ public class ShaderTest {
                 100.0f, 200.0f,   0.0f, 1.0f,          0.0f,
         };
 
-        firstMesh = new TexturedMesh(vertices, indices);
-        secondMesh = new TexturedMesh(secondVertices, indices);
+        firstMesh = new TexturedAMesh(vertices, indices);
+        secondMesh = new TexturedAMesh(secondVertices, indices);
 
         batch.addMesh(firstMesh, firstTexture);
         batch.addMesh(secondMesh, secondTexture);
