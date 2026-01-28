@@ -17,8 +17,8 @@ public abstract class A_Processor<T extends A_Component> {
         _components = new HashMap<>();
     }
 
-    protected abstract void p_init(A_System system, Scene scene);
-    protected abstract void p_kill(A_System system, Scene scene);
+    protected abstract void p_init(System system, Scene scene);
+    protected abstract void p_kill(System system, Scene scene);
 
     protected abstract void p_receiveRequiredProcessors(HashMap<Class<? extends T>, A_Processor<?>> requiredProcessors);
 
@@ -43,7 +43,7 @@ public abstract class A_Processor<T extends A_Component> {
      *
      * @author Tim Kloepper
      */
-    protected final void p_update(A_System system, Scene scene) {
+    protected final void p_update(System system, Scene scene) {
         HashSet<T> validComponents;
 
         validComponents = new HashSet<>();
@@ -57,7 +57,7 @@ public abstract class A_Processor<T extends A_Component> {
 
         p_internalUpdate(validComponents, system, scene);
     }
-    protected abstract void p_internalUpdate(Collection<T> validComponents, A_System system, Scene scene);
+    protected abstract void p_internalUpdate(Collection<T> validComponents, System system, Scene scene);
 
 
     // -+- COMPONENT MANAGEMENT -+- //

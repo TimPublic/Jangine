@@ -1,4 +1,4 @@
-﻿package internal.entity_component_system.specifics.collision.dependencies.spatial_partitioner;
+package internal.entity_component_system.specifics.collision.dependencies.spatial_partitioner;
 
 
 import internal.entity_component_system.specifics.collision.data.ObjectData;

@@ -1,4 +1,4 @@
-﻿package internal.entity_component_system.specifics.hitbox;
+package internal.entity_component_system.specifics.hitbox;
 
 
 public class CircleHitboxComponent extends A_HitboxComponent {

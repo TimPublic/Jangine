@@ -1,9 +1,9 @@
-﻿package internal.entity_component_system.specifics.collision;
+package internal.entity_component_system.specifics.collision;
 
 
 import internal.entity_component_system.A_Component;
 import internal.entity_component_system.A_Processor;
-import internal.entity_component_system.A_System;
+import internal.entity_component_system.System;
 import internal.entity_component_system.events.ProcessorAddedEvent;
 import internal.entity_component_system.events.ProcessorRemovedEvent;
 import internal.entity_component_system.specifics.collision.data.A_CollisionData;
@@ -39,13 +39,13 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
     }
 
     @Override
-    protected void p_init(A_System system, Scene scene) {
+    protected void p_init(System system, Scene scene) {
         _port = scene.getEventHandler().register();
         _port.registerFunction(this::onProcessorAdded, List.of(ProcessorAddedEvent.class));
         _port.registerFunction(this::onProcessorRemoved, List.of(ProcessorRemovedEvent.class));
     }
     @Override
-    protected void p_kill(A_System system, Scene scene) {
+    protected void p_kill(System system, Scene scene) {
 
     }
 
@@ -73,7 +73,7 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
     // -+- UPDATE LOOP -+- //
 
     @Override
-    protected void p_internalUpdate(Collection<CollisionComponent> validComponents, A_System system, Scene scene) {
+    protected void p_internalUpdate(Collection<CollisionComponent> validComponents, System system, Scene scene) {
         if (_positionProcessor == null || _hitboxProcessor == null) return;
 
         HashMap<ObjectData, HashSet<ObjectData>> pairs;

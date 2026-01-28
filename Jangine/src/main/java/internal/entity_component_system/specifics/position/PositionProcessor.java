@@ -1,9 +1,9 @@
-﻿package internal.entity_component_system.specifics.position;
+package internal.entity_component_system.specifics.position;
 
 
 import internal.entity_component_system.A_Component;
 import internal.entity_component_system.A_Processor;
-import internal.entity_component_system.A_System;
+import internal.entity_component_system.System;
 import internal.rendering.container.Scene;
 
 import java.util.Collection;
@@ -17,11 +17,11 @@ public class PositionProcessor extends A_Processor<PositionComponent> {
     // -+- CREATION -+- //
 
     @Override
-    protected void p_init(A_System system, Scene scene) {
+    protected void p_init(System system, Scene scene) {
 
     }
     @Override
-    protected void p_kill(A_System system, Scene scene) {
+    protected void p_kill(System system, Scene scene) {
 
     }
 
@@ -33,7 +33,7 @@ public class PositionProcessor extends A_Processor<PositionComponent> {
     // -+- UPDATE LOOP -+- //
 
     @Override
-    protected void p_internalUpdate(Collection<PositionComponent> validComponents, A_System system, Scene scene) {
+    protected void p_internalUpdate(Collection<PositionComponent> validComponents, System system, Scene scene) {
 
     }
 

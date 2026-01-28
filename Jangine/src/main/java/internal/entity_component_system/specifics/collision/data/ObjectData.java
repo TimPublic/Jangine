@@ -1,4 +1,4 @@
-﻿package internal.entity_component_system.specifics.collision.data;
+package internal.entity_component_system.specifics.collision.data;
 
 
 import internal.entity_component_system.specifics.hitbox.A_HitboxComponent;

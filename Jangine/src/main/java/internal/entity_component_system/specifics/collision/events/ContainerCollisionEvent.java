@@ -1,4 +1,4 @@
-﻿package internal.entity_component_system.specifics.collision.events;
+package internal.entity_component_system.specifics.collision.events;
 
 
 import internal.entity_component_system.specifics.collision.data.A_CollisionData;

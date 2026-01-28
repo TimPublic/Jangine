@@ -1,25 +1,12 @@
 package internal.rendering.container;
 
 
-import internal.ecs.ECS;
-import internal.ecs.EntityBuilder;
-import internal.ecs.SystemBuilder;
-import internal.ecs.specific.position.PositionComponent;
-import internal.ecs.specific.position.PositionComponentSystem;
-import internal.ecs.specific.rendering.RenderComponent;
-import internal.ecs.specific.rendering.RenderComponentSystem;
-import internal.ecs.specific.rendering.texture.TexturedMeshComponent;
-import internal.ecs.specific.rendering.texture.TexturedMeshComponentSystem;
-import internal.ecs.specific.size.SizeComponent;
-import internal.ecs.specific.size.SizeComponentSystem;
-import internal.ecs.specific.texture.TextureComponent;
-import internal.ecs.specific.texture.TextureComponentSystem;
+import internal.entity_component_system.System;
 import internal.events.EventListeningPort;
 import internal.events.Event;
 import internal.events.EventHandler;
 import internal.main.Engine;
 import internal.rendering.camera.Camera2D;
-import internal.rendering.mesh.TexturedAMesh;
 import internal.rendering.shader.ShaderTest;
 
 import java.util.ArrayList;
@@ -40,8 +27,10 @@ public class Scene extends Container {
 
     private EventHandler _windowEventHandler;
 
-    private final EventHandler _ownEventHandler;
-    private final EventListeningPort _ownEventHandlerListeningPort;
+    private final EventHandler _OWN_EVENT_HANDLER;
+    private final EventListeningPort _OWN_EVENT_HANDLER_LISTENING_PORT;
+
+    private final System _ECS;
 
     private ArrayList<EventListeningPort> _windowListeningPorts;
     private ArrayList<EventListeningPort> _engineListeningPorts;
@@ -51,7 +40,6 @@ public class Scene extends Container {
 
 
     ShaderTest test;
-    ECS ecs;
     int entityID;
 
 
@@ -61,10 +49,12 @@ public class Scene extends Container {
     public Scene(final EventHandler windowEventHandler, int width, int height, boolean active) {
         _windowEventHandler = windowEventHandler;
 
-        _ownEventHandler = new EventHandler();
-        _ownEventHandlerListeningPort = _windowEventHandler.register();
-        _ownEventHandlerListeningPort.registerFunction(_ownEventHandler::pushEvent, List.of(Event.class));
-        _ownEventHandlerListeningPort.setActive(active);
+        _OWN_EVENT_HANDLER = new EventHandler();
+        _OWN_EVENT_HANDLER_LISTENING_PORT = _windowEventHandler.register();
+        _OWN_EVENT_HANDLER_LISTENING_PORT.registerFunction(_OWN_EVENT_HANDLER::pushEvent, List.of(Event.class));
+        _OWN_EVENT_HANDLER_LISTENING_PORT.setActive(active);
+
+        _ECS = new System(this);
 
         _windowListeningPorts = new ArrayList<>();
         _engineListeningPorts = new ArrayList<>();
@@ -85,22 +75,6 @@ public class Scene extends Container {
                 2, 3, 0,
         };
 
-        ecs = SystemBuilder.start(this)
-                .add(new RenderComponentSystem<>(), RenderComponent.class, false)
-                .add(new TextureComponentSystem<>(), TextureComponent.class, false)
-                .add(new TexturedMeshComponentSystem<>(), TexturedMeshComponent.class, false)
-                .add(new PositionComponentSystem<>(), PositionComponent.class, false)
-                .add(new SizeComponentSystem<>(), SizeComponent.class, false)
-                .finish();
-
-        entityID = EntityBuilder.start(ecs)
-                .add(new RenderComponent(RenderComponent.RENDER_TYPE.TEXTURE))
-                .add(new TextureComponent("assets/test_image.png"))
-                .add(new TexturedMeshComponent(new TexturedAMesh(vertices, indices)))
-                .add(new PositionComponent(0, 0))
-                .add(new SizeComponent(100, 100))
-                .finish();
-
         _onCreation();
     }
 
@@ -114,7 +88,7 @@ public class Scene extends Container {
      * @author Tim Kloepper
      */
     public final void activate() {
-        _ownEventHandlerListeningPort.setActive(true);
+        _OWN_EVENT_HANDLER_LISTENING_PORT.setActive(true);
 
         _onActivation();
     }
@@ -125,7 +99,7 @@ public class Scene extends Container {
      * @author Tim Kloepper
      */
     public final void deactivate() {
-        _ownEventHandlerListeningPort.setActive(false);
+        _OWN_EVENT_HANDLER_LISTENING_PORT.setActive(false);
 
         _onDeactivation();
     }
@@ -136,7 +110,7 @@ public class Scene extends Container {
      * @author Tim Kloepper
      */
     public final void kill() {
-        _windowEventHandler.deregister(_ownEventHandlerListeningPort);
+        _windowEventHandler.deregister(_OWN_EVENT_HANDLER_LISTENING_PORT);
 
         for (EventListeningPort port : _windowListeningPorts) {
             _windowEventHandler.deregister(port);
@@ -194,6 +168,8 @@ public class Scene extends Container {
     public final void update(double deltaTime) {
         _onUpdate(deltaTime);
 
+        _ECS.update();
+
         _render();
     }
 
@@ -217,9 +193,7 @@ public class Scene extends Container {
      * @author Tim Kloepper
      */
     private void _render() {
-        // test.run();
-
-        ecs.update();
+        test.run();
 
         _onRender();
     }
@@ -273,7 +247,7 @@ public class Scene extends Container {
      * @author Tim Kloepper
      */
     public final EventHandler getEventHandler() {
-        return _ownEventHandler;
+        return _OWN_EVENT_HANDLER;
     }
 
 
@@ -290,6 +264,13 @@ public class Scene extends Container {
      */
     public void setRes(int width, int height) {
         _camera.adjustProjection(width, height);
+    }
+
+
+    // -+- GETTERS -+- //
+
+    public System getECS() {
+        return _ECS;
     }
 
 

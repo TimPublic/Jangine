@@ -1,4 +1,4 @@
-﻿package internal.entity_component_system.specifics.collision.data;
+package internal.entity_component_system.specifics.collision.data;
 
 
 public abstract class A_CollisionData {

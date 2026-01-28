@@ -1,4 +1,4 @@
-﻿package internal.entity_component_system.specifics.collision.dependencies.calculator;
+package internal.entity_component_system.specifics.collision.dependencies.calculator;
 
 
 import internal.entity_component_system.specifics.collision.data.A_CollisionData;

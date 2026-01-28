@@ -21,4 +21,10 @@ public class ColoredAMesh extends A_Mesh {
     }
 
 
+    @Override
+    public int getVertexSize() {
+        return 6;
+    }
+
+
 }

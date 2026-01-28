@@ -10,12 +10,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 
-public abstract class A_System {
+public class System {
 
 
     // -+- CREATION -+- //
 
-    public A_System(Scene scene) {
+    public System(Scene scene) {
         _processorsPerComponent = new HashMap<>();
         _scene = scene;
         _activeEntities = new HashSet<>();
@@ -261,7 +261,7 @@ public abstract class A_System {
      * Returns all classes of the component that are currently processed.
      * Is just a wrapper for {@link HashMap#keySet()} with the only difference being,
      * that this method returns a {@link Collection} instead of a {@link java.util.Set}
-     * for consistency with {@link A_System#getProcessors()}.
+     * for consistency with {@link System#getProcessors()}.
      *
      * @return All classes of the component that are currently processed.
      *

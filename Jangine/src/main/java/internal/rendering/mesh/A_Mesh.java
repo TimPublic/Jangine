@@ -42,4 +42,7 @@ public abstract class A_Mesh {
     protected abstract boolean p_areValidVertices(float[] vertices);
 
 
+    public abstract int getVertexSize();
+
+
 }

@@ -2,7 +2,7 @@ package internal.entity_component_system.builders;
 
 
 import internal.entity_component_system.A_Component;
-import internal.entity_component_system.A_System;
+import internal.entity_component_system.System;
 
 
 public class EntityBuilder {
@@ -20,7 +20,7 @@ public class EntityBuilder {
     // NON-FINALS //
 
     private int _currentEntityId;
-    private A_System _currentSystem;
+    private System _currentSystem;
 
 
     // -+- START AND STOP -+- //
@@ -36,7 +36,7 @@ public class EntityBuilder {
      *
      * @author Tim Kloepper
      */
-    public EntityBuilder start(A_System system) {
+    public EntityBuilder start(System system) {
         if (_currentEntityId != -1) {
             throw new IllegalStateException("Already building an entity!");
         }
@@ -58,7 +58,7 @@ public class EntityBuilder {
      *
      * @author Tim Kloepper
      */
-    public EntityBuilder stepIn(A_System system, int entityID) {
+    public EntityBuilder stepIn(System system, int entityID) {
         if (_currentEntityId != -1) {
             throw new IllegalStateException("Already building an entity!");
         }
@@ -71,7 +71,7 @@ public class EntityBuilder {
     /**
      * Finishes the initialization and returns the id of the created entity.
      * After calling this method, the builder is ready for a new building
-     * process with {@link EntityBuilder#start(A_System)} or {@link EntityBuilder#stepIn(A_System, int)}.
+     * process with {@link EntityBuilder#start(System)} or {@link EntityBuilder#stepIn(System, int)}.
      *
      * @return The id of the created entity
      *
@@ -122,7 +122,7 @@ public class EntityBuilder {
             throw new IllegalStateException("No entity was initialized!");
         }
 
-        _currentSystem.addComponentToEntity(_currentEntityId, component);
+        _currentSystem.addComponentToEntity(_currentEntityId, component, false);
 
         return this;
     }

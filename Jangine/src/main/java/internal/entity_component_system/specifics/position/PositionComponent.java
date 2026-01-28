@@ -1,4 +1,4 @@
-﻿package internal.entity_component_system.specifics.position;
+package internal.entity_component_system.specifics.position;
 
 
 import internal.entity_component_system.A_Component;

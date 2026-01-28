@@ -21,4 +21,10 @@ public class TexturedAMesh extends A_Mesh {
     }
 
 
+    @Override
+    public int getVertexSize() {
+        return 5;
+    }
+
+
 }

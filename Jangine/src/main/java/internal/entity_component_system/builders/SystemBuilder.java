@@ -2,16 +2,16 @@ package internal.entity_component_system.builders;
 
 
 import internal.entity_component_system.A_Processor;
-import internal.entity_component_system.A_System;
+import internal.entity_component_system.System;
 
 
 public class SystemBuilder {
 
 
-    private A_System _currentSystem;
+    private System _currentSystem;
 
 
-    public SystemBuilder start(A_System system) {
+    public SystemBuilder start(System system) {
         if (_currentSystem != null) {
             throw new IllegalStateException("Already building a system!");
         }

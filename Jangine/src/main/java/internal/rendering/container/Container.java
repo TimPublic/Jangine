@@ -1,4 +1,4 @@
-﻿package internal.rendering.container;
+package internal.rendering.container;
 
 
 import org.joml.Vector2d;
