@@ -12,7 +12,7 @@ import static org.lwjgl.opengl.GL11.GL_RGBA;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
-import static org.lwjgl.stb.STBImage.stbi_load;
+import static org.lwjgl.stb.STBImage.*;
 
 
 /**
@@ -83,6 +83,8 @@ public class STBI_TextureLoader implements I_TextureLoader {
 
                 break;
         }
+
+        stbi_image_free(image);
     }
 
 

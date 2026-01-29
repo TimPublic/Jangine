@@ -20,17 +20,20 @@ import static org.lwjgl.opengl.GL11.*;
 public class Texture {
 
 
-    private final int _textureID;
+    private final int _TEXTURE_ID;
+    private final String _PATH;
 
 
     public Texture(final String filePath, I_TextureLoader textureLoader) {
-        _textureID = glGenTextures();
+        _TEXTURE_ID = glGenTextures();
 
         bind();
 
         _setParameters(GL_REPEAT, GL_REPEAT, GL_NEAREST, GL_NEAREST);
 
-        textureLoader.apply(filePath, _textureID);
+        textureLoader.apply(filePath, _TEXTURE_ID);
+
+        _PATH = filePath;
 
         unbind();
     }
@@ -44,7 +47,7 @@ public class Texture {
      * @author Tim Kloepper
      */
     public void bind() {
-        glBindTexture(GL_TEXTURE_2D, _textureID);
+        glBindTexture(GL_TEXTURE_2D, _TEXTURE_ID);
     }
     // Unbinds the texture.
     public void unbind() {
@@ -69,6 +72,16 @@ public class Texture {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+    }
+
+
+    // -+- GETTERS -+- //
+
+    public int getId() {
+        return _TEXTURE_ID;
+    }
+    public String getPath() {
+        return _PATH;
     }
 
 

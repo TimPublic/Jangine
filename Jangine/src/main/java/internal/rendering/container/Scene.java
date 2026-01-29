@@ -7,6 +7,8 @@ import internal.events.Event;
 import internal.events.EventHandler;
 import internal.main.Engine;
 import internal.rendering.camera.Camera2D;
+import internal.util.PathManager;
+import internal.util.ResourceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,16 +31,16 @@ public class Scene extends Container {
     private final EventHandler _OWN_EVENT_HANDLER;
     private final EventListeningPort _OWN_EVENT_HANDLER_LISTENING_PORT;
 
-    private final System _ECS;
+    protected final System p_ECS;
+
+    protected final ResourceManager p_RESOURCE_MANAGER;
+    protected final PathManager p_PATH_MANAGER;
 
     private ArrayList<EventListeningPort> _windowListeningPorts;
     private ArrayList<EventListeningPort> _engineListeningPorts;
 
 
     private Camera2D _camera;
-
-
-    // private ArrayList<RenderObject> _renderObjects;
 
 
     public Scene(final EventHandler windowEventHandler, int width, int height, boolean active) {
@@ -49,7 +51,10 @@ public class Scene extends Container {
         _OWN_EVENT_HANDLER_LISTENING_PORT.registerFunction(_OWN_EVENT_HANDLER::pushEvent, List.of(Event.class));
         _OWN_EVENT_HANDLER_LISTENING_PORT.setActive(active);
 
-        _ECS = new System(this);
+        p_ECS = new System(this);
+
+        p_RESOURCE_MANAGER = new ResourceManager();
+        p_PATH_MANAGER = new PathManager();
 
         _windowListeningPorts = new ArrayList<>();
         _engineListeningPorts = new ArrayList<>();
@@ -149,7 +154,7 @@ public class Scene extends Container {
     public final void update(double deltaTime) {
         _onUpdate(deltaTime);
 
-        _ECS.update();
+        p_ECS.update();
 
         _render();
     }
@@ -251,7 +256,7 @@ public class Scene extends Container {
     // -+- GETTERS -+- //
 
     public System getECS() {
-        return _ECS;
+        return p_ECS;
     }
 
 

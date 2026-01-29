@@ -45,6 +45,8 @@ public class ShaderProgram {
 
     private int _programID;
 
+    private final String _PATH;
+
 
     public ShaderProgram(String filePath) {
         _retrieveShadersFromPath(filePath);
@@ -52,6 +54,8 @@ public class ShaderProgram {
         _compileShaders();
 
         _createAndLinkProgram();
+
+        _PATH = filePath;
     }
 
 
@@ -400,6 +404,13 @@ public class ShaderProgram {
         System.exit(1);
 
         return -1; // Is actually never reached, but needs to be here because of intelliSense (:.
+    }
+
+
+    // -+- GETTERS -+- //
+
+    public String getPath() {
+        return _PATH;
     }
 
 
