@@ -1,4 +1,4 @@
-﻿package internal.entity_component_system.specifics.render;
+package internal.entity_component_system.specifics.render;
 
 
 import internal.rendering.mesh.TexturedAMesh;

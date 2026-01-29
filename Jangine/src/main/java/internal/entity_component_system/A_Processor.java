@@ -3,6 +3,7 @@ package internal.entity_component_system;
 
 import internal.rendering.container.Scene;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,7 +15,10 @@ public abstract class A_Processor<T extends A_Component> {
     // -+- CREATION -+- //
 
     public A_Processor() {
+        super();
+
         _components = new HashMap<>();
+        _PREV_ACTIVATION_STATES = new HashMap<>();
     }
 
     protected abstract void p_init(System system, Scene scene);
@@ -28,6 +32,7 @@ public abstract class A_Processor<T extends A_Component> {
     // FINALS //
 
     protected final HashMap<Integer, T> _components;
+    protected final HashMap<T, Boolean> _PREV_ACTIVATION_STATES;
 
 
     // -+- UPDATE LOOP -+- //
@@ -49,8 +54,16 @@ public abstract class A_Processor<T extends A_Component> {
         validComponents = new HashSet<>();
 
         for (T component : _components.values()) {
-            if (!component.active) continue;
             if (!p_isComponentValid(component)) continue;
+
+            _PREV_ACTIVATION_STATES.put(component, component.active);
+
+            if (!component.active) {
+                if (_PREV_ACTIVATION_STATES.get(component)) p_onComponentDeactivated(component);
+
+                continue;
+            }
+            if (_PREV_ACTIVATION_STATES.get(component)) p_onComponentActivated(component);
 
             validComponents.add(component);
         }
@@ -82,6 +95,7 @@ public abstract class A_Processor<T extends A_Component> {
         if (_components.containsKey(entityId)) return false;
 
         _components.put(entityId, component);
+        _PREV_ACTIVATION_STATES.put(component, component.active);
 
         return true;
     }
@@ -98,7 +112,14 @@ public abstract class A_Processor<T extends A_Component> {
     public T rmvComponent(int entityId) {
         if (!_components.containsKey(entityId)) return null;
 
-        return _components.remove(entityId);
+        T removedComponent;
+
+        removedComponent = _components.remove(entityId);
+        if (removedComponent == null) return null;
+
+        _PREV_ACTIVATION_STATES.remove(removedComponent);
+
+        return removedComponent;
     }
 
     /**
@@ -113,6 +134,9 @@ public abstract class A_Processor<T extends A_Component> {
      * @author Tim Kloepper
      */
     protected abstract boolean p_isComponentValid(T component);
+
+    protected abstract void p_onComponentActivated(T component);
+    protected abstract void p_onComponentDeactivated(T component);
 
 
     // -+- GETTERS -+- //

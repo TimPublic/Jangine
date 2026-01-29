@@ -1,18 +1,24 @@
-﻿package internal.entity_component_system.specifics.render;
+package internal.entity_component_system.specifics.render;
 
 
+import internal.entity_component_system.A_Component;
 import internal.entity_component_system.A_Processor;
 import internal.entity_component_system.System;
+import internal.entity_component_system.specifics.position.PositionComponent;
 import internal.entity_component_system.specifics.position.PositionProcessor;
 import internal.rendering.batch.ColoredRenderBatch;
 import internal.rendering.batch.TexturedRenderBatch;
+import internal.rendering.camera.Camera2D;
 import internal.rendering.container.Scene;
 import internal.rendering.mesh.A_Mesh;
 import internal.rendering.mesh.ColoredAMesh;
 import internal.rendering.mesh.TexturedAMesh;
 import org.joml.Vector2d;
 
+import java.awt.*;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 
 public class RenderProcessor extends A_Processor<A_RenderComponent> {
@@ -75,7 +81,6 @@ public class RenderProcessor extends A_Processor<A_RenderComponent> {
 
     // -+- COMPONENT MANAGEMENT -+- //
 
-
     @Override
     protected boolean p_isComponentValid(A_RenderComponent component) {
         if (component.mesh == null) return false;
@@ -85,6 +90,42 @@ public class RenderProcessor extends A_Processor<A_RenderComponent> {
         if (_positionProcessor == null) return false;
 
         return _positionProcessor.getComponent(component.owningEntity) != null;
+    }
+
+
+    @Override
+    protected void p_init(System system, Scene scene) {
+        _texturedRenderBatch = new TexturedRenderBatch("Jangine/assets/default.glsl", new Camera2D(41, 41));
+        _coloredRenderBatch = new ColoredRenderBatch("Jangine/assets/default.glsl", new Camera2D(41, 41));
+    }
+    @Override
+    protected void p_kill(System system, Scene scene) {
+
+    }
+
+    @Override
+    protected void p_receiveRequiredProcessors(HashMap<Class<? extends A_RenderComponent>, A_Processor<?>> requiredProcessors) {
+        _positionProcessor = (PositionProcessor) requiredProcessors.get(PositionProcessor.class);
+    }
+
+    @Override
+    protected Collection<Class<? extends A_RenderComponent>> p_getProcessedComponentClasses() {
+        return List.of(A_RenderComponent.class, TexturedRenderComponent.class, ColoredRenderComponent.class);
+    }
+    @Override
+    protected Collection<Class<? extends A_Component>> p_getRequiredComponentClasses() {
+        return List.of(PositionComponent.class);
+    }
+
+
+    @Override
+    protected void p_onComponentActivated(A_RenderComponent component) {
+        // Is handled by the rendering updates.
+    }
+    @Override
+    protected void p_onComponentDeactivated(A_RenderComponent component) {
+        if (component.mesh instanceof TexturedAMesh) _texturedRenderBatch.rmvMesh((TexturedAMesh) component.mesh);
+        else if (component.mesh instanceof ColoredAMesh) _coloredRenderBatch.rmvMesh((ColoredAMesh) component.mesh);
     }
 
 

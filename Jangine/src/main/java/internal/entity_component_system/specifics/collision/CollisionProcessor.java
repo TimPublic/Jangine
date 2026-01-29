@@ -128,6 +128,15 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
         return _positionProcessor.hasEntity(component.owningEntity) && _hitboxProcessor.hasEntity(component.owningEntity);
     }
 
+    @Override
+    protected void p_onComponentActivated(CollisionComponent component) {
+
+    }
+    @Override
+    protected void p_onComponentDeactivated(CollisionComponent component) {
+
+    }
+
 
     // -+- PROCESSOR MANAGEMENT -+- //
 
