@@ -92,10 +92,12 @@ public abstract class A_Processor<T extends A_Component> {
      */
     public boolean addComponent(int entityId, T component, boolean overwrite) {
         if (!p_isComponentValid(component)) return false;
-        if (_components.containsKey(entityId)) return false;
+        if (_components.containsKey(entityId) && !overwrite) return false;
 
         _components.put(entityId, component);
         _PREV_ACTIVATION_STATES.put(component, component.active);
+
+        p_onComponentAdded(component);
 
         return true;
     }
@@ -119,6 +121,8 @@ public abstract class A_Processor<T extends A_Component> {
 
         _PREV_ACTIVATION_STATES.remove(removedComponent);
 
+        p_onComponentRemoved(removedComponent);
+
         return removedComponent;
     }
 
@@ -134,6 +138,9 @@ public abstract class A_Processor<T extends A_Component> {
      * @author Tim Kloepper
      */
     protected abstract boolean p_isComponentValid(T component);
+
+    protected abstract void p_onComponentAdded(T component);
+    protected abstract void p_onComponentRemoved(T component);
 
     protected abstract void p_onComponentActivated(T component);
     protected abstract void p_onComponentDeactivated(T component);

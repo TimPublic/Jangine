@@ -24,15 +24,15 @@ public class ShaderTest {
 
 
     public ShaderTest() {
-        shaderProgram = new ShaderProgram("Jangine/assets/default.glsl");
+        shaderProgram = new ShaderProgram("assets/default.glsl");
         camera = new Camera2D(40, 21);
 
         batch = new TexturedRenderBatch(shaderProgram, camera);
 
         camera._position.y -= 50;
 
-        firstTexture = new Texture("Jangine/assets/test_image.png", new STBI_TextureLoader());
-        secondTexture = new Texture("Jangine/assets/ui.png", new STBI_TextureLoader());
+        firstTexture = new Texture("assets/test_image.png", new STBI_TextureLoader());
+        secondTexture = new Texture("assets/ui.png", new STBI_TextureLoader());
 
         float[] vertices = new float[]{
                 /* Position */    /* uvCoordinates */  /* textureIndex */

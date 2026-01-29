@@ -129,6 +129,14 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
     }
 
     @Override
+    protected void p_onComponentAdded(CollisionComponent component) {
+
+    }
+    @Override
+    protected void p_onComponentRemoved(CollisionComponent component) {
+
+    }
+    @Override
     protected void p_onComponentActivated(CollisionComponent component) {
 
     }

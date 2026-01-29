@@ -35,7 +35,7 @@ public class TexturedRenderBatch extends RenderBatch {
     public static final int VERTEX_SIZE = 5;
 
 
-    public static final String PLACEHOLDER_TEXTURE_PATH = "Jangine/assets/placeholder_texture.png";
+    public static final String PLACEHOLDER_TEXTURE_PATH = "assets/placeholder_texture.png";
 
 
     private final Texture[] _textures;

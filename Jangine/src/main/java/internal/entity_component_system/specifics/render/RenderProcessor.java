@@ -24,6 +24,19 @@ import java.util.List;
 public class RenderProcessor extends A_Processor<A_RenderComponent> {
 
 
+    // -+- CREATION -+- //
+
+    @Override
+    protected void p_init(System system, Scene scene) {
+        _texturedRenderBatch = new TexturedRenderBatch("assets/default.glsl", new Camera2D(41, 41));
+        _coloredRenderBatch = new ColoredRenderBatch("assets/default.glsl", new Camera2D(41, 41));
+    }
+    @Override
+    protected void p_kill(System system, Scene scene) {
+
+    }
+
+
     // -+- PARAMETERS -+- //
 
     // NON-FINALS //
@@ -67,8 +80,12 @@ public class RenderProcessor extends A_Processor<A_RenderComponent> {
         if (origin.x == to.x && origin.y == to.y) return;
 
         for (int index = 1; index < mesh.vertices.length; index += mesh.getVertexSize()) {
-            mesh.vertices[index - 1] -= (float) (origin.x + to.x);
-            mesh.vertices[index] -= (float) (origin.x + to.x);
+            Vector2d move;
+
+            move = new Vector2d(to).sub(origin);
+
+            mesh.vertices[index - 1] += (float) move.x;
+            mesh.vertices[index] += (float) move.y;
         }
     }
     private void h_updateTexturedComponent(TexturedRenderComponent component) {
@@ -92,32 +109,23 @@ public class RenderProcessor extends A_Processor<A_RenderComponent> {
         return _positionProcessor.getComponent(component.owningEntity) != null;
     }
 
-
     @Override
-    protected void p_init(System system, Scene scene) {
-        _texturedRenderBatch = new TexturedRenderBatch("Jangine/assets/default.glsl", new Camera2D(41, 41));
-        _coloredRenderBatch = new ColoredRenderBatch("Jangine/assets/default.glsl", new Camera2D(41, 41));
+    protected void p_onComponentAdded(A_RenderComponent component) {
+
     }
     @Override
-    protected void p_kill(System system, Scene scene) {
+    protected void p_onComponentRemoved(A_RenderComponent component) {
+        if (component.mesh instanceof TexturedAMesh) {
+            _texturedRenderBatch.rmvMesh((TexturedAMesh) component.mesh);
 
+            return;
+        }
+        if (component.mesh instanceof ColoredAMesh) {
+            _coloredRenderBatch.rmvMesh((ColoredAMesh) component.mesh);
+
+            return;
+        }
     }
-
-    @Override
-    protected void p_receiveRequiredProcessors(HashMap<Class<? extends A_RenderComponent>, A_Processor<?>> requiredProcessors) {
-        _positionProcessor = (PositionProcessor) requiredProcessors.get(PositionProcessor.class);
-    }
-
-    @Override
-    protected Collection<Class<? extends A_RenderComponent>> p_getProcessedComponentClasses() {
-        return List.of(A_RenderComponent.class, TexturedRenderComponent.class, ColoredRenderComponent.class);
-    }
-    @Override
-    protected Collection<Class<? extends A_Component>> p_getRequiredComponentClasses() {
-        return List.of(PositionComponent.class);
-    }
-
-
     @Override
     protected void p_onComponentActivated(A_RenderComponent component) {
         // Is handled by the rendering updates.
@@ -126,6 +134,26 @@ public class RenderProcessor extends A_Processor<A_RenderComponent> {
     protected void p_onComponentDeactivated(A_RenderComponent component) {
         if (component.mesh instanceof TexturedAMesh) _texturedRenderBatch.rmvMesh((TexturedAMesh) component.mesh);
         else if (component.mesh instanceof ColoredAMesh) _coloredRenderBatch.rmvMesh((ColoredAMesh) component.mesh);
+    }
+
+
+    // -+- PROCESSOR MANAGEMENT -+- //
+
+    @Override
+    protected void p_receiveRequiredProcessors(HashMap<Class<? extends A_RenderComponent>, A_Processor<?>> requiredProcessors) {
+        _positionProcessor = (PositionProcessor) requiredProcessors.get(PositionComponent.class);
+    }
+
+
+    // -+- GETTERS -+- //
+
+    @Override
+    protected Collection<Class<? extends A_RenderComponent>> p_getProcessedComponentClasses() {
+        return List.of(A_RenderComponent.class, TexturedRenderComponent.class, ColoredRenderComponent.class);
+    }
+    @Override
+    protected Collection<Class<? extends A_Component>> p_getRequiredComponentClasses() {
+        return List.of(PositionComponent.class);
     }
 
 

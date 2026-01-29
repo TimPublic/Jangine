@@ -46,6 +46,14 @@ public class HitboxProcessor extends A_Processor<A_HitboxComponent> {
     }
 
     @Override
+    protected void p_onComponentAdded(A_HitboxComponent component) {
+
+    }
+    @Override
+    protected void p_onComponentRemoved(A_HitboxComponent component) {
+
+    }
+    @Override
     protected void p_onComponentActivated(A_HitboxComponent component) {
 
     }

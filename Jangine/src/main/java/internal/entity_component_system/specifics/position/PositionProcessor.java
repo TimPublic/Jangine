@@ -45,6 +45,15 @@ public class PositionProcessor extends A_Processor<PositionComponent> {
         return true;
     }
 
+
+    @Override
+    protected void p_onComponentAdded(PositionComponent component) {
+
+    }
+    @Override
+    protected void p_onComponentRemoved(PositionComponent component) {
+
+    }
     @Override
     protected void p_onComponentActivated(PositionComponent component) {
 

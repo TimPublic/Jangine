@@ -7,7 +7,6 @@ import internal.events.Event;
 import internal.events.EventHandler;
 import internal.main.Engine;
 import internal.rendering.camera.Camera2D;
-import internal.rendering.shader.ShaderTest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,10 +38,6 @@ public class Scene extends Container {
     private Camera2D _camera;
 
 
-    ShaderTest test;
-    int entityID;
-
-
     // private ArrayList<RenderObject> _renderObjects;
 
 
@@ -60,20 +55,6 @@ public class Scene extends Container {
         _engineListeningPorts = new ArrayList<>();
 
         _camera = new Camera2D(width, height);
-
-        test = new ShaderTest();
-
-        float[] vertices = new float[]{
-                /* Position */    /* uvCoordinates */  /* textureIndex */
-                0.0f,   0.0f,   0.0f, 0.0f,          0.0f,
-                100.0f,   0.0f,   1.0f, 0.0f,          1.0f,
-                100.0f, 100.0f,   1.0f, 1.0f,          1.0f,
-                0.0f, 100.0f,   0.0f, 1.0f,          0.0f,
-        };
-        int[] indices = new int[]{
-                0, 1, 2,
-                2, 3, 0,
-        };
 
         _onCreation();
     }
@@ -193,7 +174,7 @@ public class Scene extends Container {
      * @author Tim Kloepper
      */
     private void _render() {
-        test.run();
+        // test.run();
 
         _onRender();
     }
