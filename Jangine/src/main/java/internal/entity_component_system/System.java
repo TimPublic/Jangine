@@ -203,6 +203,8 @@ public class System {
         processor = _processorsPerComponent.get(componentClass);
         if (processor == null) return false;
 
+        component.owningEntity = id;
+
         return processor.addComponent(id, component, overwrite);
     }
     /**

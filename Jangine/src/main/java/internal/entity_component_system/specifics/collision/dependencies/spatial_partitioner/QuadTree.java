@@ -6,6 +6,7 @@ import internal.entity_component_system.specifics.hitbox.CircleHitboxComponent;
 import internal.entity_component_system.specifics.hitbox.RectangleHitboxComponent;
 import internal.rendering.container.Container;
 import org.joml.Vector2d;
+import org.lwjgl.util.freetype.FT_ListNode;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -78,12 +79,22 @@ public class QuadTree implements I_SpatialPartitioner {
         result = new HashSet<>();
 
         for (Node leaf : _LEAFS) {
-            if (!leaf.containsRef(obj)) continue;
+            if (!leaf.containsRef(obj.hitboxComponent.owningEntity)) continue;
 
             result.addAll(leaf.p_OBJECTS);
         }
 
-        result.remove(obj);
+        ObjectData objRemoved;
+
+        objRemoved = null;
+
+        for (ObjectData objectData : result) {
+            if (objectData.hitboxComponent.owningEntity == obj.hitboxComponent.owningEntity) {
+                objRemoved = objectData;
+            }
+        }
+
+        result.remove(objRemoved);
 
         return result;
     }
@@ -105,6 +116,8 @@ class Node {
 
         _LEAF_CREATED_CALLBACK = leafCreatedCallback;
         _LEAF_REMOVED_CALLBACK = leafRemovedCallback;
+
+        _LEAF_CREATED_CALLBACK.accept(this);
 
         _POOL = pool;
 
@@ -167,12 +180,13 @@ class Node {
             return;
         }
 
-        if (_isLeaf && !containsRef(obj)) {
+        if (_isLeaf && !containsRef(obj.hitboxComponent.owningEntity)) {
             addObject(obj);
 
             return;
         }
 
+        if (_NODES[0] == null) return;
         for (Node node : _NODES) {
             node.p_updateObject(obj);
         }
@@ -184,6 +198,7 @@ class Node {
         if (_isLeaf) _tryToCreateChildren();
         else _tryToRemoveChildren();
 
+        if (_NODES[0] == null) return;
         for (Node child : _NODES) child.p_applyChanges();
     }
 
@@ -238,6 +253,7 @@ class Node {
     public void addObject(ObjectData obj) {
         if (isLeaf()) {
             for (Node node : _NODES) {
+                if (node == null) continue;
                 node.addObject(obj);
             }
 
@@ -245,10 +261,10 @@ class Node {
         }
 
         // Avoid unnecessary position check.
-        if (containsRef(obj)) return;
+        if (containsRef(obj.hitboxComponent.owningEntity)) return;
         if (!containsPos(obj)) return;
 
-        p_OBJECTS.add(obj);
+        _ADD_OBJECTS.add(obj);
     }
     public void rmvObject(ObjectData obj) {
         if (isLeaf()) {
@@ -285,8 +301,12 @@ class Node {
 
         return xOverlap && yOverlap;
     }
-    public boolean containsRef(ObjectData obj) {
-        return p_OBJECTS.contains(obj);
+    public boolean containsRef(int entity) {
+        for (ObjectData objectData : p_OBJECTS) {
+            if (objectData.hitboxComponent.owningEntity == entity) return true;
+        }
+
+        return false;
     }
 
 

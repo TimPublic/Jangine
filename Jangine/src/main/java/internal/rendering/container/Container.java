@@ -7,6 +7,13 @@ import org.joml.Vector2d;
 public class Container {
 
 
+    public Container(Vector2d position, double width, double height) {
+        _position = position;
+        _width = width;
+        _height = height;
+    }
+
+
     private Vector2d _position;
     private double _width, _height;
 

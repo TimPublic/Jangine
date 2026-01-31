@@ -58,7 +58,6 @@ public class Engine {
      */
     public void run() {
         createWindow();
-        createWindow();
 
         while (!_shouldClose) {
             _currentDeltaTime = DeltaTimer.get().getDeltaTime();

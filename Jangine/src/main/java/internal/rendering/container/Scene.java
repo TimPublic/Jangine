@@ -9,6 +9,7 @@ import internal.main.Engine;
 import internal.rendering.camera.Camera2D;
 import internal.util.PathManager;
 import internal.util.ResourceManager;
+import org.joml.Vector2d;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,7 @@ public class Scene extends Container {
     private EventHandler _windowEventHandler;
 
     private final EventHandler _OWN_EVENT_HANDLER;
-    private final EventListeningPort _OWN_EVENT_HANDLER_LISTENING_PORT;
+    private final EventListeningPort _WINDOW_EVENT_HANDLER_LISTENING_PORT;
 
     protected final System p_ECS;
 
@@ -44,12 +45,14 @@ public class Scene extends Container {
 
 
     public Scene(final EventHandler windowEventHandler, int width, int height, boolean active) {
+        super(new Vector2d(0, 0), 1000, 1000);
+
         _windowEventHandler = windowEventHandler;
 
         _OWN_EVENT_HANDLER = new EventHandler();
-        _OWN_EVENT_HANDLER_LISTENING_PORT = _windowEventHandler.register();
-        _OWN_EVENT_HANDLER_LISTENING_PORT.registerFunction(_OWN_EVENT_HANDLER::pushEvent, List.of(Event.class));
-        _OWN_EVENT_HANDLER_LISTENING_PORT.setActive(active);
+        _WINDOW_EVENT_HANDLER_LISTENING_PORT = windowEventHandler.register();
+        _WINDOW_EVENT_HANDLER_LISTENING_PORT.registerFunction(_OWN_EVENT_HANDLER::pushEvent, List.of(Event.class));
+        _WINDOW_EVENT_HANDLER_LISTENING_PORT.setActive(active);
 
         p_ECS = new System(this);
 
@@ -65,6 +68,11 @@ public class Scene extends Container {
     }
 
 
+    public void test(Event event) {
+        return;
+    }
+
+
     // -+- LIFE-CYCLE -+- //
 
     /**
@@ -74,7 +82,7 @@ public class Scene extends Container {
      * @author Tim Kloepper
      */
     public final void activate() {
-        _OWN_EVENT_HANDLER_LISTENING_PORT.setActive(true);
+        _WINDOW_EVENT_HANDLER_LISTENING_PORT.setActive(true);
 
         _onActivation();
     }
@@ -85,7 +93,7 @@ public class Scene extends Container {
      * @author Tim Kloepper
      */
     public final void deactivate() {
-        _OWN_EVENT_HANDLER_LISTENING_PORT.setActive(false);
+        _WINDOW_EVENT_HANDLER_LISTENING_PORT.setActive(false);
 
         _onDeactivation();
     }
@@ -96,7 +104,7 @@ public class Scene extends Container {
      * @author Tim Kloepper
      */
     public final void kill() {
-        _windowEventHandler.deregister(_OWN_EVENT_HANDLER_LISTENING_PORT);
+        _windowEventHandler.deregister(_WINDOW_EVENT_HANDLER_LISTENING_PORT);
 
         for (EventListeningPort port : _windowListeningPorts) {
             _windowEventHandler.deregister(port);

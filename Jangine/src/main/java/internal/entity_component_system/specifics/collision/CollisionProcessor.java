@@ -82,6 +82,8 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
         PositionComponent positionComponent;
         ObjectData objectData;
 
+        _SPATIAL_PARTITIONER.update(scene);
+
         pairs = new HashMap<>();
 
         for (CollisionComponent component : validComponents) {
@@ -130,7 +132,9 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
 
     @Override
     protected void p_onComponentAdded(CollisionComponent component) {
+        if (_hitboxProcessor == null || _positionProcessor == null) return;
 
+        _SPATIAL_PARTITIONER.addObject(new ObjectData(_hitboxProcessor.getComponent(component.owningEntity), _positionProcessor.getComponent(component.owningEntity)));
     }
     @Override
     protected void p_onComponentRemoved(CollisionComponent component) {
