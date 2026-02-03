@@ -24,7 +24,7 @@ import java.util.List;
 public class RenderProcessor extends A_Processor<RenderComponent> {
 
 
-    public RenderProcessor(Collection<? extends A_BatchProcessor> processors) {
+    public RenderProcessor(Collection<? extends A_BatchProcessor<?>> processors) {
         super();
 
         _SYSTEM = new BatchSystem();
@@ -73,6 +73,8 @@ public class RenderProcessor extends A_Processor<RenderComponent> {
 
             _SYSTEM.updateMesh(component.renderMesh, component.shader);
         }
+
+        _SYSTEM.update();
     }
 
     private void h_updatePosition(A_Mesh mesh, Vector2d to) {

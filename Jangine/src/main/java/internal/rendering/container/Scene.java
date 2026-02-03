@@ -4,10 +4,11 @@ package internal.rendering.container;
 import internal.batch.BatchSystem;
 import internal.batch.specifics.TextureBatchProcessor;
 import internal.entity_component_system.System;
+import internal.entity_component_system.builders.EntityBuilder;
 import internal.entity_component_system.specifics.position.PositionComponent;
 import internal.entity_component_system.specifics.position.PositionProcessor;
+import internal.entity_component_system.specifics.render.RenderComponent;
 import internal.entity_component_system.specifics.render.RenderProcessor;
-import internal.entity_component_system.specifics.render.TexturedRenderComponent;
 import internal.events.EventListeningPort;
 import internal.events.Event;
 import internal.events.EventHandler;
@@ -51,7 +52,7 @@ public class Scene extends Container {
     private ArrayList<EventListeningPort> _engineListeningPorts;
 
 
-    BatchSystem batchSystem;
+    int entityId;
 
     TexturedAMesh mesh;
     TexturedAMesh secondMesh;
@@ -83,8 +84,6 @@ public class Scene extends Container {
 
         _camera = new Camera2D(width, height);
 
-        batchSystem = new BatchSystem();
-
         float[] vertices;
 
         vertices = new float[] {
@@ -112,15 +111,21 @@ public class Scene extends Container {
 
         addCounter = true;
 
-        shader = new ShaderProgram("Jangine/assets/default.glsl");
+        TexturedAMesh mesh;
 
-        mesh = new TexturedAMesh(vertices, indices, "Jangine/assets/ui.png");
-        secondMesh = new TexturedAMesh(secondVertices, indices, "Jangine/assets/ui.png");
+        mesh = new TexturedAMesh(vertices, indices, "assets/placeholder_texture.png");
 
-        batchSystem.addProcessor(new TextureBatchProcessor(), false);
+        p_ECS.addProcessor(new PositionProcessor());
+        p_ECS.addProcessor(new RenderProcessor(List.of(new TextureBatchProcessor())));
 
-        java.lang.System.out.println(batchSystem.addMesh(mesh, shader));
-        java.lang.System.out.println(batchSystem.addMesh(secondMesh, shader));
+        EntityBuilder builder;
+
+        builder = new EntityBuilder();
+
+        entityId = builder.start(p_ECS).
+                add(new PositionComponent(new Vector2d(0, 0))).
+                add(new RenderComponent(true, mesh, new ShaderProgram("assets/default.glsl"))).
+                finish();
 
         _onCreation();
     }
@@ -216,16 +221,6 @@ public class Scene extends Container {
         _onUpdate(deltaTime);
 
         p_ECS.update();
-
-        mesh.vertices[0]++;
-        mesh.vertices[1]++;
-
-        if (addCounter) addCounter = !batchSystem.rmvMesh(secondMesh);
-        else addCounter = !batchSystem.addMesh(secondMesh, shader);
-
-        batchSystem.updateMesh(mesh);
-
-        batchSystem.update();
 
         _render();
     }
