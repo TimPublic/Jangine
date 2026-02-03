@@ -112,10 +112,10 @@ public class Scene extends Container {
 
         addCounter = true;
 
-        shader = new ShaderProgram("assets/default.glsl");
+        shader = new ShaderProgram("Jangine/assets/default.glsl");
 
-        mesh = new TexturedAMesh(vertices, indices, "assets/test_image.png");
-        secondMesh = new TexturedAMesh(secondVertices, indices, "assets/test_image.png");
+        mesh = new TexturedAMesh(vertices, indices, "Jangine/assets/ui.png");
+        secondMesh = new TexturedAMesh(secondVertices, indices, "Jangine/assets/ui.png");
 
         batchSystem.addProcessor(new TextureBatchProcessor(), false);
 

@@ -1,155 +1,145 @@
 package internal.entity_component_system.specifics.render;
 
 
+import internal.batch.A_BatchProcessor;
+import internal.batch.BatchSystem;
 import internal.entity_component_system.A_Component;
 import internal.entity_component_system.A_Processor;
 import internal.entity_component_system.System;
+import internal.entity_component_system.events.ProcessorAddedEvent;
+import internal.entity_component_system.events.ProcessorRemovedEvent;
 import internal.entity_component_system.specifics.position.PositionComponent;
 import internal.entity_component_system.specifics.position.PositionProcessor;
-import internal.rendering.batch.ColoredRenderBatch;
-import internal.rendering.batch.TexturedRenderBatch;
-import internal.rendering.camera.Camera2D;
+import internal.events.Event;
+import internal.events.EventListeningPort;
 import internal.rendering.container.Scene;
 import internal.rendering.mesh.A_Mesh;
-import internal.rendering.mesh.ColoredAMesh;
-import internal.rendering.mesh.TexturedAMesh;
 import org.joml.Vector2d;
 
-import java.awt.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
 
-public class RenderProcessor extends A_Processor<A_RenderComponent> {
+public class RenderProcessor extends A_Processor<RenderComponent> {
 
 
-    // -+- CREATION -+- //
+    public RenderProcessor(Collection<? extends A_BatchProcessor> processors) {
+        super();
 
-    @Override
-    protected void p_init(System system, Scene scene) {
-        _texturedRenderBatch = new TexturedRenderBatch("assets/default.glsl", new Camera2D(41, 41));
-        _coloredRenderBatch = new ColoredRenderBatch("assets/default.glsl", new Camera2D(41, 41));
-    }
-    @Override
-    protected void p_kill(System system, Scene scene) {
+        _SYSTEM = new BatchSystem();
 
+        for (A_BatchProcessor<?> processor : processors) {
+            _SYSTEM.addProcessor(processor, false);
+        }
     }
 
 
     // -+- PARAMETERS -+- //
 
-    // NON-FINALS //
-
-    private PositionProcessor _positionProcessor;
-
     // FINALS //
 
-    private TexturedRenderBatch _texturedRenderBatch;
-    private ColoredRenderBatch _coloredRenderBatch;
+    private final BatchSystem _SYSTEM;
 
+    // NON-FINALS //
 
-    // -+- UPDATE LOOP -+- //
+    private EventListeningPort _PORT;
+    private PositionProcessor _positionProcessor;
+
 
     @Override
-    protected void p_internalUpdate(Collection<A_RenderComponent> validComponents, System system, Scene scene) {
-        for (A_RenderComponent component : validComponents) {
-            if (component.isPositionDependent) h_updatePosition(component.mesh, _positionProcessor.getComponent(component.owningEntity).position); // Is safe because of the valid component check.
+    protected void p_init(System system, Scene scene) {
+        _PORT = scene.getEventHandler().register();
 
-            if (component instanceof TexturedRenderComponent) {
-                h_updateTexturedComponent((TexturedRenderComponent) component);
-                continue;
-            }
-            if (component instanceof ColoredRenderComponent) {
-                h_updateColoredComponent((ColoredRenderComponent) component);
-                continue;
-            }
-        }
-
-        _texturedRenderBatch.update();
-        _coloredRenderBatch.update();
-    }
-
-    private void h_updatePosition(A_Mesh mesh, Vector2d to) {
-        // THE FIRST MESH COORDINATE NEEDS TO BE THE ORIGIN!
-
-        Vector2d origin;
-
-        origin = new Vector2d(mesh.vertices[0], mesh.vertices[1]);
-
-        if (origin.x == to.x && origin.y == to.y) return;
-
-        for (int index = 1; index < mesh.vertices.length; index += mesh.getVertexSize()) {
-            Vector2d move;
-
-            move = new Vector2d(to).sub(origin);
-
-            mesh.vertices[index - 1] += (float) move.x;
-            mesh.vertices[index] += (float) move.y;
-        }
-    }
-    private void h_updateTexturedComponent(TexturedRenderComponent component) {
-        _texturedRenderBatch.addMesh((TexturedAMesh) component.mesh, component.texture);
-    }
-    private void h_updateColoredComponent(ColoredRenderComponent component) {
-        _coloredRenderBatch.addMesh((ColoredAMesh) component.mesh);
-    }
-
-
-    // -+- COMPONENT MANAGEMENT -+- //
-
-    @Override
-    protected boolean p_isComponentValid(A_RenderComponent component) {
-        if (component.mesh == null) return false;
-
-        if (!component.isPositionDependent) return true;
-
-        if (_positionProcessor == null) return false;
-
-        return _positionProcessor.getComponent(component.owningEntity) != null;
-    }
-
-    @Override
-    protected void p_onComponentAdded(A_RenderComponent component) {
-
+        _PORT.registerFunction(this::onSystemAdded, List.of(ProcessorAddedEvent.class));
+        _PORT.registerFunction(this::onSystemRemoved, List.of(ProcessorRemovedEvent.class));
     }
     @Override
-    protected void p_onComponentRemoved(A_RenderComponent component) {
-        if (component.mesh instanceof TexturedAMesh) {
-            _texturedRenderBatch.rmvMesh((TexturedAMesh) component.mesh);
-
-            return;
-        }
-        if (component.mesh instanceof ColoredAMesh) {
-            _coloredRenderBatch.rmvMesh((ColoredAMesh) component.mesh);
-
-            return;
-        }
-    }
-    @Override
-    protected void p_onComponentActivated(A_RenderComponent component) {
-        // Is handled by the rendering updates.
-    }
-    @Override
-    protected void p_onComponentDeactivated(A_RenderComponent component) {
-        if (component.mesh instanceof TexturedAMesh) _texturedRenderBatch.rmvMesh((TexturedAMesh) component.mesh);
-        else if (component.mesh instanceof ColoredAMesh) _coloredRenderBatch.rmvMesh((ColoredAMesh) component.mesh);
+    protected void p_kill(System system, Scene scene) {
+        scene.getEventHandler().deregister(_PORT);
     }
 
 
-    // -+- PROCESSOR MANAGEMENT -+- //
-
     @Override
-    protected void p_receiveRequiredProcessors(HashMap<Class<? extends A_RenderComponent>, A_Processor<?>> requiredProcessors) {
+    protected void p_receiveRequiredProcessors(HashMap<Class<? extends A_Component>, A_Processor<?>> requiredProcessors) {
         _positionProcessor = (PositionProcessor) requiredProcessors.get(PositionComponent.class);
     }
 
 
-    // -+- GETTERS -+- //
+    @Override
+    protected void p_internalUpdate(Collection<RenderComponent> validComponents, System system, Scene scene) {
+        for (RenderComponent component : validComponents) {
+            if (component.positionDependent) h_updatePosition(component.renderMesh, _positionProcessor.getComponent(component.owningEntity).position);
+
+            _SYSTEM.updateMesh(component.renderMesh, component.shader);
+        }
+    }
+
+    private void h_updatePosition(A_Mesh mesh, Vector2d to) {
+        Vector2d origin;
+
+        origin = new Vector2d(mesh.vertices[0], mesh.vertices[1]);
+
+        double xDist, yDist;
+
+        xDist = origin.distance(to);
+        yDist = origin.distance(to);
+
+        if (xDist == 0 && yDist == 0) return;
+
+        for (int index = 1; index < mesh.vertices.length; index++) {
+            mesh.vertices[index - 1] += xDist;
+            mesh.vertices[index] += yDist;
+        }
+    }
+
 
     @Override
-    protected Collection<Class<? extends A_RenderComponent>> p_getProcessedComponentClasses() {
-        return List.of(A_RenderComponent.class, TexturedRenderComponent.class, ColoredRenderComponent.class);
+    protected boolean p_isComponentValid(RenderComponent component) {
+        if (component.positionDependent) {
+            if (_positionProcessor == null) return false;
+
+            return _positionProcessor.hasEntity(component.owningEntity);
+        }
+
+        return true;
+    }
+
+
+    @Override
+    protected void p_onComponentActivated(RenderComponent component) {
+        _SYSTEM.addMesh(component.renderMesh, component.shader);
+    }
+    @Override
+    protected void p_onComponentDeactivated(RenderComponent component) {
+        _SYSTEM.rmvMesh(component.renderMesh);
+    }
+
+    @Override
+    protected void p_onComponentAdded(RenderComponent component) {
+        _SYSTEM.addMesh(component.renderMesh, component.shader);
+    }
+    @Override
+    protected void p_onComponentRemoved(RenderComponent component) {
+        _SYSTEM.rmvMesh(component.renderMesh);
+    }
+
+
+    public void onSystemAdded(Event event) {
+        if (((ProcessorAddedEvent) event).processor instanceof PositionProcessor) {
+            _positionProcessor = (PositionProcessor) ((ProcessorAddedEvent) event).processor;
+        }
+    }
+    public void onSystemRemoved(Event event) {
+        if (((ProcessorAddedEvent) event).processor instanceof PositionProcessor) {
+            _positionProcessor = null;
+        }
+    }
+
+
+    @Override
+    protected Collection<Class<? extends RenderComponent>> p_getProcessedComponentClasses() {
+        return List.of(RenderComponent.class);
     }
     @Override
     protected Collection<Class<? extends A_Component>> p_getRequiredComponentClasses() {

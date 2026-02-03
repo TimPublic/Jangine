@@ -27,7 +27,7 @@ public class TextureBatch extends A_Batch<TexturedAMesh> {
         _LOADER = new TextureLoader();
 
         _TEXTURES = new Texture[8];
-        _PLACEHOLDER = _LOADER.load("assets/placeholder_texture.png");
+        _PLACEHOLDER = _LOADER.load("Jangine/assets/placeholder_texture.png");
     }
 
 

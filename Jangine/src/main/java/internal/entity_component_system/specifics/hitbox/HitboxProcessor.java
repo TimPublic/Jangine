@@ -26,7 +26,7 @@ public class HitboxProcessor extends A_Processor<A_HitboxComponent> {
     }
 
     @Override
-    protected void p_receiveRequiredProcessors(HashMap<Class<? extends A_HitboxComponent>, A_Processor<?>> requiredProcessors) {
+    protected void p_receiveRequiredProcessors(HashMap<Class<? extends A_Component>, A_Processor<?>> requiredProcessors) {
 
     }
 

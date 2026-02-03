@@ -50,7 +50,7 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
     }
 
     @Override
-    protected void p_receiveRequiredProcessors(HashMap<Class<? extends CollisionComponent>, A_Processor<?>> requiredProcessors) {
+    protected void p_receiveRequiredProcessors(HashMap<Class<? extends A_Component>, A_Processor<?>> requiredProcessors) {
         _hitboxProcessor = (HitboxProcessor) requiredProcessors.get(A_HitboxComponent.class);
         _positionProcessor = (PositionProcessor) requiredProcessors.get(PositionComponent.class);
     }

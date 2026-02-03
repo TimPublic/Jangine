@@ -26,7 +26,7 @@ public class PositionProcessor extends A_Processor<PositionComponent> {
     }
 
     @Override
-    protected void p_receiveRequiredProcessors(HashMap<Class<? extends PositionComponent>, A_Processor<?>> requiredProcessors) {
+    protected void p_receiveRequiredProcessors(HashMap<Class<? extends A_Component>, A_Processor<?>> requiredProcessors) {
 
     }
 

@@ -24,7 +24,7 @@ public abstract class A_Processor<T extends A_Component> {
     protected abstract void p_init(System system, Scene scene);
     protected abstract void p_kill(System system, Scene scene);
 
-    protected abstract void p_receiveRequiredProcessors(HashMap<Class<? extends T>, A_Processor<?>> requiredProcessors);
+    protected abstract void p_receiveRequiredProcessors(HashMap<Class<? extends A_Component>, A_Processor<?>> requiredProcessors);
 
 
     // -+- PARAMETERS -+- //

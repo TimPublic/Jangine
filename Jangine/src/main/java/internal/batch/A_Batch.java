@@ -547,7 +547,7 @@ public abstract class A_Batch<T extends A_Mesh> {
 
         p_prepareRendering();
 
-        glDrawElements(GL_TRIANGLES, _INDICES.length, GL_UNSIGNED_INT, _EBO_ID);
+        glDrawElements(GL_TRIANGLES, _INDICES.length, GL_UNSIGNED_INT, 0);
 
         glBindVertexArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
