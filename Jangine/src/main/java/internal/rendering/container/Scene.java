@@ -1,12 +1,22 @@
 package internal.rendering.container;
 
 
+import internal.batch.BatchSystem;
+import internal.batch.specifics.TextureBatchProcessor;
 import internal.entity_component_system.System;
+import internal.entity_component_system.specifics.position.PositionComponent;
+import internal.entity_component_system.specifics.position.PositionProcessor;
+import internal.entity_component_system.specifics.render.RenderProcessor;
+import internal.entity_component_system.specifics.render.TexturedRenderComponent;
 import internal.events.EventListeningPort;
 import internal.events.Event;
 import internal.events.EventHandler;
 import internal.main.Engine;
 import internal.rendering.camera.Camera2D;
+import internal.rendering.mesh.TexturedAMesh;
+import internal.rendering.shader.ShaderProgram;
+import internal.rendering.texture.Texture;
+import internal.rendering.texture.dependencies.implementations.STBI_TextureLoader;
 import internal.util.PathManager;
 import internal.util.ResourceManager;
 import org.joml.Vector2d;
@@ -41,6 +51,15 @@ public class Scene extends Container {
     private ArrayList<EventListeningPort> _engineListeningPorts;
 
 
+    BatchSystem batchSystem;
+
+    TexturedAMesh mesh;
+    TexturedAMesh secondMesh;
+    boolean addCounter;
+
+    ShaderProgram shader;
+
+
     private Camera2D _camera;
 
 
@@ -64,12 +83,46 @@ public class Scene extends Container {
 
         _camera = new Camera2D(width, height);
 
+        batchSystem = new BatchSystem();
+
+        float[] vertices;
+
+        vertices = new float[] {
+                0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+                100.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+                100.0f, 100.0f, 1.0f, 1.0f, 0.0f,
+                0.0f, 100.0f, 0.0f, 1.0f, 0.0f,
+        };
+
+        float[] secondVertices;
+
+        secondVertices = new float[] {
+                100.0f, 100.0f, 0.0f, 0.0f, 0.0f,
+                200.0f, 100.0f, 1.0f, 0.0f, 0.0f,
+                200.0f, 200.0f, 1.0f, 1.0f, 0.0f,
+                100.0f, 200.0f, 0.0f, 1.0f, 0.0f,
+        };
+
+        int[] indices;
+
+        indices = new int[] {
+                0, 1, 2,
+                2, 3, 0,
+        };
+
+        addCounter = true;
+
+        shader = new ShaderProgram("assets/default.glsl");
+
+        mesh = new TexturedAMesh(vertices, indices, "assets/test_image.png");
+        secondMesh = new TexturedAMesh(secondVertices, indices, "assets/test_image.png");
+
+        batchSystem.addProcessor(new TextureBatchProcessor(), false);
+
+        java.lang.System.out.println(batchSystem.addMesh(mesh, shader));
+        java.lang.System.out.println(batchSystem.addMesh(secondMesh, shader));
+
         _onCreation();
-    }
-
-
-    public void test(Event event) {
-        return;
     }
 
 
@@ -163,6 +216,16 @@ public class Scene extends Container {
         _onUpdate(deltaTime);
 
         p_ECS.update();
+
+        mesh.vertices[0]++;
+        mesh.vertices[1]++;
+
+        if (addCounter) addCounter = !batchSystem.rmvMesh(secondMesh);
+        else addCounter = !batchSystem.addMesh(secondMesh, shader);
+
+        batchSystem.updateMesh(mesh);
+
+        batchSystem.update();
 
         _render();
     }

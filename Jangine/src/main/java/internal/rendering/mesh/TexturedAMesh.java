@@ -10,9 +10,14 @@ public class TexturedAMesh extends A_Mesh {
      */
 
 
-    public TexturedAMesh(float[] vertices, int[] indices) {
+    public TexturedAMesh(float[] vertices, int[] indices, String texturePath) {
         super(vertices, indices);
+
+        this.texturePath = texturePath;
     }
+
+
+    public String texturePath;
 
 
     @Override
