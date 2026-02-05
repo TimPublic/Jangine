@@ -4,7 +4,7 @@ package internal.entity_component_system.specifics.hitbox;
 import internal.entity_component_system.A_Component;
 import internal.entity_component_system.A_Processor;
 import internal.entity_component_system.System;
-import internal.rendering.container.Scene;
+import internal.rendering.container.A_Scene;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,11 +17,11 @@ public class HitboxProcessor extends A_Processor<A_HitboxComponent> {
     // -+- CREATION -+- //
 
     @Override
-    protected void p_init(System system, Scene scene) {
+    protected void p_init(System system, A_Scene scene) {
 
     }
     @Override
-    protected void p_kill(System system, Scene scene) {
+    protected void p_kill(System system, A_Scene scene) {
 
     }
 
@@ -33,7 +33,7 @@ public class HitboxProcessor extends A_Processor<A_HitboxComponent> {
     // -+- UPDATE LOOP -+- //
 
     @Override
-    protected void p_internalUpdate(Collection<A_HitboxComponent> validComponents, System system, Scene scene) {
+    protected void p_internalUpdate(Collection<A_HitboxComponent> validComponents, System system, A_Scene scene) {
 
     }
 

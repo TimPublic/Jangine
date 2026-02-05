@@ -1,9 +1,8 @@
 package internal.entity_component_system;
 
 
-import internal.rendering.container.Scene;
+import internal.rendering.container.A_Scene;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,8 +20,8 @@ public abstract class A_Processor<T extends A_Component> {
         _PREV_ACTIVATION_STATES = new HashMap<>();
     }
 
-    protected abstract void p_init(System system, Scene scene);
-    protected abstract void p_kill(System system, Scene scene);
+    protected abstract void p_init(System system, A_Scene oldScene);
+    protected abstract void p_kill(System system, A_Scene oldScene);
 
     protected abstract void p_receiveRequiredProcessors(HashMap<Class<? extends A_Component>, A_Processor<?>> requiredProcessors);
 
@@ -40,15 +39,15 @@ public abstract class A_Processor<T extends A_Component> {
     /**
      * The update method that is always the same and called by the system.
      * It creates a list of valid components and pushes them,
-     * together with the system itself and the owning scene to the internal
+     * together with the system itself and the owning oldScene to the internal
      * update method.
      *
      * @param system System that manages this processor
-     * @param scene Scene that owns the specified system
+     * @param scene OldScene that owns the specified system
      *
      * @author Tim Kloepper
      */
-    protected final void p_update(System system, Scene scene) {
+    protected final void p_update(System system, A_Scene scene) {
         HashSet<T> validComponents;
 
         validComponents = new HashSet<>();
@@ -70,7 +69,7 @@ public abstract class A_Processor<T extends A_Component> {
 
         p_internalUpdate(validComponents, system, scene);
     }
-    protected abstract void p_internalUpdate(Collection<T> validComponents, System system, Scene scene);
+    protected abstract void p_internalUpdate(Collection<T> validComponents, System system, A_Scene scene);
 
 
     // -+- COMPONENT MANAGEMENT -+- //

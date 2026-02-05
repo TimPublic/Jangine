@@ -19,8 +19,8 @@ import internal.entity_component_system.specifics.position.PositionProcessor;
 import internal.events.Event;
 import internal.events.EventHandler;
 import internal.events.EventListeningPort;
-import internal.rendering.container.Container;
-import internal.rendering.container.Scene;
+import internal.rendering.container.A_Scene;
+import internal.rendering.container.A_Container;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -39,13 +39,13 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
     }
 
     @Override
-    protected void p_init(System system, Scene scene) {
-        _port = scene.getEventHandler().register();
+    protected void p_init(System system, A_Scene scene) {
+        _port = scene.SYSTEMS.EVENT_HANDLER.register();
         _port.registerFunction(this::onProcessorAdded, List.of(ProcessorAddedEvent.class));
         _port.registerFunction(this::onProcessorRemoved, List.of(ProcessorRemovedEvent.class));
     }
     @Override
-    protected void p_kill(System system, Scene scene) {
+    protected void p_kill(System system, A_Scene scene) {
 
     }
 
@@ -73,7 +73,7 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
     // -+- UPDATE LOOP -+- //
 
     @Override
-    protected void p_internalUpdate(Collection<CollisionComponent> validComponents, System system, Scene scene) {
+    protected void p_internalUpdate(Collection<CollisionComponent> validComponents, System system, A_Scene scene) {
         if (_positionProcessor == null || _hitboxProcessor == null) return;
 
         HashMap<ObjectData, HashSet<ObjectData>> pairs;
@@ -91,12 +91,12 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
             positionComponent = _positionProcessor.getComponent(component.owningEntity);
             objectData = new ObjectData(hitboxComponent, positionComponent);
 
-            h_checkAgainstContainer(objectData, scene, scene.getEventHandler());
-            h_checkAgainstObjects(objectData, _SPATIAL_PARTITIONER.getCollidingObjects(objectData), pairs, scene.getEventHandler());
+            h_checkAgainstContainer(objectData, scene, scene.SYSTEMS.EVENT_HANDLER);
+            h_checkAgainstObjects(objectData, _SPATIAL_PARTITIONER.getCollidingObjects(objectData), pairs, scene.SYSTEMS.EVENT_HANDLER);
         }
     }
 
-    private void h_checkAgainstContainer(ObjectData object, Container container, EventHandler eventHandler) {
+    private void h_checkAgainstContainer(ObjectData object, A_Container container, EventHandler eventHandler) {
         if (_COLLISION_CALCULATOR.isCollidingWith(object, container)) {
             eventHandler.pushEvent(new ContainerCollisionEvent(_COLLISION_CALCULATOR.getCollisionAxis(object, container), object, container));
         }

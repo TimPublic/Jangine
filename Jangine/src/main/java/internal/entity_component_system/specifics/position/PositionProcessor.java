@@ -4,7 +4,7 @@ package internal.entity_component_system.specifics.position;
 import internal.entity_component_system.A_Component;
 import internal.entity_component_system.A_Processor;
 import internal.entity_component_system.System;
-import internal.rendering.container.Scene;
+import internal.rendering.container.A_Scene;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,11 +17,11 @@ public class PositionProcessor extends A_Processor<PositionComponent> {
     // -+- CREATION -+- //
 
     @Override
-    protected void p_init(System system, Scene scene) {
+    protected void p_init(System system, A_Scene scene) {
 
     }
     @Override
-    protected void p_kill(System system, Scene scene) {
+    protected void p_kill(System system, A_Scene scene) {
 
     }
 
@@ -33,7 +33,7 @@ public class PositionProcessor extends A_Processor<PositionComponent> {
     // -+- UPDATE LOOP -+- //
 
     @Override
-    protected void p_internalUpdate(Collection<PositionComponent> validComponents, System system, Scene scene) {
+    protected void p_internalUpdate(Collection<PositionComponent> validComponents, System system, A_Scene scene) {
 
     }
 

@@ -4,9 +4,8 @@ package internal.entity_component_system.specifics.collision.dependencies.spatia
 import internal.entity_component_system.specifics.collision.data.ObjectData;
 import internal.entity_component_system.specifics.hitbox.CircleHitboxComponent;
 import internal.entity_component_system.specifics.hitbox.RectangleHitboxComponent;
-import internal.rendering.container.Container;
+import internal.rendering.container.A_Container;
 import org.joml.Vector2d;
-import org.lwjgl.util.freetype.FT_ListNode;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -43,7 +42,7 @@ public class QuadTree implements I_SpatialPartitioner {
     // -+- UPDATE LOOP -+- //
 
     @Override
-    public void update(Container container) {
+    public void update(A_Container container) {
         _ROOT.update(_OBJECTS);
     }
 

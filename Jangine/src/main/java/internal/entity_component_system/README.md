@@ -9,7 +9,7 @@ The entity component system consists of three layers:
 
 ## System
 
-The system is home to a scene and contains the processors and entities.
+The system is home to a oldScene and contains the processors and entities.
 It manages the processors, checks their requirements and pushes notifications.
 <p></p>
 It also manages the entity addition and removal.

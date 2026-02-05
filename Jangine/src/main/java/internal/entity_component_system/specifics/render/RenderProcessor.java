@@ -12,7 +12,7 @@ import internal.entity_component_system.specifics.position.PositionComponent;
 import internal.entity_component_system.specifics.position.PositionProcessor;
 import internal.events.Event;
 import internal.events.EventListeningPort;
-import internal.rendering.container.Scene;
+import internal.rendering.container.A_Scene;
 import internal.rendering.mesh.A_Mesh;
 import org.joml.Vector2d;
 
@@ -48,15 +48,15 @@ public class RenderProcessor extends A_Processor<RenderComponent> {
 
 
     @Override
-    protected void p_init(System system, Scene scene) {
-        _PORT = scene.getEventHandler().register();
+    protected void p_init(System system, A_Scene scene) {
+        _PORT = scene.SYSTEMS.EVENT_HANDLER.register();
 
         _PORT.registerFunction(this::onSystemAdded, List.of(ProcessorAddedEvent.class));
         _PORT.registerFunction(this::onSystemRemoved, List.of(ProcessorRemovedEvent.class));
     }
     @Override
-    protected void p_kill(System system, Scene scene) {
-        scene.getEventHandler().deregister(_PORT);
+    protected void p_kill(System system, A_Scene scene) {
+        scene.SYSTEMS.EVENT_HANDLER.deregister(_PORT);
     }
 
 
@@ -67,7 +67,7 @@ public class RenderProcessor extends A_Processor<RenderComponent> {
 
 
     @Override
-    protected void p_internalUpdate(Collection<RenderComponent> validComponents, System system, Scene scene) {
+    protected void p_internalUpdate(Collection<RenderComponent> validComponents, System system, A_Scene scene) {
         for (RenderComponent component : validComponents) {
             if (component.positionDependent) h_updatePosition(component.renderMesh, _positionProcessor.getComponent(component.owningEntity).position);
 

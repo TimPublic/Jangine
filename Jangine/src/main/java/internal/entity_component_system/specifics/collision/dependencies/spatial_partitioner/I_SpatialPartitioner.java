@@ -2,7 +2,7 @@ package internal.entity_component_system.specifics.collision.dependencies.spatia
 
 
 import internal.entity_component_system.specifics.collision.data.ObjectData;
-import internal.rendering.container.Container;
+import internal.rendering.container.A_Container;
 
 import java.util.Collection;
 
@@ -12,7 +12,7 @@ public interface I_SpatialPartitioner {
 
     // -+- UPDATE LOOP -+- //
 
-    void update(Container container);
+    void update(A_Container container);
 
 
     // -+- ADDITION AND REMOVAL -+- //

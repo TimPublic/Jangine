@@ -3,7 +3,7 @@ package internal.entity_component_system;
 
 import internal.entity_component_system.events.ProcessorAddedEvent;
 import internal.entity_component_system.events.ProcessorRemovedEvent;
-import internal.rendering.container.Scene;
+import internal.rendering.container.A_Scene;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,9 +15,9 @@ public class System {
 
     // -+- CREATION -+- //
 
-    public System(Scene scene) {
+    public System(A_Scene scene) {
         _processorsPerComponent = new HashMap<>();
-        _scene = scene;
+        _SCENE = scene;
         _activeEntities = new HashSet<>();
         _freeEntityIds = new HashSet<>();
 
@@ -30,7 +30,7 @@ public class System {
     // FINALS //
 
     private final HashMap<Class<? extends A_Component>, A_Processor> _processorsPerComponent;
-    private final Scene _scene;
+    private final A_Scene _SCENE;
     private final HashSet<Integer> _activeEntities;
     private final HashSet<Integer> _freeEntityIds;
 
@@ -50,7 +50,7 @@ public class System {
      */
     public void update() {
         for (A_Processor processor : _processorsPerComponent.values()) {
-            processor.p_update(this, _scene);
+            processor.p_update(this, _SCENE);
         }
     }
 
@@ -92,7 +92,7 @@ public class System {
             requirements.put((Class<? extends A_Component>) componentClass, _processorsPerComponent.get(componentClass));
         }
 
-        processor.p_init(this, _scene);
+        processor.p_init(this, _SCENE);
         processor.p_receiveRequiredProcessors(requirements);
 
         _onProcessorAdded(processor);
@@ -119,7 +119,7 @@ public class System {
             _processorsPerComponent.remove(componentClass);
         }
 
-        processor.p_kill(this, _scene);
+        processor.p_kill(this, _SCENE);
 
         _onProcessorRemoved(processor);
 
@@ -135,7 +135,7 @@ public class System {
      * @author Tim Kloepper
      */
     private void _onProcessorAdded(A_Processor processor) {
-        _scene.getEventHandler().pushEvent(new ProcessorAddedEvent(processor));
+        _SCENE.SYSTEMS.EVENT_HANDLER.pushEvent(new ProcessorAddedEvent(processor));
     }
     /**
      * Gets called, when a processor got removed.
@@ -146,7 +146,7 @@ public class System {
      * @author Tim Kloepper
      */
     private void _onProcessorRemoved(A_Processor processor) {
-        _scene.getEventHandler().pushEvent(new ProcessorRemovedEvent(processor));
+        _SCENE.SYSTEMS.EVENT_HANDLER.pushEvent(new ProcessorRemovedEvent(processor));
     }
 
 

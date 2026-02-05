@@ -5,6 +5,7 @@ import internal.events.EventHandler;
 import internal.input.KeyListener;
 import internal.input.MouseListener;
 import internal.main.Engine;
+import org.joml.Vector2d;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
@@ -19,36 +20,14 @@ import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 
-/**
- * A window is a simple desktop-window which is created and managed by the {@link Engine}.
- * It contains an amount of {@link Scene} from which only one is active at one time, which
- * is the only one that gets updated.
- * A window also always contains a {@link KeyListener} and a {@link MouseListener}
- * that push their events to the windows' and the engines' {@link EventHandler}.
- *
- * @author Tim Kloepper
- * @version 1.0
- */
-public class Window {
+public class Window extends A_Container {
 
 
-    private int _width, _height;
-    private String _title;
+    // -+- CREATION -+- //
 
-    private EventHandler _eventHandler;
-    private KeyListener _keyListener;
-    private MouseListener _mouseListener;
+    public Window(double width, double height) {
 
-    private long _glfw_windowPointer;
-
-
-    private HashSet<Scene> _scenes;
-    private Scene _activeScene;
-
-
-    public Window() {
-        _width = 960;
-        _height = 540;
+        super(new Vector2d(0, 0), width, height);
 
         _title = "Jangine Window";
 
@@ -62,9 +41,25 @@ public class Window {
         _setUpEngine();
 
         _scenes = new HashSet<>();
-
-        activateScene(createScene());
     }
+
+
+    // -+- PARAMETERS -+- //
+
+    // NON-FINALS //
+
+    private String _title;
+
+    private EventHandler _eventHandler;
+    private KeyListener _keyListener;
+    private MouseListener _mouseListener;
+
+    private long _glfw_windowPointer;
+
+
+    private HashSet<A_Scene> _scenes;
+    private A_Scene _activeScene;
+
 
 
     // -+- UPDATE-LOOP -+- //
@@ -103,15 +98,10 @@ public class Window {
         return true;
     }
 
-    /**
-     * Updates the currently active {@link Scene}.
-     *
-     * @author Tim Kloepper
-     */
     private void _updateScene(double deltaTime) {
         if (_activeScene == null) {return;}
 
-        _activeScene.update(deltaTime); // 44 is just a placeholder.
+        _activeScene.update(deltaTime);
     }
 
 
@@ -139,7 +129,7 @@ public class Window {
         glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
         // Create the window
-        _glfw_windowPointer = glfwCreateWindow(_width, _height, "Hello World!", NULL, NULL);
+        _glfw_windowPointer = glfwCreateWindow((int) getWidth(), (int) getHeight(), "Hello World!", NULL, NULL);
         if (_glfw_windowPointer == NULL)
             throw new RuntimeException("Failed to create the GLFW window");
 
@@ -202,75 +192,71 @@ public class Window {
 
     // -+- SCENE-MANAGEMENT -+- //
 
-    // Creates a new scene in this window and returns it.
-    public Scene createScene() {
-        Scene newScene;
+    public void addScene(A_Scene scene) {
+        if (scene == null) throw new IllegalStateException("[WINDOW ERROR] : Scene cannot be null!");
 
-        newScene = new Scene(_eventHandler, _width, _height, false);
+        scene.init(this);
 
-        _scenes.add(newScene);
-
-        return newScene;
+        _scenes.add(scene);
     }
-    public boolean deleteScene(Scene scene) {
+    public void addAndActivateScene(A_Scene scene) {
+        addScene(scene);
+        activateScene(scene);
+    }
+    public boolean deleteScene(A_Scene scene) {
         if (!_scenes.remove(scene)) {return false;}
 
         scene.kill();
 
         return true;
     }
-    // Activates a scene.
-    // The scene must be home to this window, if not, the engine will crash.
-    // If another scene is currently active, it will be deactivated.
-    public Scene activateScene(Scene scene) {
+    // Activates a oldScene.
+    // The oldScene must be home to this window, if not, the engine will crash.
+    // If another oldScene is currently active, it will be deactivated.
+    public A_Scene activateScene(A_Scene scene) {
         if (!_scenes.contains(scene)) {
-            System.err.println("[WINDOW ERROR] : Tried to make scene active, which is not home to this window!");
+            System.err.println("[WINDOW ERROR] : Tried to make oldScene active, which is not home to this window!");
 
             System.exit(1);
         }
 
         if (_activeScene != null) {
-            _activeScene.deactivate();
+            _activeScene.setActive(false);
         }
 
         _activeScene = scene;
 
-        _activeScene.activate();
+        _activeScene.setActive(true);
 
         return _activeScene;
     }
-    // Deactivates a scene.
-    // The scene must be home to this window, if not, the engine will crash.
-    // After this call, no scene will be active.
-    public Scene deactivateScene(Scene scene) {
+    // Deactivates a oldScene.
+    // The oldScene must be home to this window, if not, the engine will crash.
+    // After this call, no oldScene will be active.
+    public A_Scene deactivateScene(A_Scene scene) {
         if (!_scenes.contains(scene)) {
             System.err.println("[WINDOW ERROR] : Tried to deactivate scene, which is not home to this window!");
 
             System.exit(1);
         }
 
-        _activeScene.deactivate();
+        _activeScene.setActive(false);
 
         _activeScene = null;
 
         return scene;
     }
-    // Deactivates a scene and activates another one.
+    // Deactivates a oldScene and activates another one.
     // Both scenes must be home to this window, if not, the engine will crash.
-    public void deactivateScene(Scene scene, Scene newActiveScene) {
+    public void deactivateScene(A_Scene scene, A_Scene newActiveScene) {
         deactivateScene(scene);
-        activateScene(scene);
-    }
-    // Adds a scene to this window and therefore makes it home to this window.
-    // A scene should only ever be home to one window!
-    private void _addScene(Scene scene) {
-        _scenes.add(scene);
+        activateScene(newActiveScene);
     }
 
 
     // -+- GETTERS -+- //
 
-    protected Scene getActiveScene() {
+    protected A_Scene getActiveScene() {
         return _activeScene;
     }
 
@@ -284,14 +270,6 @@ public class Window {
         return _eventHandler;
     }
 
-    // Returns the width of this window.
-    public int getWidth() {
-        return _width;
-    }
-    // Returns the height of this window.
-    public int getHeight() {
-        return _height;
-    }
     // Returns the title of this window.
     public String getTitle() {
         return _title;

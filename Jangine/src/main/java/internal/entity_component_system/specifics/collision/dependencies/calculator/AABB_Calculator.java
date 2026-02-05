@@ -6,7 +6,7 @@ import internal.entity_component_system.specifics.collision.data.ObjectData;
 import internal.entity_component_system.specifics.hitbox.A_HitboxComponent;
 import internal.entity_component_system.specifics.hitbox.CircleHitboxComponent;
 import internal.entity_component_system.specifics.hitbox.RectangleHitboxComponent;
-import internal.rendering.container.Container;
+import internal.rendering.container.A_Container;
 import org.joml.Vector2d;
 
 
@@ -33,7 +33,7 @@ public class AABB_Calculator implements I_CollisionCalculator {
         return null;
     }
     @Override
-    public A_CollisionData.COLLISION_AXIS getCollisionAxis(ObjectData objA, Container container) {
+    public A_CollisionData.COLLISION_AXIS getCollisionAxis(ObjectData objA, A_Container container) {
         A_HitboxComponent hitboxA;
 
         hitboxA = objA.hitboxComponent;
@@ -83,12 +83,12 @@ public class AABB_Calculator implements I_CollisionCalculator {
     private A_CollisionData.COLLISION_AXIS h_getCollisionAxis(CircleHitboxComponent objA, Vector2d posA, RectangleHitboxComponent objB, Vector2d posB) {
         return h_getCollisionAxis(objB, posB, objA, posA);
     }
-    private A_CollisionData.COLLISION_AXIS h_getCollisionAxis(RectangleHitboxComponent obj, Vector2d pos, Container container) {
+    private A_CollisionData.COLLISION_AXIS h_getCollisionAxis(RectangleHitboxComponent obj, Vector2d pos, A_Container container) {
         if (pos.x < container.getPosition().x || pos.x + obj.width > container.getPosition().x + container.getWidth()) return A_CollisionData.COLLISION_AXIS.X;
 
         return A_CollisionData.COLLISION_AXIS.Y;
     }
-    private A_CollisionData.COLLISION_AXIS h_getCollisionAxis(CircleHitboxComponent obj, Vector2d pos, Container container) {
+    private A_CollisionData.COLLISION_AXIS h_getCollisionAxis(CircleHitboxComponent obj, Vector2d pos, A_Container container) {
         if (pos.x - obj.radius < container.getPosition().x || pos.x + obj.radius > container.getPosition().x + container.getWidth()) return A_CollisionData.COLLISION_AXIS.X;
 
         return A_CollisionData.COLLISION_AXIS.Y;
@@ -115,7 +115,7 @@ public class AABB_Calculator implements I_CollisionCalculator {
         return false;
     }
     @Override
-    public boolean isCollidingWith(ObjectData objA, Container container) {
+    public boolean isCollidingWith(ObjectData objA, A_Container container) {
         A_HitboxComponent hitboxA;
 
         hitboxA = objA.hitboxComponent;
@@ -152,7 +152,7 @@ public class AABB_Calculator implements I_CollisionCalculator {
     public boolean h_isColliding(CircleHitboxComponent objA, Vector2d posA, CircleHitboxComponent objB, Vector2d posB) {
         return posA.distance(posB) < Math.max(objA.radius, objB.radius);
     }
-    public boolean h_isColliding(RectangleHitboxComponent obj, Vector2d pos, Container container) {
+    public boolean h_isColliding(RectangleHitboxComponent obj, Vector2d pos, A_Container container) {
         boolean xOverlap, yOverlap;
 
         xOverlap = pos.x < container.getPosition().x || pos.x + obj.width > container.getPosition().x + container.getWidth();
@@ -163,7 +163,7 @@ public class AABB_Calculator implements I_CollisionCalculator {
 
         return yOverlap;
     }
-    public boolean h_isColliding(CircleHitboxComponent obj, Vector2d pos, Container container) {
+    public boolean h_isColliding(CircleHitboxComponent obj, Vector2d pos, A_Container container) {
         boolean xOverlap, yOverlap;
 
         xOverlap = pos.x - obj.radius < container.getPosition().x || pos.x + obj.radius > container.getPosition().x + container.getWidth();

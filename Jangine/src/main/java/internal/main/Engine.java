@@ -57,8 +57,6 @@ public class Engine {
      * @author Tim Kloepper
      */
     public void run() {
-        createWindow();
-
         while (!_shouldClose) {
             _currentDeltaTime = DeltaTimer.get().getDeltaTime();
 
@@ -114,7 +112,7 @@ public class Engine {
     public Window createWindow() {
         Window newWindow;
 
-        newWindow = new Window();
+        newWindow = new Window(1920, 1080);
 
         _windows.add(newWindow);
 
