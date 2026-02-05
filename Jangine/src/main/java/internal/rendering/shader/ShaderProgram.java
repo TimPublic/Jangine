@@ -1,6 +1,7 @@
 package internal.rendering.shader;
 
 
+import internal.util.FormatChecker;
 import org.joml.*;
 import org.lwjgl.BufferUtils;
 
@@ -49,6 +50,8 @@ public class ShaderProgram {
 
 
     public ShaderProgram(String filePath) {
+        FormatChecker.assertFormat(filePath, ".glsl");
+
         _retrieveShadersFromPath(filePath);
 
         _compileShaders();
@@ -91,12 +94,6 @@ public class ShaderProgram {
      * @author Tim Kloepper
      * */
     private void _retrieveShadersFromPath(String path) {
-        if (!path.endsWith(".glsl")) {
-            System.err.println("[SHADER ERROR] : Given shader file is not of '.glsl!'");
-
-            System.exit(1);
-        }
-
         try {
             String fileContents;
 

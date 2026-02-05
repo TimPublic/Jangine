@@ -6,10 +6,10 @@ import internal.rendering.camera.Camera2D;
 import internal.rendering.mesh.TexturedAMesh;
 import internal.rendering.shader.ShaderProgram;
 import internal.rendering.texture.Texture;
+import internal.rendering.texture.TextureLoader;
 import internal.rendering.texture.dependencies.implementations.STBI_TextureLoader;
 
 import java.util.Arrays;
-import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
@@ -24,7 +24,7 @@ public class TextureBatch extends A_Batch<TexturedAMesh> {
     public TextureBatch(ShaderProgram shader, int verticesAmount, int vertexSize, int indicesAmount) {
         super(shader, verticesAmount, vertexSize, indicesAmount);
 
-        _LOADER = new TextureLoader();
+        _LOADER = new TextureLoader(new STBI_TextureLoader());
 
         _TEXTURES = new Texture[8];
         _PLACEHOLDER = _LOADER.load("assets/placeholder_texture.png");
@@ -119,26 +119,6 @@ public class TextureBatch extends A_Batch<TexturedAMesh> {
         }
 
         return -1;
-    }
-
-
-}
-
-class TextureLoader {
-
-
-    public TextureLoader() {
-        _TEXTURES_PER_PATH = new HashMap<>();
-    }
-
-
-    private final HashMap<String, Texture> _TEXTURES_PER_PATH;
-
-
-    public Texture load(String path) {
-        if (!_TEXTURES_PER_PATH.containsKey(path)) _TEXTURES_PER_PATH.put(path, new Texture(path, new STBI_TextureLoader()));
-
-        return _TEXTURES_PER_PATH.get(path);
     }
 
 

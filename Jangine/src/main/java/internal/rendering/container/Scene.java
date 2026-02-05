@@ -1,7 +1,6 @@
 package internal.rendering.container;
 
 
-import internal.batch.BatchSystem;
 import internal.batch.specifics.TextureBatchProcessor;
 import internal.entity_component_system.System;
 import internal.entity_component_system.builders.EntityBuilder;
@@ -16,10 +15,7 @@ import internal.main.Engine;
 import internal.rendering.camera.Camera2D;
 import internal.rendering.mesh.TexturedAMesh;
 import internal.rendering.shader.ShaderProgram;
-import internal.rendering.texture.Texture;
-import internal.rendering.texture.dependencies.implementations.STBI_TextureLoader;
 import internal.util.PathManager;
-import internal.util.ResourceManager;
 import org.joml.Vector2d;
 
 import java.util.ArrayList;
@@ -45,7 +41,6 @@ public class Scene extends Container {
 
     protected final System p_ECS;
 
-    protected final ResourceManager p_RESOURCE_MANAGER;
     protected final PathManager p_PATH_MANAGER;
 
     private ArrayList<EventListeningPort> _windowListeningPorts;
@@ -76,13 +71,18 @@ public class Scene extends Container {
 
         p_ECS = new System(this);
 
-        p_RESOURCE_MANAGER = new ResourceManager();
         p_PATH_MANAGER = new PathManager();
 
         _windowListeningPorts = new ArrayList<>();
         _engineListeningPorts = new ArrayList<>();
 
         _camera = new Camera2D(width, height);
+
+        p_PATH_MANAGER.add("uiTexture", "assets/ui.png");
+        p_PATH_MANAGER.add("defaultShader", "assets/default.glsl");
+
+        p_PATH_MANAGER.setLead("");
+        p_PATH_MANAGER.setTrail("");
 
         float[] vertices;
 
@@ -91,15 +91,6 @@ public class Scene extends Container {
                 100.0f, 0.0f, 1.0f, 0.0f, 0.0f,
                 100.0f, 100.0f, 1.0f, 1.0f, 0.0f,
                 0.0f, 100.0f, 0.0f, 1.0f, 0.0f,
-        };
-
-        float[] secondVertices;
-
-        secondVertices = new float[] {
-                100.0f, 100.0f, 0.0f, 0.0f, 0.0f,
-                200.0f, 100.0f, 1.0f, 0.0f, 0.0f,
-                200.0f, 200.0f, 1.0f, 1.0f, 0.0f,
-                100.0f, 200.0f, 0.0f, 1.0f, 0.0f,
         };
 
         int[] indices;
@@ -113,7 +104,7 @@ public class Scene extends Container {
 
         TexturedAMesh mesh;
 
-        mesh = new TexturedAMesh(vertices, indices, "assets/placeholder_texture.png");
+        mesh = new TexturedAMesh(vertices, indices, p_PATH_MANAGER.get("uiTexture"));
 
         p_ECS.addProcessor(new PositionProcessor());
         p_ECS.addProcessor(new RenderProcessor(List.of(new TextureBatchProcessor())));
@@ -124,7 +115,7 @@ public class Scene extends Container {
 
         entityId = builder.start(p_ECS).
                 add(new PositionComponent(new Vector2d(0, 0))).
-                add(new RenderComponent(true, mesh, new ShaderProgram("assets/default.glsl"))).
+                add(new RenderComponent(true, mesh, new ShaderProgram(p_PATH_MANAGER.get("defaultShader")))).
                 finish();
 
         _onCreation();

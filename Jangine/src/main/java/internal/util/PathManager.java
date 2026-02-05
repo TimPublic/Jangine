@@ -12,8 +12,8 @@ public class PathManager {
     public PathManager() {
         _PATHS = new HashMap<>();
 
-        _leading = "";
-        _trailing = "";
+        _lead = "";
+        _trail = "";
     }
 
 
@@ -25,13 +25,13 @@ public class PathManager {
 
     // NON-FINALS //
 
-    private String _leading;
-    private String _trailing;
+    private String _lead;
+    private String _trail;
 
 
     // -+- PATH MANAGEMENT -+- //
 
-    public void addPath(String shortcut, String path) {
+    public void add(String shortcut, String path) {
         if (_PATHS.containsKey(shortcut)) {
             throw new IllegalArgumentException("[PATH MANAGER ERROR] : Shortcut is already in use!\n"
             + "|-> Shortcut : " + shortcut);
@@ -39,7 +39,7 @@ public class PathManager {
 
         _PATHS.put(shortcut, path);
     }
-    public boolean rmvPath(String shortcut) {
+    public boolean rmv(String shortcut) {
         String path;
 
         path = _PATHS.remove(shortcut);
@@ -50,23 +50,33 @@ public class PathManager {
 
     // -+- ADDITIONS MANAGEMENT -+- //
 
-    public void setLeadingPath(String leading) {
-        _leading = leading;
+    public void setLead(String leading) {
+        _lead = leading;
     }
-    public void setTrailingPath(String trailing) {
-        _trailing = trailing;
+    public void setTrail(String trailing) {
+        _trail = trailing;
     }
 
 
     // -+- GETTERS -+- //
 
-    public String getFullPath(String shortcut) {
+    public String get(String shortcut) {
         String path;
 
         path = _PATHS.get(shortcut);
         if (path == null) return null;
 
-        return _leading + path + _trailing;
+        return _lead + path + _trail;
+    }
+    public String getOriginal(String shortcut) {
+        return _PATHS.get(shortcut);
+    }
+
+    public String getLead() {
+        return _lead;
+    }
+    public String getTrail() {
+        return _trail;
     }
 
 
