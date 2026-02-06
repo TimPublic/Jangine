@@ -1,7 +1,9 @@
 package internal.rendering.container;
 
 
+import internal.events.Event;
 import internal.events.EventHandler;
+import internal.events.EventListeningPort;
 import internal.input.KeyListener;
 import internal.input.MouseListener;
 import internal.main.Engine;
@@ -11,7 +13,9 @@ import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
 import java.nio.*;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -40,7 +44,10 @@ public class Window extends A_Container {
 
         _setUpEngine();
 
-        _scenes = new HashSet<>();
+        _SCENES = new HashSet<>();
+        _SCENE_PORTS = new HashMap<>();
+
+        _ENGINE_PORT = Engine.get().getEventHandler().register();
     }
 
 
@@ -56,9 +63,15 @@ public class Window extends A_Container {
 
     private long _glfw_windowPointer;
 
-
-    private HashSet<A_Scene> _scenes;
     private A_Scene _activeScene;
+
+
+    // FINALS //
+
+    private final HashSet<A_Scene> _SCENES;
+    private final HashMap<A_Scene, EventListeningPort> _SCENE_PORTS;
+
+    private final EventListeningPort _ENGINE_PORT;
 
 
 
@@ -196,17 +209,23 @@ public class Window extends A_Container {
         if (scene == null) throw new IllegalStateException("[WINDOW ERROR] : Scene cannot be null!");
 
         scene.init(this);
+        _SCENE_PORTS.put(scene, scene.SYSTEMS.EVENT_HANDLER.register());
+        _SCENE_PORTS.get(scene).
+                registerFunction(
+                        event -> _eventHandler.pushEvent(event)
+                );
 
-        _scenes.add(scene);
+        _SCENES.add(scene);
     }
     public void addAndActivateScene(A_Scene scene) {
         addScene(scene);
         activateScene(scene);
     }
-    public boolean deleteScene(A_Scene scene) {
-        if (!_scenes.remove(scene)) {return false;}
+    public boolean rmvScene(A_Scene scene) {
+        if (!_SCENES.remove(scene)) {return false;}
 
         scene.kill();
+        scene.SYSTEMS.EVENT_HANDLER.deregister(_SCENE_PORTS.remove(scene));
 
         return true;
     }
@@ -214,7 +233,7 @@ public class Window extends A_Container {
     // The oldScene must be home to this window, if not, the engine will crash.
     // If another oldScene is currently active, it will be deactivated.
     public A_Scene activateScene(A_Scene scene) {
-        if (!_scenes.contains(scene)) {
+        if (!_SCENES.contains(scene)) {
             System.err.println("[WINDOW ERROR] : Tried to make oldScene active, which is not home to this window!");
 
             System.exit(1);
@@ -234,7 +253,7 @@ public class Window extends A_Container {
     // The oldScene must be home to this window, if not, the engine will crash.
     // After this call, no oldScene will be active.
     public A_Scene deactivateScene(A_Scene scene) {
-        if (!_scenes.contains(scene)) {
+        if (!_SCENES.contains(scene)) {
             System.err.println("[WINDOW ERROR] : Tried to deactivate scene, which is not home to this window!");
 
             System.exit(1);
@@ -268,6 +287,10 @@ public class Window extends A_Container {
     // Returns this windows' event-handler.
     public EventHandler getEventHandler() {
         return _eventHandler;
+    }
+
+    public EventListeningPort getEnginePort() {
+        return _ENGINE_PORT;
     }
 
     // Returns the title of this window.

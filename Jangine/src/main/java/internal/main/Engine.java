@@ -1,11 +1,15 @@
 package internal.main;
 
 
+import internal.events.Event;
 import internal.events.EventHandler;
+import internal.events.EventListeningPort;
 import internal.rendering.container.Window;
 import internal.util.DeltaTimer;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
@@ -31,6 +35,7 @@ public class Engine {
     private EventHandler _eventHandler;
 
     private Set<Window> _windows;
+    private final HashMap<Window, EventListeningPort> _WINDOW_PORTS;
 
     private boolean _shouldClose;
 
@@ -41,6 +46,7 @@ public class Engine {
         _eventHandler = new EventHandler();
 
         _windows = new HashSet<>();
+        _WINDOW_PORTS = new HashMap<>();
 
         _shouldClose = false;
 
@@ -103,23 +109,6 @@ public class Engine {
     // -+- WINDOW-MANAGEMENT -+- //
 
     /**
-     * Creates a {@link Window} and takes it into the main update loop.
-     *
-     * @return the new {@link Window}
-     *
-     * @author Tim Kloepper
-     */
-    public Window createWindow() {
-        Window newWindow;
-
-        newWindow = new Window(1920, 1080);
-
-        _windows.add(newWindow);
-
-        return newWindow;
-    }
-
-    /**
      * Adds a {@link Window} and takes it into the main update loop.
      *
      * @param window the window that is to be added
@@ -128,6 +117,16 @@ public class Engine {
      */
     public void addWindow(Window window) {
         _windows.add(window);
+
+        _WINDOW_PORTS.put(window, window.getEventHandler().register());
+        _WINDOW_PORTS.get(window).registerFunction(
+                event -> _eventHandler.pushEvent(event)
+        );
+    }
+    public void rmvWindow(Window window) {
+        if (!_windows.remove(window)) return;
+
+        window.getEventHandler().deregister(_WINDOW_PORTS.get(window));
     }
 
     /**

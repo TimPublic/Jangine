@@ -102,6 +102,11 @@ public class EventListeningPort {
             _callbacks.get(subClass).add(function);
         }
     }
+    public void registerFunction(Consumer<Event> function) {
+        if (!_callbacks.containsKey(Event.class)) _callbacks.put(Event.class, new ArrayList<>());
+
+        _callbacks.get(Event.class).add(function);
+    }
 
 
 }

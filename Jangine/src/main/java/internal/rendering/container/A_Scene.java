@@ -4,6 +4,7 @@ package internal.rendering.container;
 import internal.entity_component_system.System;
 import internal.events.EventHandler;
 import internal.events.EventListeningPort;
+import internal.main.Engine;
 import internal.rendering.texture.TextureLoader;
 import internal.rendering.texture.dependencies.I_TextureLoader;
 import internal.util.PathManager;
@@ -86,6 +87,8 @@ public abstract class A_Scene extends A_Container {
             ECS = new System(scene);
 
             EVENT_HANDLER = new EventHandler();
+
+            ENGINE_PORT = Engine.get().getEventHandler().register();
         }
 
 
@@ -101,6 +104,8 @@ public abstract class A_Scene extends A_Container {
 
         public EventHandler window_event_handler;
         public EventListeningPort window_port;
+
+        public final EventListeningPort ENGINE_PORT;
 
 
     }
