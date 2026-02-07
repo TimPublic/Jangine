@@ -108,5 +108,29 @@ public class EventListeningPort {
         _callbacks.get(Event.class).add(function);
     }
 
+    public boolean rmvFunction(Consumer<Event> function) {
+        ArrayList<Consumer<Event>> removes;
+        boolean foundAny;
+
+        removes = new ArrayList<>();
+        foundAny = false;
+
+        for (ArrayList<Consumer<Event>> list : _callbacks.values()) {
+            for (Consumer<Event> callback : list) {
+                if (callback != function) continue;
+
+                removes.add(callback);
+                foundAny = true;
+            }
+
+            list.removeAll(removes);
+        }
+
+        return foundAny;
+    }
+    public boolean rmvClass(Class<? extends Event> eventClass) {
+        return _callbacks.remove(eventClass) != null;
+    }
+
 
 }
