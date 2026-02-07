@@ -6,14 +6,21 @@ import internal.events.EventHandler;
 import internal.events.EventListeningPort;
 import internal.rendering.container.Window;
 import internal.util.DeltaTimer;
+import org.lwjgl.opengl.GL;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.lwjgl.glfw.GLFW.glfwSetErrorCallback;
-import static org.lwjgl.glfw.GLFW.glfwTerminate;
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
+import static org.lwjgl.glfw.GLFW.GLFW_MAXIMIZED;
+import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
+import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
+import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
+import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
+import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 
 
 /**
@@ -51,6 +58,10 @@ public class Engine {
         _shouldClose = false;
 
         _currentDeltaTime = 0;
+
+        // Initialize GLFW. Most GLFW functions will not work before doing this.
+        if ( !glfwInit() )
+            throw new IllegalStateException("Unable to initialize GLFW");
     }
 
 
@@ -63,6 +74,8 @@ public class Engine {
      * @author Tim Kloepper
      */
     public void run() {
+        if (_windows.isEmpty()) return;
+
         while (!_shouldClose) {
             _currentDeltaTime = DeltaTimer.get().getDeltaTime();
 

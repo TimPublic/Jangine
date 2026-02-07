@@ -1,7 +1,6 @@
 package internal.rendering.container;
 
 
-import internal.events.Event;
 import internal.events.EventHandler;
 import internal.events.EventListeningPort;
 import internal.input.KeyListener;
@@ -15,7 +14,6 @@ import org.lwjgl.system.*;
 import java.nio.*;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -72,6 +70,9 @@ public class Window extends A_Container {
     private final HashMap<A_Scene, EventListeningPort> _SCENE_PORTS;
 
     private final EventListeningPort _ENGINE_PORT;
+
+    // Used for sharing the context, in order to make all ids except vertex array object globally accessible.
+    private static final HashSet<Window> p_WINDOWS = new HashSet<>();
 
 
 
@@ -131,10 +132,6 @@ public class Window extends A_Container {
         // will print the error message in System.err.
         GLFWErrorCallback.createPrint(System.err).set();
 
-        // Initialize GLFW. Most GLFW functions will not work before doing this.
-        if ( !glfwInit() )
-            throw new IllegalStateException("Unable to initialize GLFW");
-
         // Configure GLFW
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
@@ -142,7 +139,13 @@ public class Window extends A_Container {
         glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
         // Create the window
-        _glfw_windowPointer = glfwCreateWindow((int) getWidth(), (int) getHeight(), "Hello World!", NULL, NULL);
+        Window referenceWindow;
+
+        referenceWindow = p_WINDOWS.iterator().next();
+
+        if (referenceWindow != null) _glfw_windowPointer = glfwCreateWindow((int) getWidth(), (int) getHeight(), "Hello World!", NULL, referenceWindow.getPointer());
+        else _glfw_windowPointer = glfwCreateWindow((int) getWidth(), (int) getHeight(), "Hello World!", NULL, NULL);
+
         if (_glfw_windowPointer == NULL)
             throw new RuntimeException("Failed to create the GLFW window");
 
@@ -182,6 +185,8 @@ public class Window extends A_Container {
 
         // Set the clear color
         glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+
+        p_WINDOWS.add(this);
     }
 
     // Connects the engines' event-handler to the listeners and keeps a reference of the event-handler.
@@ -200,6 +205,13 @@ public class Window extends A_Container {
         _mouseListener = new MouseListener();
 
         _mouseListener.setUpWindow(this);
+    }
+
+
+    // -+- WINDOW MANAGEMENT -+- //
+
+    public void makeCurrent() {
+        glfwMakeContextCurrent(_glfw_windowPointer);
     }
 
 
