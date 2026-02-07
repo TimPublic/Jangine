@@ -3,8 +3,8 @@ package internal.batch;
 
 import internal.rendering.camera.Camera2D;
 import internal.rendering.mesh.A_Mesh;
-import internal.rendering.shader.ShaderManager;
 import internal.rendering.shader.ShaderProgram;
+import internal.resource.ResourceManager;
 
 import java.util.HashMap;
 
@@ -25,7 +25,10 @@ public class BatchSystem {
 
     public BatchSystem(Camera2D camera2D) {
         _PROCESSORS = new HashMap<>();
-        _SHADER_MANAGER = new ShaderManager();
+
+        _SHADER_MANAGER = new ResourceManager<>(
+                ShaderProgram::new
+        );
 
         _CAMERA = camera2D;
     }
@@ -40,7 +43,7 @@ public class BatchSystem {
      * These processors are subclasses of {@link A_BatchProcessor}.
      */
     private final HashMap<Class<? extends A_Mesh>, A_BatchProcessor<? extends A_Mesh>> _PROCESSORS;
-    private final ShaderManager _SHADER_MANAGER;
+    private final ResourceManager<ShaderProgram> _SHADER_MANAGER;
 
     private final Camera2D _CAMERA;
 

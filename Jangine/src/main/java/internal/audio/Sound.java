@@ -1,19 +1,26 @@
 package internal.audio;
 
 
+import internal.resource.A_Resource;
 import internal.util.FormatChecker;
 
 
-public class Sound {
+public class Sound extends A_Resource {
 
 
     // -+- CREATION -+- //
 
     public Sound(String path) {
+        super(path);
+
         FormatChecker.assertFormat(path, ".wav");
 
         _SOURCE_ID = h_genSource();
-        _PATH = path;
+    }
+
+    @Override
+    protected void p_dispose() {
+
     }
 
     private long h_genSource() {
@@ -26,7 +33,6 @@ public class Sound {
     // FINALS //
 
     private final long _SOURCE_ID;
-    private final String _PATH;
 
 
     // -+- SOUND MANAGEMENT -+- //
@@ -43,10 +49,6 @@ public class Sound {
 
     public int getLenghtMin() {
         return -1;
-    }
-
-    public String getPath() {
-        return _PATH;
     }
 
 

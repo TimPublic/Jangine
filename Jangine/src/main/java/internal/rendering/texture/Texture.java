@@ -2,6 +2,8 @@ package internal.rendering.texture;
 
 
 import internal.rendering.texture.dependencies.I_TextureLoader;
+import internal.resource.A_Resource;
+import internal.usable.I_Usable;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -17,7 +19,7 @@ import static org.lwjgl.opengl.GL11.*;
  * @author Tim Kloepper
  * @version 1.0
  */
-public class Texture {
+public class Texture extends A_Resource implements I_Usable {
 
 
     private final int _TEXTURE_ID;
@@ -25,9 +27,11 @@ public class Texture {
 
 
     public Texture(final String filePath, I_TextureLoader textureLoader) {
+        super(filePath);
+
         _TEXTURE_ID = glGenTextures();
 
-        bind();
+        use();
 
         _setParameters(GL_REPEAT, GL_REPEAT, GL_NEAREST, GL_NEAREST);
 
@@ -35,7 +39,12 @@ public class Texture {
 
         _PATH = filePath;
 
-        unbind();
+        unuse();
+    }
+
+    @Override
+    protected void p_dispose() {
+        glDeleteTextures(_TEXTURE_ID);
     }
 
 
@@ -46,11 +55,11 @@ public class Texture {
      *
      * @author Tim Kloepper
      */
-    public void bind() {
+    public void use() {
         glBindTexture(GL_TEXTURE_2D, _TEXTURE_ID);
     }
     // Unbinds the texture.
-    public void unbind() {
+    public void unuse() {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 

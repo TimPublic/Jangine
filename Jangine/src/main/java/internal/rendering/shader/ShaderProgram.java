@@ -1,6 +1,8 @@
 package internal.rendering.shader;
 
 
+import internal.resource.A_Resource;
+import internal.usable.I_Usable;
 import internal.util.FormatChecker;
 import org.joml.*;
 import org.lwjgl.BufferUtils;
@@ -14,13 +16,6 @@ import java.util.Arrays;
 import static org.lwjgl.opengl.GL20.*;
 
 
-// On creation a path to a dlsl-file needs to be specified.
-// The shader scans this file for a vertex and a fragment shader,
-// marked by '#type vertex' and '#type fragment'.
-// If any of those are missing, the engine crashes.
-// Then it compiles itself to a program which can then be used and unused
-// with the use- and unuse-method calls.
-
 /**
  * The shader program wraps around an GLFW-program linked with a vertex- and fragment shader.
  * Both shaders need to be contained in one glsl-file, marked with #type (vertex / fragment).
@@ -31,7 +26,7 @@ import static org.lwjgl.opengl.GL20.*;
  * @author Tim Kloepper
  * @version 1.0
  */
-public class ShaderProgram {
+public class ShaderProgram extends A_Resource implements I_Usable {
 
 
     public final String VERTEX_TYPE_IDENTIFIER = "vertex";
@@ -46,10 +41,10 @@ public class ShaderProgram {
 
     private int _programID;
 
-    private final String _PATH;
-
 
     public ShaderProgram(String filePath) {
+        super(filePath);
+
         FormatChecker.assertFormat(filePath, ".glsl");
 
         _retrieveShadersFromPath(filePath);
@@ -57,8 +52,13 @@ public class ShaderProgram {
         _compileShaders();
 
         _createAndLinkProgram();
+    }
 
-        _PATH = filePath;
+    @Override
+    protected void p_dispose() {
+        glDeleteShader(_vertexShaderID);
+        glDeleteShader(_fragmentShaderID);
+        glDeleteProgram(_programID);
     }
 
 
@@ -401,13 +401,6 @@ public class ShaderProgram {
         System.exit(1);
 
         return -1; // Is actually never reached, but needs to be here because of intelliSense (:.
-    }
-
-
-    // -+- GETTERS -+- //
-
-    public String getPath() {
-        return _PATH;
     }
 
 

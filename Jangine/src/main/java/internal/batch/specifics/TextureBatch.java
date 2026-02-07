@@ -6,8 +6,8 @@ import internal.rendering.camera.Camera2D;
 import internal.rendering.mesh.TexturedAMesh;
 import internal.rendering.shader.ShaderProgram;
 import internal.rendering.texture.Texture;
-import internal.rendering.texture.TextureManager;
 import internal.rendering.texture.dependencies.implementations.STBI_TextureLoader;
+import internal.resource.ResourceManager;
 
 import java.util.Arrays;
 
@@ -24,14 +24,16 @@ public class TextureBatch extends A_Batch<TexturedAMesh> {
     public TextureBatch(ShaderProgram shader, int verticesAmount, int vertexSize, int indicesAmount) {
         super(shader, verticesAmount, vertexSize, indicesAmount);
 
-        _LOADER = new TextureManager(new STBI_TextureLoader());
+        _LOADER = new ResourceManager<>(
+                path -> new Texture(path, new STBI_TextureLoader())
+        );
 
         _TEXTURES = new Texture[8];
         _PLACEHOLDER = _LOADER.load("assets/placeholder_texture.png");
     }
 
 
-    private final TextureManager _LOADER;
+    private final ResourceManager<Texture> _LOADER;
 
     private final Texture[] _TEXTURES;
     private final Texture _PLACEHOLDER;
@@ -90,9 +92,9 @@ public class TextureBatch extends A_Batch<TexturedAMesh> {
             glActiveTexture(GL_TEXTURE0 + index);
 
             if (_TEXTURES[index] == null) {
-                _PLACEHOLDER.bind();
+                _PLACEHOLDER.use();
             } else {
-                _TEXTURES[index].bind();
+                _TEXTURES[index].use();
             }
         }
 

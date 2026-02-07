@@ -6,8 +6,10 @@ import internal.events.EventHandler;
 import internal.events.EventListeningPort;
 import internal.main.Engine;
 import internal.rendering.camera.Camera2D;
-import internal.rendering.texture.TextureManager;
+import internal.rendering.texture.Texture;
 import internal.rendering.texture.dependencies.I_TextureLoader;
+import internal.rendering.texture.dependencies.implementations.STBI_TextureLoader;
+import internal.resource.ResourceManager;
 import internal.util.PathManager;
 import org.joml.Vector2d;
 
@@ -71,7 +73,9 @@ public abstract class A_Scene extends A_Container {
 
         public Util(I_TextureLoader loader) {
             PATH_MANAGER = new PathManager();
-            TEXTURE_LOADER = new TextureManager(loader);
+            TEXTURE_LOADER = new ResourceManager<>(
+                    path -> new Texture(path, new STBI_TextureLoader())
+            );
         }
 
 
@@ -81,7 +85,7 @@ public abstract class A_Scene extends A_Container {
 
         public final PathManager PATH_MANAGER;
 
-        public final TextureManager TEXTURE_LOADER;
+        public final ResourceManager<Texture> TEXTURE_LOADER;
 
 
     }
