@@ -3,6 +3,7 @@ package internal.events;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -109,21 +110,31 @@ public class EventListeningPort {
     }
 
     public boolean rmvFunction(Consumer<Event> function) {
-        ArrayList<Consumer<Event>> removes;
+        Iterator<Class<? extends Event>> eventIterator;
+        Iterator<Consumer<Event>> callbackIterator;
         boolean foundAny;
 
-        removes = new ArrayList<>();
+        eventIterator = _callbacks.keySet().iterator();
         foundAny = false;
 
-        for (ArrayList<Consumer<Event>> list : _callbacks.values()) {
-            for (Consumer<Event> callback : list) {
-                if (callback != function) continue;
+        while (eventIterator.hasNext()) {
+            ArrayList<Consumer<Event>> list;
+            Class<? extends Event> eventClass;
 
-                removes.add(callback);
-                foundAny = true;
+            eventClass = eventIterator.next();
+            list = _callbacks.get(eventClass);
+
+            callbackIterator = list.iterator();
+
+            while (callbackIterator.hasNext()) {
+                if (callbackIterator.next() != function) continue;
+
+                list.remove(function);
             }
 
-            list.removeAll(removes);
+            if (!list.isEmpty()) continue;
+
+            _callbacks.remove(eventClass);
         }
 
         return foundAny;
