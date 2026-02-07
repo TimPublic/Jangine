@@ -1,200 +1,162 @@
 # Jangine
 
-**Jangine** is a simple **game-engine** written in Java, using **JWLGL**.
+![Jangine Logo](Jangine.png)
 
----
+# About
 
-## Features Overview
+Jangine is a game engine written in **Java**, using **LWJGL**. <br>
+While supporting standard features as listed further down, the main feature is the **efficent rendering organized in batches**,
+which **manage fragments efficiently, reducing removal costs drastically**. <br>
 
-- 📬 Event System -> Clean hierachial, port based system
-- 💻 Rendering -> Extensive options for textures, shaders and batching (currently under construction)
-- 👽 Entity Component System -> Simple and reliable, scene based, anonymous, lighweight (currently under construction)
-- 🖱️ Input System -> Clean, window based system
-- 🪟 Multiple Windows -> Supports any amount of engine orchestrated windows
-- 🎞️ Scene System -> Per window, transferable, own render and update loop
-- 📖 Extensive JavaDoc documentation -> Detailled explanation for every function and class
-- 📁 Package speration -> Clear and clean seperation of concerns in clearly named packages
+Jangine is the **perfect engine** for **quick and frequent mesh and batch manipulation**.
 
----
+This engine is written by one person, which is six-teen years old.
 
-## Main Features Detailled
+# Features
 
-#### 📬 Event System
+## 💻 Rendering - Dynamic and efficient
 
-The events get distributed hierachially.
-Every window, the engine and every scene has an own **event-handler**.
-The engine stands on the top, everyone can connect to it.
-The window is in the middle, handling own window-wide events and the
-scene is at the bottom, only handling scene wide events.
+Jangine allows you to easily render any kind of mesh. <br>
+It comes with texture and color rendering out of the box,
+but also supports custom meshes, shaders and batches. <br>
 
-In case of **input-events**, every window has their own **listeners**, pushing to
-the windows' event-handler and the engines'. The scene only receives them,
-if they are active.
+Batches manage fragments, created by removing meshes, efficiently, reusing them upon adding a new mesh. <br>
+This feature has its own section further down this README.
 
-The event-handlers use a **port-based system** for registration.
-If an object wants to receive events, it request a **port**,
-where it can register **callbacks** and **event subclasses** on which
-this callback should be called.
+## 📫 Event Handling - Anonymous and port-based
 
-Those ports can also be **deactivated** or **activated**.
+Events are handled through event handlers, home to the engine, all windows and all scenes. <br>
+Listening to events is managed anonymously with ports, holding callbacks. <br>
 
-Example:
+The event distribution follows an hierarchial system: <br>
+The engine pushes every event of the engine. <br>
+Windows push every event occuring in the window or its scenes. <br>
+Scenes push every event occuring in itself. <br>
+
+Despite this system, a scene could still receive an event occuring in a scene of another window,
+as it holds one (standard) or multiple (custom) ports from the engines' event handler.
+
+## 👽 Entity Component System - Anonymous and easy to use
+
+The entity component system is a standard implementation of this wide spread design. <br>
+But this implementation is all about being dynamic and easy to use: <br>
+Upon a processor being added, that can manage a specific component, you can add this type of component for any entity in this entity component system.
+
+It ships with support for rendering, position and collision (+ hitbox), but also supports custom systems: <br>
+You can easily create new components and processors for them by extending the respective abstract classes.
+
+## 💥 Collision - Dynamic and easy to use
+
+The collision system is heavily integraded into the entity component system and only exists inside of it. <br>
+
+It uses dependency injection to support different collision calculations.
+While shipping with only AABB collision and rectangle and circle hitbox components, it supports custom calculators and hitbox components.
+
+## ⌨️ Input System - Mouse and Keyboard
+
+The input system is window based and has listeners for mouse and keyboard. <br>
+These are standard listeners implemented through openGL.
+
+## 🪟 Multiple Windows - Any amount and easy management
+
+Jangine supports any amount of windows, giving you maximum flexibility. <br>
+Though the window is a complete and standalone class, you can still extend it and tailor it to your needs. <br>
+
+Due to having to add windows manually to the engine, you can also manage them as you like.
+
+Window creation and adding them to the engine, while the engine is already running, is also supported.
+
+## 🎞️ Scene based - Any amount and easy management
+
+Jangine supports any amount of scenes, which are home to a window. <br>
+The scene class is abstract and therefore is intended to be extended and then added to any window you would like.
+
+Scene are basically the render and logic containers in the engine, containing the entity component systems. <br>
+Only one scene can be active per window at any given moment, supporting their position as being the container for one complete logic tank.
+
+# Getting Started
+
+To get started, just download the .jar and implement it into your project. <br>
+Then, you can write your first small scene, add it to a window, add the window to the engine and then run it! <br>
+
+## Minimal Setup
+
 ~~~
-// Registration (get port).
-port = eventHandler.register();
+// Just an example method, could also be main or anything else, make sure this is called though.
+public void start() {
+    // What you need.
+    Engine engine;
+    Window window;
+    // SimpleScene is not shipped, it should just represent a scene, extending the base scene class.
+    SimpleScene scene;
 
-// Set up callbacks.
-port.registerFunction(callback, List.of(Class<JangineKeyEvent>, ...));
+    // This is necessary to set up GLFW, if you don't do that, the engine won't run.
+    engine = Engine.get();
 
-// Deactivate.
-port.setActive(false);
-// Activate.
-port.setActive(true);
+    // You need to create a window, before doing anything else, as this will set up OpenGL.
+    window = new Window(1920, 1080);
+    engine.addWindow(window);
 
-// Check for status.
-if (port.isActive()) {
-    ...
+    scene = new SimpleScene(window.getWidth(), window.getHeight());
+    window.addScene(scene);
+
+    // Anything after this line will only run after the engine closed.
+    // any other logic needs to be in objects inside the engine.
+    engine.run();
 }
-
-// Remove port upon not using it anymore.
-eventHandler.deregister(port);
-port = null;
 ~~~
 
-#### 💻 Rendering
+## Typical Mistakes
 
-**Jangine** contains **extensive rendering options**.
-You can write your **own shaders** and set them up in a **shader-program class**.
-**Jangine** also provides a **texture-**, a **camera-** as well as a **render-batch class**.
+### Initialization Order
 
-**Texture**
-Textures can be created as follows:
-~~~
-JangineTexture texture;
+You need to get the engine one time, as it is a singleton, you do not need to safe it,
+but get it. <br>
+This initilializes GLFW which is used to create windows. <br>
 
-texture = new JangineTexture("texturepath/texture.png", imageLoaderImpl);
-~~~
-They can be bound and unbound as follows:
-~~~
-glActiveTexture(GL_TEXTURE0);
-texture.bind();
+Then, before creating shaders or anything else, get the window where you want to use it
+into context, so that OpenGL does not work other than you or the engine expected.
 
-...
+### Scene Activation
 
-texture.unbind();
-~~~
+Only one scene can be active at any time per window. <br>
+Adding a scene does not suffice and will not make it active, although you can call "addAndActivateScene()". <br>
+Use "activateScene()" to actually make the scene active, because only then its update method will be called.
 
-**Shader Program**
-Shaders can be created as follows:
-~~~
-JangineShaderProgram shaderProgram;
+## Batch - Fragment Management
 
-// This will automatically compile and link.
-shaderProgram = new JangineShaderProgram("shaderpath/shader.glsl"); // Needs to be glsl-file.
-~~~
-The shader-program can simply be bound with a single method and is then used:
-~~~
-shaderProgram.use();
+As this is the most prominent and important feature, which makes Jangine special, this section is dedicated to it.
 
-shaderProgram.unuse();
-~~~
-The shader also takes in **uniforms**:
-~~~
-shaderProgram.upload("uniformName", int / float / matrix / ...);
-~~~
+### The Problem
 
-**Camera**
-The camera is currently a nearly one-to-one copy from "Games with Gabe" and all credits for this class should go to him.
+Usually, when removing a mesh or updating it to another size, the operation creates holes in the batch,
+called fragments. <br>
+To avoid these unused spaces of data, batches just rebuilds either directly after removing a mesh, or after a specified threshold of fragmentation is reached.
 
-To create a camera, do the following:
-~~~
-JangineCamera2D camera;
+This costs lots of time, as it turns removal into an O(n) operation.
 
-// Width and height currently in 32-by-32 pixels.
-camera = new JangineCamera2D(width, height);
-~~~
-If you want to change the projection, do the following:
-~~~
-camera.adjustProjection(width, height);
-~~~
-The view matrix gets updated upon calling:
-~~~
-viewMatrix = camera.getViewMatrix();
-~~~
+### The Solution
 
-**Render Batch**
-Render batches can be created as follows:
-~~~
-JangineRenderBatch renderBatch;
+If you would keep track of these fragments, to later reuse them,
+you could reduce the amount of rebuilds needed drastically. <br>
+By just finding a fitting fragments, created at a removal, upon adding a new mesh and using it to store this new mesh,
+you would avoid rebuilds almost completely, as they are only required, if no fitting fragment is available inside the batch. <br>
+Doing this for both the vertex and the index buffer, is an important optimization to support frequent removal and
+unpredictable mesh manipulations.
 
-renderBatch = new JangineRenderBatch(shaderProgram, texture, camera);
-~~~
-You can then add and remove meshes freely, those need to follow the following premise of a **four-float vertex**: x, y, uvX and uvY:
-~~~
-renderBatch.addMesh(mesh);
+### How Jangine implements it
 
-renderBatch.updateMesh(mesh);
+Jangine implements the previously stated solution, by implementing fragments through a fragment node.
+This node constists of a position, a size and two other fragment nodes. <br>
+These nodes make up a binary tree, with the size as the key. <br>
+Upon addition, a fitting node is found with the binary tree, the position is returned and the size of the fragment
+node gets reduced by the allocated amount. <br>
+Of cource, directly adjacent nodes need to be merged together. In order to provide this functionality without
+brute force checks with O(n²) complexity, a tree map is maintained, to get adjacent nodes in O(log n) time,
+making the final complexity O(n log n), with regards to the recursive nature, as a new loop needs to be started
+if nodes get merged, potentially increasing the time complexity.
 
-renderBatch.rmvMesh(mesh);
-~~~
-To render a batch, simply call:
-~~~
-renderBatch.render();
-~~~
+## Further Documentation
 
-#### 👽 Entity-Component System
-
-The entity component system is a per-scene system.
-Meaning every scene has its own ecs.
-The system is very anonymous, with as few coupling as possible.
-This generates more need for memory than a few other implementations,
-but ensures reference and memory safety.
-
-Entities are not a class, but simply an integer, coupled with components.
-The componentes do not know about the system, other components, the scene or the entity.
-In special cases, where component communication is needed, it is done through callbacks.
-A good example for this is the collision component, which needs a way to notify interested
-components about collisions, for that every component can look inside a static registry,
-if there is a collision component they are interested in and can then register a callback there.
-This is why the only time a component knows about the system, is during creation.
-
-#### 🖱️ Input System
-
-Jangine has a ways to identify both **key-** and **mouse events**.
-For that, the **JangineKeyListener** and **JangineMouseListener** are being used.
-
-They can push a **variety of events** describing **different inputs**.
-
-They themselves do not take in any **callbacks** or **reactions**,
-they take in event-handlers that they push respective events to:
-
-~~~
-// Creating.
-keyListener = new JangineKeyListener();
-
-// Adding an event-handler.
-keyListener.addEventHandler(eventHandler);
-// Removing an event-handler.
-keyListener.rmvEventHandler(eventHandler);
-
-// Adding engines' event-handler.
-keyListener.addEngine();
-// Removing engines' event-handler.
-keyListener.rmvEngine();
-
-(Same for the JangineMouseListener)
-~~~
-
-#### 🪟 Multiple windows
-
-The engine supports **multiple windows**, which get **created** and **managed** by the engine itself.
-
-#### 🎞️ Scene system
-
-Every window can contain **scenes**, from which only one can be **active** in every window at one time.
-
-The scenes that are not active, do not get **updated** and do not **receive events** from the windows' event-handler,
-as their own event-handler is connected to the windows'
-through a **port** which gets **deactivated** and **activated**.
-
-Scenes can be **switched between windows**, but can only be owned by **one window at a time**, although you **could work around this limitation**.
+For more detailled and technical documentation, please consult the docs. <br>
+For functioning examples, please consult the examples.
