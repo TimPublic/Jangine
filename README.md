@@ -158,5 +158,4 @@ if nodes get merged, potentially increasing the time complexity.
 
 ## Further Documentation
 
-For more detailled and technical documentation, please consult the docs. <br>
-For functioning examples, please consult the examples.
+More detailled explanations of the systems can be found in their corresponding packages.
