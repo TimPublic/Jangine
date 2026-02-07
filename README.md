@@ -1,6 +1,6 @@
 # Jangine
 
-image
+![Jangine Logo](Jangine.png)
 
 # About
 
