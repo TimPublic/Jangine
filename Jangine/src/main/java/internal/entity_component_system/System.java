@@ -78,7 +78,7 @@ public class System {
         // Needs to be an own loop, in order to not have the possibility to add the processor
         // to some extends only to then crash and have an incomplete implementation.
         for (Object componentClass : processor.p_getProcessedComponentClasses()) {
-            if (_processorsPerComponent.containsKey(componentClass)) return false; // TODO : Think of a good way to manage this case.
+            if (_processorsPerComponent.containsKey(componentClass)) return false;
         }
 
         for (Object componentClass : processor.p_getProcessedComponentClasses()) {
@@ -197,6 +197,7 @@ public class System {
         A_Processor processor;
 
         if (!_activeEntities.contains(id)) return false;
+        if (component.owningEntity != -1) return false;
 
         componentClass = component.getClass();
 
@@ -227,7 +228,14 @@ public class System {
         processor = _processorsPerComponent.get(componentClass);
         if (processor == null) return false;
 
-        return processor.rmvComponent(id) != null;
+        A_Component component;
+
+        component = processor.rmvComponent(id);
+        if (component == null) return false;
+
+        component.owningEntity = -1;
+
+        return true;
     }
 
 

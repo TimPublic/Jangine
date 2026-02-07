@@ -19,7 +19,7 @@ public abstract class A_Component {
 
     // FINALS //
 
-    public int owningEntity; // TODO : Initialize.
+    public int owningEntity;
 
 
 }
