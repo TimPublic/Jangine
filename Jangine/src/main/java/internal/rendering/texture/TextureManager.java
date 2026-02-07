@@ -7,15 +7,15 @@ import internal.util.interfaces.I_Loader;
 import java.util.HashMap;
 
 
-public class TextureLoader implements I_Loader<Texture> {
+public class TextureManager implements I_Loader<Texture> {
 
 
     // -+- CREATION -+- //
 
-    public TextureLoader(I_TextureLoader loader) {
-        _LOADER = loader;
-
+    public TextureManager(I_TextureLoader loader) {
         _TEXTURES = new HashMap<>();
+
+        _LOADER = loader;
     }
 
 
@@ -23,9 +23,11 @@ public class TextureLoader implements I_Loader<Texture> {
 
     // FINALS //
 
-    private I_TextureLoader _LOADER;
+    private final HashMap<String, Texture> _TEXTURES;
 
-    private HashMap<String, Texture> _TEXTURES;
+    // NON-FINALS //
+
+    private I_TextureLoader _LOADER;
 
 
     // -+- LOADING -+- //
@@ -44,39 +46,26 @@ public class TextureLoader implements I_Loader<Texture> {
     // -+- ADDITION -+- //
 
     @Override
-    public boolean add(String path, boolean overwrite) {
-        Texture texture;
-
-        if (_TEXTURES.containsKey(path) && !overwrite) return false;
-
-        texture = new Texture(path, _LOADER);
-
-        _TEXTURES.put(path, texture);
+    public boolean add(String path) {
+        load(path);
 
         return true;
     }
     @Override
-    public boolean add(Texture object, boolean overwrite) {
-        if (object == null) throw new IllegalArgumentException("[TEXTURE LOADER ERROR] : Texture can not be null!");
-
+    public boolean add(Texture object) {
         String path;
-        Texture texture;
+        Texture foundTexture;
 
         path = object.getPath();
-        texture = _TEXTURES.get(path);
+        foundTexture = _TEXTURES.get(path);
 
-        if (texture == null) {
+        if (foundTexture == null) {
             _TEXTURES.put(path, object);
 
             return true;
         }
-        if (texture == object) return true;
 
-        if (!overwrite) return false;
-
-        _TEXTURES.put(path, object);
-
-        return true;
+        return foundTexture == object;
     }
 
 
@@ -90,11 +79,19 @@ public class TextureLoader implements I_Loader<Texture> {
     public boolean rmv(Texture object) {
         if (object == null) throw new IllegalArgumentException("[TEXTURE LOADER ERROR] : Texture can not be null!");
 
-        String path;
+        return _TEXTURES.remove(object.getPath(), object);
+    }
 
-        path = object.getPath();
 
-        return _TEXTURES.remove(path) == object;
+    // -+- DATA MANAGEMENT -+- //
+
+    public void clear() {
+        _TEXTURES.clear();
+    }
+    public void clear(I_TextureLoader newTextureLoader) {
+        _TEXTURES.clear();
+
+        _LOADER = newTextureLoader;
     }
 
 

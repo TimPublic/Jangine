@@ -10,8 +10,8 @@ public interface I_Loader<T extends Object> {
 
     // -+- ADDITION -+- //
 
-    boolean add(String path, boolean overwrite);
-    boolean add(T object, boolean overwrite);
+    boolean add(String path);
+    boolean add(T object);
 
     // -+- REMOVAL -+- //
 

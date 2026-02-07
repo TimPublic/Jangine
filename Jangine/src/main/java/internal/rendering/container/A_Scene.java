@@ -5,7 +5,7 @@ import internal.entity_component_system.System;
 import internal.events.EventHandler;
 import internal.events.EventListeningPort;
 import internal.main.Engine;
-import internal.rendering.texture.TextureLoader;
+import internal.rendering.texture.TextureManager;
 import internal.rendering.texture.dependencies.I_TextureLoader;
 import internal.util.PathManager;
 import org.joml.Vector2d;
@@ -66,7 +66,7 @@ public abstract class A_Scene extends A_Container {
 
         public Util(I_TextureLoader loader) {
             PATH_MANAGER = new PathManager();
-            TEXTURE_LOADER = new TextureLoader(loader);
+            TEXTURE_LOADER = new TextureManager(loader);
         }
 
 
@@ -76,7 +76,7 @@ public abstract class A_Scene extends A_Container {
 
         public final PathManager PATH_MANAGER;
 
-        public final TextureLoader TEXTURE_LOADER;
+        public final TextureManager TEXTURE_LOADER;
 
 
     }

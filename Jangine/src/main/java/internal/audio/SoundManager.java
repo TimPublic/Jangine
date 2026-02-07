@@ -1,10 +1,12 @@
 ﻿package internal.audio;
 
 
+import internal.util.interfaces.I_Loader;
+
 import java.util.HashMap;
 
 
-public class SoundManager {
+public class SoundManager implements I_Loader<Sound> {
 
 
     // -+- CREATION -+- //

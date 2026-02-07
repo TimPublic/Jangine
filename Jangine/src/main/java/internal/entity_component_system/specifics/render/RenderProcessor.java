@@ -71,7 +71,7 @@ public class RenderProcessor extends A_Processor<RenderComponent> {
         for (RenderComponent component : validComponents) {
             if (component.positionDependent) h_updatePosition(component.renderMesh, _positionProcessor.getComponent(component.owningEntity).position);
 
-            _SYSTEM.updateMesh(component.renderMesh, component.shader);
+            _SYSTEM.updateMesh(component.renderMesh, component.shaderPath);
         }
 
         _SYSTEM.update();
@@ -110,7 +110,7 @@ public class RenderProcessor extends A_Processor<RenderComponent> {
 
     @Override
     protected void p_onComponentActivated(RenderComponent component) {
-        _SYSTEM.addMesh(component.renderMesh, component.shader);
+        _SYSTEM.addMesh(component.renderMesh, component.shaderPath);
     }
     @Override
     protected void p_onComponentDeactivated(RenderComponent component) {
@@ -119,7 +119,7 @@ public class RenderProcessor extends A_Processor<RenderComponent> {
 
     @Override
     protected void p_onComponentAdded(RenderComponent component) {
-        _SYSTEM.addMesh(component.renderMesh, component.shader);
+        _SYSTEM.addMesh(component.renderMesh, component.shaderPath);
     }
     @Override
     protected void p_onComponentRemoved(RenderComponent component) {

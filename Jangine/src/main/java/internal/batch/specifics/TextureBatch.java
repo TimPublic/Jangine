@@ -6,7 +6,7 @@ import internal.rendering.camera.Camera2D;
 import internal.rendering.mesh.TexturedAMesh;
 import internal.rendering.shader.ShaderProgram;
 import internal.rendering.texture.Texture;
-import internal.rendering.texture.TextureLoader;
+import internal.rendering.texture.TextureManager;
 import internal.rendering.texture.dependencies.implementations.STBI_TextureLoader;
 
 import java.util.Arrays;
@@ -24,14 +24,14 @@ public class TextureBatch extends A_Batch<TexturedAMesh> {
     public TextureBatch(ShaderProgram shader, int verticesAmount, int vertexSize, int indicesAmount) {
         super(shader, verticesAmount, vertexSize, indicesAmount);
 
-        _LOADER = new TextureLoader(new STBI_TextureLoader());
+        _LOADER = new TextureManager(new STBI_TextureLoader());
 
         _TEXTURES = new Texture[8];
         _PLACEHOLDER = _LOADER.load("assets/placeholder_texture.png");
     }
 
 
-    private final TextureLoader _LOADER;
+    private final TextureManager _LOADER;
 
     private final Texture[] _TEXTURES;
     private final Texture _PLACEHOLDER;

@@ -3,7 +3,6 @@ package internal.entity_component_system.specifics.render;
 
 import internal.entity_component_system.A_Component;
 import internal.rendering.mesh.A_Mesh;
-import internal.rendering.shader.ShaderProgram;
 
 
 public class RenderComponent extends A_Component {
@@ -11,13 +10,13 @@ public class RenderComponent extends A_Component {
 
     // -+- CREATION -+- //
 
-    public RenderComponent(boolean positionDependent, A_Mesh renderMesh, ShaderProgram shader) {
+    public RenderComponent(boolean positionDependent, A_Mesh renderMesh, String shaderPath) {
         super();
 
         this.positionDependent = positionDependent;
 
         this.renderMesh = renderMesh;
-        this.shader = shader;
+        this.shaderPath = shaderPath;
     }
 
 
@@ -28,7 +27,7 @@ public class RenderComponent extends A_Component {
     public boolean positionDependent;
 
     public A_Mesh renderMesh;
-    public ShaderProgram shader;
+    public String shaderPath;
 
 
 }

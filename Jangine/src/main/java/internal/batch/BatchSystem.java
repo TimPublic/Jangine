@@ -2,6 +2,7 @@ package internal.batch;
 
 
 import internal.rendering.mesh.A_Mesh;
+import internal.rendering.shader.ShaderManager;
 import internal.rendering.shader.ShaderProgram;
 
 import java.util.HashMap;
@@ -23,6 +24,7 @@ public class BatchSystem {
 
     public BatchSystem() {
         _PROCESSORS = new HashMap<>();
+        _SHADER_MANAGER = new ShaderManager();
     }
 
 
@@ -35,6 +37,7 @@ public class BatchSystem {
      * These processors are subclasses of {@link A_BatchProcessor}.
      */
     private final HashMap<Class<? extends A_Mesh>, A_BatchProcessor<? extends A_Mesh>> _PROCESSORS;
+    private final ShaderManager _SHADER_MANAGER;
 
 
     // -+- UPDATE LOOP -+- //
@@ -129,9 +132,12 @@ public class BatchSystem {
      *
      * @author Tim Kloepper
      */
-    public boolean addMesh(A_Mesh mesh, ShaderProgram shader) {
+    public boolean addMesh(A_Mesh mesh, String shaderPath) {
         if (mesh == null) throw new IllegalArgumentException("[BATCH SYSTEM ERROR] : The mesh can not be null!");
-        if (shader == null) throw new IllegalArgumentException("[BATCH SYSTEM ERROR] : The shader can not be null!");
+
+        ShaderProgram shader;
+
+        shader = _SHADER_MANAGER.load(shaderPath);
 
         A_BatchProcessor<? extends A_Mesh> processor;
 
@@ -174,9 +180,12 @@ public class BatchSystem {
 
         return processor.updateMesh(mesh);
     }
-    public boolean updateMesh(A_Mesh mesh, ShaderProgram shader) {
+    public boolean updateMesh(A_Mesh mesh, String shaderPath) {
         if (mesh == null) throw new IllegalArgumentException("[BATCH SYSTEM ERROR] : The mesh can not be null!");
-        if (shader == null) throw new IllegalArgumentException("[BATCH SYSTEM ERROR] : The shader can not be null!");
+
+        ShaderProgram shader;
+
+        shader = _SHADER_MANAGER.load(shaderPath);
 
         A_BatchProcessor<? extends A_Mesh> processor;
 
