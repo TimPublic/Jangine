@@ -3,7 +3,6 @@ package internal.entity_component_system;
 
 import internal.entity_component_system.events.ProcessorAddedEvent;
 import internal.entity_component_system.events.ProcessorRemovedEvent;
-import internal.rendering.camera.Camera2D;
 import internal.rendering.container.A_Scene;
 
 import java.util.Collection;
@@ -291,6 +290,10 @@ public class System {
         }
 
         return true;
+    }
+
+    public boolean isProcessing(Class<? extends A_Component> componentClass) {
+        return _processorsPerComponent.containsKey(componentClass);
     }
 
 

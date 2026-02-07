@@ -135,7 +135,7 @@ public class RenderProcessor extends A_Processor<RenderComponent> {
     }
     @Override
     protected Collection<Class<? extends A_Component>> p_getRequiredComponentClasses() {
-        return List.of(PositionComponent.class);
+        return List.of();
     }
 
 
