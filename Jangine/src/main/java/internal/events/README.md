@@ -1,7 +1,7 @@
 # Event System
 
 Jangines' event system is focused on being anonymous and easy to use. <br>
-That is why, there are only two "handling" classes and all in all only three.
+That is why there are only two "handling" classes and all in all only three.
 
 ## Classes
 
