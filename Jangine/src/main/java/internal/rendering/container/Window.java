@@ -141,7 +141,11 @@ public class Window extends A_Container {
         // Create the window
         Window referenceWindow;
 
-        referenceWindow = p_WINDOWS.iterator().next();
+        referenceWindow = null;
+
+        if (p_WINDOWS.iterator().hasNext()) {
+            referenceWindow = p_WINDOWS.iterator().next();
+        }
 
         if (referenceWindow != null) _glfw_windowPointer = glfwCreateWindow((int) getWidth(), (int) getHeight(), "Hello World!", NULL, referenceWindow.getPointer());
         else _glfw_windowPointer = glfwCreateWindow((int) getWidth(), (int) getHeight(), "Hello World!", NULL, NULL);

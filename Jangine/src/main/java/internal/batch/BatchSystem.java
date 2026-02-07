@@ -1,6 +1,7 @@
 package internal.batch;
 
 
+import internal.rendering.camera.Camera2D;
 import internal.rendering.mesh.A_Mesh;
 import internal.rendering.shader.ShaderManager;
 import internal.rendering.shader.ShaderProgram;
@@ -22,9 +23,11 @@ public class BatchSystem {
 
     // -+- CREATION -+- //
 
-    public BatchSystem() {
+    public BatchSystem(Camera2D camera2D) {
         _PROCESSORS = new HashMap<>();
         _SHADER_MANAGER = new ShaderManager();
+
+        _CAMERA = camera2D;
     }
 
 
@@ -39,6 +42,8 @@ public class BatchSystem {
     private final HashMap<Class<? extends A_Mesh>, A_BatchProcessor<? extends A_Mesh>> _PROCESSORS;
     private final ShaderManager _SHADER_MANAGER;
 
+    private final Camera2D _CAMERA;
+
 
     // -+- UPDATE LOOP -+- //
 
@@ -49,7 +54,7 @@ public class BatchSystem {
      */
     public void update() {
         for (A_BatchProcessor<? extends A_Mesh> processor : _PROCESSORS.values()) {
-            processor.update();
+            processor.update(_CAMERA);
         }
     }
 

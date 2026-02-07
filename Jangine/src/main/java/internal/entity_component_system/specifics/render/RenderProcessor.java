@@ -1,7 +1,6 @@
 package internal.entity_component_system.specifics.render;
 
 
-import internal.batch.A_BatchProcessor;
 import internal.batch.BatchSystem;
 import internal.entity_component_system.A_Component;
 import internal.entity_component_system.A_Processor;
@@ -24,22 +23,11 @@ import java.util.List;
 public class RenderProcessor extends A_Processor<RenderComponent> {
 
 
-    public RenderProcessor(Collection<? extends A_BatchProcessor<?>> processors) {
-        super();
-
-        _SYSTEM = new BatchSystem();
-
-        for (A_BatchProcessor<?> processor : processors) {
-            _SYSTEM.addProcessor(processor, false);
-        }
-    }
-
-
     // -+- PARAMETERS -+- //
 
     // FINALS //
 
-    private final BatchSystem _SYSTEM;
+    private BatchSystem _system;
 
     // NON-FINALS //
 
@@ -53,6 +41,8 @@ public class RenderProcessor extends A_Processor<RenderComponent> {
 
         _PORT.registerFunction(this::onSystemAdded, List.of(ProcessorAddedEvent.class));
         _PORT.registerFunction(this::onSystemRemoved, List.of(ProcessorRemovedEvent.class));
+
+        _system = new BatchSystem(scene.getCamera());
     }
     @Override
     protected void p_kill(System system, A_Scene scene) {
@@ -71,10 +61,10 @@ public class RenderProcessor extends A_Processor<RenderComponent> {
         for (RenderComponent component : validComponents) {
             if (component.positionDependent) h_updatePosition(component.renderMesh, _positionProcessor.getComponent(component.owningEntity).position);
 
-            _SYSTEM.updateMesh(component.renderMesh, component.shaderPath);
+            _system.updateMesh(component.renderMesh, component.shaderPath);
         }
 
-        _SYSTEM.update();
+        _system.update();
     }
 
     private void h_updatePosition(A_Mesh mesh, Vector2d to) {
@@ -110,20 +100,20 @@ public class RenderProcessor extends A_Processor<RenderComponent> {
 
     @Override
     protected void p_onComponentActivated(RenderComponent component) {
-        _SYSTEM.addMesh(component.renderMesh, component.shaderPath);
+        _system.addMesh(component.renderMesh, component.shaderPath);
     }
     @Override
     protected void p_onComponentDeactivated(RenderComponent component) {
-        _SYSTEM.rmvMesh(component.renderMesh);
+        _system.rmvMesh(component.renderMesh);
     }
 
     @Override
     protected void p_onComponentAdded(RenderComponent component) {
-        _SYSTEM.addMesh(component.renderMesh, component.shaderPath);
+        _system.addMesh(component.renderMesh, component.shaderPath);
     }
     @Override
     protected void p_onComponentRemoved(RenderComponent component) {
-        _SYSTEM.rmvMesh(component.renderMesh);
+        _system.rmvMesh(component.renderMesh);
     }
 
 

@@ -5,6 +5,7 @@ import internal.entity_component_system.System;
 import internal.events.EventHandler;
 import internal.events.EventListeningPort;
 import internal.main.Engine;
+import internal.rendering.camera.Camera2D;
 import internal.rendering.texture.TextureManager;
 import internal.rendering.texture.dependencies.I_TextureLoader;
 import internal.util.PathManager;
@@ -23,6 +24,8 @@ public abstract class A_Scene extends A_Container {
         SYSTEMS = new Systems(this);
 
         setActive(false);
+
+        _CAMERA = new Camera2D((int) width, (int) height);
     }
 
     public void init(Window window) {
@@ -55,6 +58,8 @@ public abstract class A_Scene extends A_Container {
 
     public final Util UTIL;
     public final Systems SYSTEMS;
+
+    private final Camera2D _CAMERA;
 
 
     // -+- CLASSES -+- //
@@ -131,6 +136,13 @@ public abstract class A_Scene extends A_Container {
     // -+- UPDATE LOOP -+- //
 
     public abstract void update(double deltaTime);
+
+
+    // -+- GETTERS -+- //
+
+    public Camera2D getCamera() {
+        return _CAMERA;
+    }
 
 
     // -+- CHECKERS -+- //

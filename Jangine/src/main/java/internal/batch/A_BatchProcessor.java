@@ -1,6 +1,7 @@
 package internal.batch;
 
 
+import internal.rendering.camera.Camera2D;
 import internal.rendering.mesh.A_Mesh;
 import internal.rendering.shader.ShaderProgram;
 
@@ -12,7 +13,7 @@ import java.util.HashMap;
  * orders batches which are subclasses of the {@link A_Batch} class,
  * by shaders of the {@link ShaderProgram} class. <br>
  * Basically holds batches and fills them with meshes,
- * to render them on every {@link A_BatchProcessor#update()} call.
+ * to render them on every {@link A_BatchProcessor#update(Camera2D)} call.
  *
  * @param <T> The subclass of the {@link A_Mesh} the specific batch processor,
  *           will manage.
@@ -46,9 +47,9 @@ public abstract class A_BatchProcessor<T extends A_Mesh> {
      *
      * @author Tim Kloepper
      */
-    public void update() {
+    public void update(Camera2D camera) {
         for (A_Batch<T> batch : _BATCHES.values()) {
-            batch.render();
+            batch.render(camera);
         }
     }
 

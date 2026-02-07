@@ -74,6 +74,12 @@ public class Engine {
      * @author Tim Kloepper
      */
     public void run() {
+        Window window;
+
+        window = new Window(1920, 1080);
+
+        addWindow(window);
+
         if (_windows.isEmpty()) return;
 
         while (!_shouldClose) {

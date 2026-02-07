@@ -1,6 +1,7 @@
 package internal.batch;
 
 
+import internal.rendering.camera.Camera2D;
 import internal.rendering.mesh.A_Mesh;
 import internal.rendering.mesh.MeshInfo;
 import internal.rendering.shader.ShaderProgram;
@@ -228,7 +229,7 @@ public abstract class A_Batch<T extends A_Mesh> {
      * the vertices and indices but also add it
      * into the actual gpu-side buffers. <br>
      * Until the mesh is removed with the {@link A_Batch#rmvMesh(A_Mesh)} method,
-     * it is rendered every {@link A_Batch#render()} call.
+     * it is rendered every {@link A_Batch#render(Camera2D)} call.
      * Also creates a {@link MeshInfo} for the mesh, for updates.
      * </p>
      * <p>
@@ -534,18 +535,18 @@ public abstract class A_Batch<T extends A_Mesh> {
     /**
      * Renders all meshes of the batch by binding
      * the vertex array object and using the {@link ShaderProgram},
-     * to then prepare batch specific things in the {@link A_Batch#p_prepareRendering()}
+     * to then prepare batch specific things in the {@link A_Batch#p_prepareRendering(Camera2D)}
      * method.
      * Finally, it calls {@code glDrawElements()} and unbinds the vertex array object,
      * any buffer and the shader.
      *
      * @author Tim Kloepper
      */
-    public void render() {
+    public void render(Camera2D camera) {
         glBindVertexArray(_VAO_ID);
         _shader.use();
 
-        p_prepareRendering();
+        p_prepareRendering(camera);
 
         glDrawElements(GL_TRIANGLES, _INDICES.length, GL_UNSIGNED_INT, 0);
 
@@ -563,7 +564,7 @@ public abstract class A_Batch<T extends A_Mesh> {
      *
      * @author Tim Kloepper
      */
-    protected abstract void p_prepareRendering();
+    protected abstract void p_prepareRendering(Camera2D camera);
 
 
     // -+- SHADER MANAGEMENT -+- //

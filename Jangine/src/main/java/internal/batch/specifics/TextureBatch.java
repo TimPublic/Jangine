@@ -83,7 +83,7 @@ public class TextureBatch extends A_Batch<TexturedAMesh> {
     }
 
     @Override
-    protected void p_prepareRendering() {
+    protected void p_prepareRendering(Camera2D camera) {
         getActiveShader().upload("uTextures", new int[] {0,1,2,3,4,5,6,7});
 
         for (int index = 0; index < 8; index++) {
@@ -97,10 +97,6 @@ public class TextureBatch extends A_Batch<TexturedAMesh> {
         }
 
         getActiveShader().upload("uTextures", new int[] {0,1,2,3,4,5,6,7});
-
-        Camera2D camera;
-
-        camera = new Camera2D(41, 41);
 
         getActiveShader().upload("uProjectionMatrix", camera.getProjectionMatrix());
         getActiveShader().upload("uViewMatrix", camera.getViewMatrix());
