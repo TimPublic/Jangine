@@ -1,4 +1,4 @@
-﻿package internal.rendering.shader;
+package internal.rendering.shader;
 
 
 import internal.util.interfaces.I_Loader;

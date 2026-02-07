@@ -1,4 +1,4 @@
-﻿package internal.audio;
+package internal.audio;
 
 
 import internal.util.interfaces.I_Loader;

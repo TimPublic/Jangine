@@ -117,21 +117,6 @@ public class BatchSystem {
 
     // -+- MESH MANAGEMENT -+- //
 
-    /**
-     * Adds an {@link A_Mesh} to the correct {@link A_BatchProcessor}.
-     * This processor is automatically found,
-     * but if no processor is registered for the class of this mesh,
-     * the method will return {@code false}.
-     *
-     * @param mesh The {@link A_Mesh} object, that should be added.
-     *             The mesh can not be null.
-     * @param shader The {@link ShaderProgram}, that should be used, to render this mesh.
-     *               The shader can not be null.
-     *
-     * @return Whether the addition was successful, or not.
-     *
-     * @author Tim Kloepper
-     */
     public boolean addMesh(A_Mesh mesh, String shaderPath) {
         if (mesh == null) throw new IllegalArgumentException("[BATCH SYSTEM ERROR] : The mesh can not be null!");
 
