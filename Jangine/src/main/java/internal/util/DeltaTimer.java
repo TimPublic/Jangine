@@ -46,7 +46,7 @@ public class DeltaTimer {
      * @author Tim Kloepper
      */
     public void update() {
-        _runtime += System.nanoTime();
+        _runtime = System.nanoTime();
     }
 
 
