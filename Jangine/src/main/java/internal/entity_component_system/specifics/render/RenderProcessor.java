@@ -31,22 +31,23 @@ public class RenderProcessor extends A_Processor<RenderComponent> {
 
     // NON-FINALS //
 
-    private EventListeningPort _PORT;
+    private EventListeningPort _port;
     private PositionProcessor _positionProcessor;
 
 
     @Override
     protected void p_init(System system, A_Scene scene) {
-        _PORT = scene.SYSTEMS.EVENT_HANDLER.register();
+        _port = scene.SYSTEMS.EVENT_HANDLER.register();
 
-        _PORT.registerFunction(this::onSystemAdded, List.of(ProcessorAddedEvent.class));
-        _PORT.registerFunction(this::onSystemRemoved, List.of(ProcessorRemovedEvent.class));
+        _port.registerFunction(this::onSystemAdded, List.of(ProcessorAddedEvent.class));
+        _port.registerFunction(this::onSystemRemoved, List.of(ProcessorRemovedEvent.class));
 
         _system = new BatchSystem(scene.getCamera());
     }
     @Override
     protected void p_kill(System system, A_Scene scene) {
-        scene.SYSTEMS.EVENT_HANDLER.deregister(_PORT);
+        scene.SYSTEMS.EVENT_HANDLER.deregister(_port);
+        _port = null;
     }
 
 
@@ -74,12 +75,12 @@ public class RenderProcessor extends A_Processor<RenderComponent> {
 
         double xDist, yDist;
 
-        xDist = origin.distance(to);
-        yDist = origin.distance(to);
+        xDist = to.x - origin.x;
+        yDist = to.y - origin.y;
 
         if (xDist == 0 && yDist == 0) return;
 
-        for (int index = 1; index < mesh.vertices.length; index++) {
+        for (int index = 1; index < mesh.vertices.length; index += 5) {
             mesh.vertices[index - 1] += xDist;
             mesh.vertices[index] += yDist;
         }
@@ -135,7 +136,11 @@ public class RenderProcessor extends A_Processor<RenderComponent> {
     }
     @Override
     protected Collection<Class<? extends A_Component>> p_getRequiredComponentClasses() {
-        return List.of();
+        return List.of(PositionComponent.class);
+    }
+
+    public BatchSystem getBatchSystem() {
+        return _system;
     }
 
 

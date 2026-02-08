@@ -1,4 +1,4 @@
-﻿package internal.resource;
+package internal.resource;
 
 
 public abstract class A_Resource {

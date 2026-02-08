@@ -146,7 +146,6 @@ public abstract class A_BatchProcessor<T extends A_Mesh> {
         currentShader = _SHADER_PER_MESH.get((T) mesh);
 
         if (currentShader == null) return false;
-        if (currentShader == shader) return false;
 
         _SHADER_PER_MESH.put((T) mesh, shader);
 

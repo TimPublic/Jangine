@@ -4,6 +4,8 @@ package internal.rendering.container;
 import internal.entity_component_system.System;
 import internal.events.EventHandler;
 import internal.events.EventListeningPort;
+import internal.input.KeyListener;
+import internal.input.MouseListener;
 import internal.main.Engine;
 import internal.rendering.camera.Camera2D;
 import internal.rendering.texture.Texture;
@@ -27,7 +29,7 @@ public abstract class A_Scene extends A_Container {
 
         setActive(false);
 
-        _CAMERA = new Camera2D((int) width, (int) height);
+        _CAMERA = new Camera2D((int) width / 10, (int) height / 10);
     }
 
     public void init(Window window) {
@@ -117,6 +119,13 @@ public abstract class A_Scene extends A_Container {
         public final EventListeningPort ENGINE_PORT;
 
 
+        // -+- UPDATE LOOP -+- //
+
+        protected void p_update() {
+            ECS.update();
+        }
+
+
     }
 
 
@@ -135,6 +144,9 @@ public abstract class A_Scene extends A_Container {
 
     protected abstract void p_onActivation();
     protected abstract void p_onDeactivation();
+
+    protected abstract void p_onAdded(Window window);
+    protected abstract void p_onRemoved(Window window);
 
 
     // -+- UPDATE LOOP -+- //

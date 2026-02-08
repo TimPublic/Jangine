@@ -20,8 +20,8 @@ public abstract class A_Processor<T extends A_Component> {
         _PREV_ACTIVATION_STATES = new HashMap<>();
     }
 
-    protected abstract void p_init(System system, A_Scene oldScene);
-    protected abstract void p_kill(System system, A_Scene oldScene);
+    protected abstract void p_init(System system, A_Scene scene);
+    protected abstract void p_kill(System system, A_Scene scene);
 
     protected abstract void p_receiveRequiredProcessors(HashMap<Class<? extends A_Component>, A_Processor<?>> requiredProcessors);
 
@@ -39,7 +39,7 @@ public abstract class A_Processor<T extends A_Component> {
     /**
      * The update method that is always the same and called by the system.
      * It creates a list of valid components and pushes them,
-     * together with the system itself and the owning oldScene to the internal
+     * together with the system itself and the owning scene to the internal
      * update method.
      *
      * @param system System that manages this processor

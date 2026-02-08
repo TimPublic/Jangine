@@ -1,4 +1,4 @@
-﻿package internal.resource;
+package internal.resource;
 
 
 import java.util.HashMap;
@@ -32,7 +32,11 @@ public class ResourceManager<T extends A_Resource> {
         T resource;
 
         resource = _RES.get(path);
-        if (resource == null) _FACTORY.apply(path);
+        if (resource == null) {
+            resource = _FACTORY.apply(path);
+
+            _RES.put(path, resource);
+        }
 
         return resource;
     }

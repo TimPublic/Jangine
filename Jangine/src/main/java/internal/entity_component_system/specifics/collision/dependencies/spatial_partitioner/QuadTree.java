@@ -268,6 +268,7 @@ class Node {
     public void rmvObject(ObjectData obj) {
         if (isLeaf()) {
             for (Node node : _NODES) {
+                if (node == null) continue;
                 node.rmvObject(obj);
             }
 

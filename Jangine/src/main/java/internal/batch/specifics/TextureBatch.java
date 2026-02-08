@@ -86,8 +86,6 @@ public class TextureBatch extends A_Batch<TexturedAMesh> {
 
     @Override
     protected void p_prepareRendering(Camera2D camera) {
-        getActiveShader().upload("uTextures", new int[] {0,1,2,3,4,5,6,7});
-
         for (int index = 0; index < 8; index++) {
             glActiveTexture(GL_TEXTURE0 + index);
 

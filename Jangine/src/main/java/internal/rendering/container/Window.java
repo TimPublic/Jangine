@@ -28,7 +28,6 @@ public class Window extends A_Container {
     // -+- CREATION -+- //
 
     public Window(double width, double height) {
-
         super(new Vector2d(0, 0), width, height);
 
         _title = "Jangine Window";
@@ -136,7 +135,7 @@ public class Window extends A_Container {
         glfwDefaultWindowHints(); // optional, the current window hints are already the default
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
-        glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+        glfwWindowHint(GLFW_MAXIMIZED, GLFW_FALSE);
 
         // Create the window
         Window referenceWindow;
@@ -232,6 +231,8 @@ public class Window extends A_Container {
                 );
 
         _SCENES.add(scene);
+
+        scene.p_onAdded(this);
     }
     public void addAndActivateScene(A_Scene scene) {
         addScene(scene);
@@ -242,6 +243,8 @@ public class Window extends A_Container {
 
         scene.kill();
         scene.SYSTEMS.EVENT_HANDLER.deregister(_SCENE_PORTS.remove(scene));
+
+        scene.p_onRemoved(this);
 
         return true;
     }

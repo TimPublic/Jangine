@@ -8,6 +8,8 @@ public abstract class A_Component {
 
     public A_Component() {
         active = true;
+
+        owningEntity = -1;
     }
 
 

@@ -1,4 +1,4 @@
-﻿package internal.usable;
+package internal.usable;
 
 
 public interface I_Usable {

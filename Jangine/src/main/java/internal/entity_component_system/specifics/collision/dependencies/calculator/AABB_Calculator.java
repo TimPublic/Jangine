@@ -84,14 +84,14 @@ public class AABB_Calculator implements I_CollisionCalculator {
         return h_getCollisionAxis(objB, posB, objA, posA);
     }
     private A_CollisionData.COLLISION_AXIS h_getCollisionAxis(RectangleHitboxComponent obj, Vector2d pos, A_Container container) {
-        if (pos.x < container.getPosition().x || pos.x + obj.width > container.getPosition().x + container.getWidth()) return A_CollisionData.COLLISION_AXIS.X;
+        if (pos.x < container.getPosition().x || pos.x + obj.width > container.getPosition().x + container.getWidth()) return A_CollisionData.COLLISION_AXIS.Y;
 
-        return A_CollisionData.COLLISION_AXIS.Y;
+        return A_CollisionData.COLLISION_AXIS.X;
     }
     private A_CollisionData.COLLISION_AXIS h_getCollisionAxis(CircleHitboxComponent obj, Vector2d pos, A_Container container) {
-        if (pos.x - obj.radius < container.getPosition().x || pos.x + obj.radius > container.getPosition().x + container.getWidth()) return A_CollisionData.COLLISION_AXIS.X;
+        if (pos.x - obj.radius < container.getPosition().x || pos.x + obj.radius > container.getPosition().x + container.getWidth()) return A_CollisionData.COLLISION_AXIS.Y;
 
-        return A_CollisionData.COLLISION_AXIS.Y;
+        return A_CollisionData.COLLISION_AXIS.X;
     }
 
 
