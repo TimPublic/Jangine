@@ -72,6 +72,10 @@ public class PongScene extends A_Scene {
         secondBall =  new Ball(this, 100, 100, 0, 100, "assets/ui.png");
         thirdBall =  new Ball(this, 100, 100, 100, 100, "assets/ui.png");
         fourthBall =  new Ball(this, 100, 100, 200, 200, "assets/ui.png");
+
+        BallCatcher catcher;
+
+        catcher = new BallCatcher(this, 1920, 1, 0, 0);
     }
     @Override
     protected void p_onRemoved(Window window) {

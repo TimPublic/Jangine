@@ -13,8 +13,8 @@ public abstract class A_Entity {
     // -+- CREATION -+- //
 
     public A_Entity(A_Scene scene) {
-        _ECS = scene.SYSTEMS.ECS;
-        _ID = _ECS.addEntity();
+        p_ECS = scene.SYSTEMS.ECS;
+        _ID = p_ECS.addEntity();
 
         p_PORT = scene.SYSTEMS.EVENT_HANDLER.register();
     }
@@ -24,7 +24,7 @@ public abstract class A_Entity {
 
     // FINALS //
 
-    private final System _ECS;
+    protected final System p_ECS;
     private final int _ID;
 
     protected final EventListeningPort p_PORT;
@@ -33,7 +33,7 @@ public abstract class A_Entity {
     // -+- COMPONENT MANAGEMENT -+- //
 
     protected void p_addComponent(A_Component component) {
-        _ECS.addComponentToEntity(_ID, component, false);
+        p_ECS.addComponentToEntity(_ID, component, false);
     }
 
 

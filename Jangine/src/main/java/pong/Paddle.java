@@ -39,6 +39,8 @@ public class Paddle extends A_Entity {
         _MESH = new TexturedAMesh(h_genVertices(), h_genIndices(), imagePath);
         p_addComponent(new RenderComponent(true, _MESH, "assets/default.glsl"));
 
+        EntityRegistry.get().add(this);
+
         h_setUpCallbacks(scene.SYSTEMS.window_port);
     }
 

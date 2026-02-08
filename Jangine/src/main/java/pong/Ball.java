@@ -38,6 +38,8 @@ public class Ball extends A_Entity {
         _MESH = new TexturedAMesh(h_genVertices(), h_genIndices(), imagePath);
         p_addComponent(new RenderComponent(true, _MESH, "assets/default.glsl"));
 
+        EntityRegistry.get().add(this);
+
         h_setUpCallbacks();
 
         _collisionTimer = 0;
@@ -61,6 +63,11 @@ public class Ball extends A_Entity {
     private void h_setUpCallbacks() {
         p_PORT.registerFunction(this::onContainerCollision, List.of(ContainerCollisionEvent.class));
         p_PORT.registerFunction(this::onObjectCollision, List.of(ObjectCollisionEvent.class));
+    }
+
+    public void kill() {
+        EntityRegistry.get().rmv(getId());
+        p_ECS.rmvEntity(getId());
     }
 
 

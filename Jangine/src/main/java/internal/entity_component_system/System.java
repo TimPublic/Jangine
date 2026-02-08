@@ -168,6 +168,10 @@ public class System {
     public boolean rmvEntity(int id) {
         if (!_activeEntities.contains(id)) {return false;}
 
+        for (A_Processor<?> processor : _processorsPerComponent.values()) {
+            processor.rmvComponent(id);
+        }
+
         _activeEntities.remove(id);
         _freeEntityIds.add(id);
 

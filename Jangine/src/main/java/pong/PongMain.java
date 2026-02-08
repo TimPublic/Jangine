@@ -15,7 +15,7 @@ public class PongMain {
 
         Window window;
 
-        window = new Window(1920, 1080);
+        window = new Window(100, 100);
 
         PongScene scene;
 
