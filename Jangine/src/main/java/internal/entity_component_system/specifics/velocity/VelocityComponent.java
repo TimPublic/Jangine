@@ -10,10 +10,11 @@ public class VelocityComponent extends A_Component {
 
     // -+- CREATION -+- //
 
-    public VelocityComponent(Vector2d velocity) {
+    public VelocityComponent(Vector2d velocity, int mult) {
         super();
 
         VELOCITY = velocity;
+        this.mult = mult;
     }
 
 
@@ -22,6 +23,10 @@ public class VelocityComponent extends A_Component {
     // FINALS //
 
     public final Vector2d VELOCITY;
+
+    // NON-FINALS //
+
+    public int mult;
 
 
 }

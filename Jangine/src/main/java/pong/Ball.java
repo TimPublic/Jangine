@@ -1,57 +1,66 @@
 package pong;
 
 
-import internal.entity_component_system.System;
 import internal.entity_component_system.specifics.collision.CollisionComponent;
 import internal.entity_component_system.specifics.collision.events.ContainerCollisionEvent;
+import internal.entity_component_system.specifics.collision.events.ObjectCollisionEvent;
 import internal.entity_component_system.specifics.hitbox.RectangleHitboxComponent;
 import internal.entity_component_system.specifics.position.PositionComponent;
 import internal.entity_component_system.specifics.render.RenderComponent;
 import internal.entity_component_system.specifics.velocity.VelocityComponent;
 import internal.events.Event;
-import internal.events.EventHandler;
-import internal.events.EventListeningPort;
+import internal.rendering.container.A_Scene;
 import internal.rendering.mesh.TexturedAMesh;
+import internal.top_classes.A_Entity;
 import org.joml.Vector2d;
 
 import java.util.List;
 
 
-public class Ball {
+public class Ball extends A_Entity {
 
 
-    public Ball(System ecs, EventHandler handler) {
-        _ID = ecs.addEntity();
+    public Ball(A_Scene scene, double width, double height, double x, double y, String imagePath) {
+        super(scene);
 
-        float[] vertices;
-        int[] indices;
-        TexturedAMesh mesh;
+        _VELOCITY = new Vector2d(1, 1);
+        _POSITION = new Vector2d(x, y);
 
-        vertices = new float[] {
-                0, 0, 0, 0, 0,
-                50, 0, 1, 0, 0,
-                50, 50, 1, 1, 0,
-                0, 50, 0, 1, 0,
+        p_addComponent(new PositionComponent(_POSITION));
+        p_addComponent(new VelocityComponent(_VELOCITY, 7));
+
+        p_addComponent(new RectangleHitboxComponent(width, height));
+        p_addComponent(new CollisionComponent());
+
+        _WIDTH = width;
+        _HEIGHT = height;
+
+        _MESH = new TexturedAMesh(h_genVertices(), h_genIndices(), imagePath);
+        p_addComponent(new RenderComponent(true, _MESH, "assets/default.glsl"));
+
+        h_setUpCallbacks();
+
+        _collisionTimer = 0;
+    }
+
+    private float[] h_genVertices() {
+        return new float[] {
+                              0,               0, 0, 0, 0,
+                 (float) _WIDTH,               0, 1, 0, 0,
+                (float) _HEIGHT, (float) _HEIGHT, 1, 1, 0,
+                              0, (float) _HEIGHT, 0, 1, 0,
         };
-        indices = new int[] {
+    }
+    private int[] h_genIndices() {
+        return new int[] {
                 0, 1, 2,
-                2, 3, 0,
+                3, 2, 0,
         };
+    }
 
-        mesh = new TexturedAMesh(vertices, indices, "assets/ui.png");
-
-        _POSITION = new Vector2d(200, 0);
-        _VELOCITY = new Vector2d(2, 0);
-
-        ecs.addComponentToEntity(_ID, new PositionComponent(_POSITION), false);
-        ecs.addComponentToEntity(_ID, new RenderComponent(true, mesh, "assets/default.glsl"), false);
-        ecs.addComponentToEntity(_ID, new RectangleHitboxComponent(50, 50), false);
-        ecs.addComponentToEntity(_ID, new CollisionComponent(), false);
-        ecs.addComponentToEntity(_ID, new VelocityComponent(_VELOCITY), false);
-
-        _PORT = handler.register();
-
-        _PORT.registerFunction(this::onContainerCollision, List.of(ContainerCollisionEvent.class));
+    private void h_setUpCallbacks() {
+        p_PORT.registerFunction(this::onContainerCollision, List.of(ContainerCollisionEvent.class));
+        p_PORT.registerFunction(this::onObjectCollision, List.of(ObjectCollisionEvent.class));
     }
 
 
@@ -59,12 +68,24 @@ public class Ball {
 
     // FINALS //
 
-    private final int _ID;
-
-    private final Vector2d _POSITION;
     private final Vector2d _VELOCITY;
+    private final Vector2d _POSITION;
 
-    private final EventListeningPort _PORT;
+    private final double _WIDTH, _HEIGHT;
+
+    private final TexturedAMesh _MESH;
+
+    // NON-FINALS //
+
+    private int _collisionTimer;
+
+
+    // -+- UPDATE LOOP -+- //
+
+    @Override
+    public void update(double deltaTime) {
+        _collisionTimer--;
+    }
 
 
     // -+- CALLBACKS -+- //
@@ -74,12 +95,28 @@ public class Ball {
 
         cce = (ContainerCollisionEvent) event;
 
-        if (cce.object.positionComponent.owningEntity != _ID) return;
+        if (cce.object.positionComponent.owningEntity != getId()) return;
 
         switch (cce.collisionAxis) {
             case X -> _VELOCITY.mul(1, -1);
             case Y -> _VELOCITY.mul(-1, 1);
         }
+    }
+    public void onObjectCollision(Event event) {
+        ObjectCollisionEvent oce;
+
+        oce = (ObjectCollisionEvent) event;
+
+        if (_collisionTimer > 0) return;
+
+        if (oce.object.positionComponent.owningEntity != getId()) return;
+
+        switch (oce.collisionAxis) {
+            case X -> _VELOCITY.mul(1, -1);
+            case Y -> _VELOCITY.mul(-1, 1);
+        }
+
+        _collisionTimer = 10;
     }
 
 

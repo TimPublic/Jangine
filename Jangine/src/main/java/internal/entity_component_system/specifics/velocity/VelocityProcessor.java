@@ -46,7 +46,7 @@ public class VelocityProcessor extends A_Processor<VelocityComponent> {
         for (VelocityComponent component : validComponents) {
             positionComponent = _positionProcessor.getComponent(component.owningEntity);
 
-            positionComponent.position.add(component.VELOCITY);
+            positionComponent.position.add(component.VELOCITY.x * component.mult, component.VELOCITY.y * component.mult);
         }
     }
 

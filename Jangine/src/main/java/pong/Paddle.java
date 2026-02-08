@@ -1,9 +1,7 @@
 package pong;
 
 
-import internal.entity_component_system.System;
 import internal.entity_component_system.specifics.collision.CollisionComponent;
-import internal.entity_component_system.specifics.collision.data.A_CollisionData;
 import internal.entity_component_system.specifics.collision.events.ContainerCollisionEvent;
 import internal.entity_component_system.specifics.hitbox.RectangleHitboxComponent;
 import internal.entity_component_system.specifics.position.PositionComponent;
@@ -12,53 +10,56 @@ import internal.entity_component_system.specifics.velocity.VelocityComponent;
 import internal.events.Event;
 import internal.events.EventListeningPort;
 import internal.events.input.key.KeyContinuedEvent;
+import internal.rendering.container.A_Scene;
 import internal.rendering.mesh.TexturedAMesh;
+import internal.top_classes.A_Entity;
 import org.joml.Vector2d;
 
 import java.util.List;
 
 
-public class Paddle {
+public class Paddle extends A_Entity {
 
 
-    // -+- CREATION -+- //
+    public Paddle(A_Scene scene, double width, double height, String imagePath) {
+        super(scene);
 
-    public Paddle(System ecs, EventListeningPort windowPort) {
-        _ID = ecs.addEntity();
-
-        float[] vertices;
-        int[] indices;
-        TexturedAMesh mesh;
-
-        vertices = new float[] {
-                0, 0, 0, 0, 0,
-                100, 0, 1, 0, 0,
-                100, 100, 1, 1, 0,
-                0, 100, 0, 1, 0,
-        };
-        indices = new int[] {
-                0, 1, 2,
-                2, 3, 0,
-        };
-
-        mesh = new TexturedAMesh(vertices, indices, "assets/ui.png");
-
-        _POSITION = new Vector2d(0, 0);
         _VELOCITY = new Vector2d(0, 0);
+        _POSITION = new Vector2d(100, 0);
 
-        ecs.addComponentToEntity(_ID, new PositionComponent(_POSITION), false);
-        ecs.addComponentToEntity(_ID, new RenderComponent(true, mesh, "assets/default.glsl"), false);
-        ecs.addComponentToEntity(_ID, new RectangleHitboxComponent(100, 100), false);
-        ecs.addComponentToEntity(_ID, new CollisionComponent(), false);
-        ecs.addComponentToEntity(_ID, new VelocityComponent(_VELOCITY), false);
+        p_addComponent(new PositionComponent(_POSITION));
+        p_addComponent(new VelocityComponent(_VELOCITY, 7));
 
+        p_addComponent(new RectangleHitboxComponent(width, height));
+        p_addComponent(new CollisionComponent());
+
+        _WIDTH = width;
+        _HEIGHT = height;
+
+        _MESH = new TexturedAMesh(h_genVertices(), h_genIndices(), imagePath);
+        p_addComponent(new RenderComponent(true, _MESH, "assets/default.glsl"));
+
+        h_setUpCallbacks(scene.SYSTEMS.window_port);
+    }
+
+    private float[] h_genVertices() {
+        return new float[] {
+                0,               0, 0, 0, 0,
+                (float) _WIDTH,               0, 1, 0, 0,
+                (float) _HEIGHT, (float) _HEIGHT, 1, 1, 0,
+                0, (float) _HEIGHT, 0, 1, 0,
+        };
+    }
+    private int[] h_genIndices() {
+        return new int[] {
+                0, 1, 2,
+                3, 2, 0,
+        };
+    }
+
+    private void h_setUpCallbacks(EventListeningPort windowPort) {
+        p_PORT.registerFunction(this::onContainerCollision, List.of(ContainerCollisionEvent.class));
         windowPort.registerFunction(this::onKeyContinued, List.of(KeyContinuedEvent.class));
-        windowPort.registerFunction(this::onCollisionWithWindow, List.of(ContainerCollisionEvent.class));
-
-        _speed = 7;
-
-        _touchesWallLeft = false;
-        _touchesWallRight = false;
     }
 
 
@@ -66,74 +67,65 @@ public class Paddle {
 
     // FINALS //
 
-    private final int _ID;
-
-    private final Vector2d _POSITION;
     private final Vector2d _VELOCITY;
+    private final Vector2d _POSITION;
 
+    private final double _WIDTH, _HEIGHT;
+
+    private final TexturedAMesh _MESH;
 
     // NON-FINALS //
 
-    private int _speed;
-
-    private boolean _touchesWallLeft, _touchesWallRight;
+    private boolean _touchesLeft, _touchesRight;
 
 
     // -+- UPDATE LOOP -+- //
 
-    public void update() {
-        _VELOCITY.set(0, 0);
+    @Override
+    public void update(double deltaTime) {
+        _VELOCITY.zero();
+    }
+
+
+    // -+- MOVEMENT -+- //
+
+    private void _tryMoveLeft() {
+        if (_touchesLeft) return;
+
+        _VELOCITY.x -= 1;
+
+        _touchesRight = false;
+    }
+    private void _tryMoveRight() {
+        if (_touchesRight) return;
+
+        _VELOCITY.x += 1;
+
+        _touchesLeft = false;
     }
 
 
     // -+- CALLBACKS -+- //
 
+    public void onContainerCollision(Event event) {
+        ContainerCollisionEvent cce;
+
+        cce = (ContainerCollisionEvent) event;
+
+        if (cce.object.positionComponent.owningEntity != getId()) return;
+
+        if (cce.container.getPosition().x > cce.object.positionComponent.position.x) _touchesLeft = true;
+        else _touchesRight = true;
+    }
     public void onKeyContinued(Event event) {
         KeyContinuedEvent kce;
 
         kce = (KeyContinuedEvent) event;
 
-        int keyCode;
-
-        keyCode = kce.getKeyCode();
-
-        switch (keyCode) {
-            case 65: // s
-                h_tryMoveLeft();
-                break;
-            case 68: // d
-                h_tryMoveRight();
-                break;
-            default:
-                break;
+        switch (kce.getKeyCode()) {
+            case 68 -> _tryMoveRight();
+            case 65 -> _tryMoveLeft();
         }
-    }
-    public void onCollisionWithWindow(Event event) {
-        ContainerCollisionEvent cce;
-
-        cce = (ContainerCollisionEvent) event;
-
-        if (cce.object.hitboxComponent.owningEntity != _ID) return;
-
-        if (cce.collisionAxis == A_CollisionData.COLLISION_AXIS.Y) {
-            if (cce.object.positionComponent.position.x < cce.container.getPosition().x) {
-                _touchesWallLeft = true;
-            }
-            else _touchesWallRight = true;
-        }
-    }
-
-    private void h_tryMoveLeft() {
-        if (_touchesWallLeft) return;
-
-        _VELOCITY.x = -_speed;
-        _touchesWallRight = false;
-    }
-    private void h_tryMoveRight() {
-        if (_touchesWallRight) return;
-
-        _VELOCITY.x = _speed;
-        _touchesWallLeft = false;
     }
 
 

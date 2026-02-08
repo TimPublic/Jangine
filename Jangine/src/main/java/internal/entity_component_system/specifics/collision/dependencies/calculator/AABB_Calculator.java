@@ -125,6 +125,17 @@ public class AABB_Calculator implements I_CollisionCalculator {
 
         return false;
     }
+    @Override
+    public boolean isCollidingWith(ObjectData objA, Vector2d position) {
+        A_HitboxComponent hitboxA;
+
+        hitboxA = objA.hitboxComponent;
+
+        if (hitboxA instanceof RectangleHitboxComponent) return h_isColliding((RectangleHitboxComponent) hitboxA, objA.positionComponent.position, position);
+        if (hitboxA instanceof CircleHitboxComponent) return h_isColliding((CircleHitboxComponent) hitboxA, objA.positionComponent.position, position);
+
+        return false;
+    }
 
     public boolean h_isColliding(RectangleHitboxComponent objA, Vector2d posA, RectangleHitboxComponent objB, Vector2d posB) {
         boolean xOverlap, yOverlap;
@@ -173,6 +184,26 @@ public class AABB_Calculator implements I_CollisionCalculator {
         yOverlap = pos.y - obj.radius < container.getPosition().y || pos.y + obj.radius > container.getPosition().y + container.getHeight();
 
         return yOverlap;
+    }
+    public boolean h_isColliding(RectangleHitboxComponent obj, Vector2d pos, Vector2d otherPosition) {
+        boolean xOverlap, yOverlap;
+
+        xOverlap = otherPosition.x >= pos.x && otherPosition.x <= pos.x + obj.width;
+        yOverlap = otherPosition.y >= pos.y && otherPosition.y <= pos.y + obj.height;
+
+        return xOverlap && yOverlap;
+    }
+    public boolean h_isColliding(CircleHitboxComponent obj, Vector2d pos, Vector2d otherPosition) {
+        Vector2d closestPoint;
+
+        closestPoint = new Vector2d(pos);
+
+        if (closestPoint.x > otherPosition.x) closestPoint.x = otherPosition.x;
+        else if (closestPoint.x < otherPosition.x) closestPoint.x = otherPosition.x;
+        if (closestPoint.y > otherPosition.y) closestPoint.y = otherPosition.y;
+        else if (closestPoint.y < otherPosition.y) closestPoint.y = otherPosition.y;
+
+        return pos.distance(closestPoint) <= obj.radius;
     }
 
 

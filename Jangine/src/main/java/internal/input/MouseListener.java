@@ -149,15 +149,15 @@ public class MouseListener {
         _scrollOffsetX = 0.0;
         _scrollOffsetY = 0.0;
 
-        _prevX = _xPos;
-        _prevY = _yPos;
-
         _prevIsDragging = _isDragging;
 
         _manageButtonEvents();
         _manageScrollEvent();
         _manageDragEvents();
         _manageMoveEvent();
+
+        _prevX = _xPos;
+        _prevY = _yPos;
     }
 
 

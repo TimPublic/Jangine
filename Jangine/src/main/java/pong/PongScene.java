@@ -2,29 +2,18 @@ package pong;
 
 
 import internal.batch.specifics.TextureBatchProcessor;
-import internal.entity_component_system.specifics.collision.CollisionComponent;
 import internal.entity_component_system.specifics.collision.CollisionProcessor;
 import internal.entity_component_system.specifics.collision.dependencies.calculator.AABB_Calculator;
 import internal.entity_component_system.specifics.collision.dependencies.spatial_partitioner.QuadTree;
 import internal.entity_component_system.specifics.hitbox.HitboxProcessor;
-import internal.entity_component_system.specifics.hitbox.RectangleHitboxComponent;
-import internal.entity_component_system.specifics.position.PositionComponent;
 import internal.entity_component_system.specifics.position.PositionProcessor;
-import internal.entity_component_system.specifics.render.RenderComponent;
 import internal.entity_component_system.specifics.render.RenderProcessor;
 import internal.entity_component_system.specifics.velocity.VelocityProcessor;
-import internal.events.Event;
-import internal.events.input.key.KeyEvent;
-import internal.events.input.key.KeyPressedEvent;
 import internal.rendering.container.A_Scene;
 import internal.rendering.container.Window;
-import internal.rendering.mesh.TexturedAMesh;
-import internal.rendering.shader.ShaderProgram;
 import internal.rendering.texture.dependencies.I_TextureLoader;
 import internal.rendering.texture.dependencies.implementations.STBI_TextureLoader;
 import org.joml.Vector2d;
-
-import java.util.List;
 
 
 public class PongScene extends A_Scene {
@@ -61,7 +50,7 @@ public class PongScene extends A_Scene {
 
     Paddle paddle;
 
-    Ball ball;
+    Ball ball, secondBall, thirdBall, fourthBall;
 
 
     // -+- SCENE MANAGEMENT -+- //
@@ -77,9 +66,12 @@ public class PongScene extends A_Scene {
 
     @Override
     protected void p_onAdded(Window window) {
-        paddle = new Paddle(SYSTEMS.ECS, SYSTEMS.window_port);
+        paddle = new Paddle(this, 100, 100, "assets/placeholder_texture.png");
 
-        ball =  new Ball(SYSTEMS.ECS, SYSTEMS.EVENT_HANDLER);
+        ball =  new Ball(this, 100, 100, 100, 0, "assets/ui.png");
+        secondBall =  new Ball(this, 100, 100, 0, 100, "assets/ui.png");
+        thirdBall =  new Ball(this, 100, 100, 100, 100, "assets/ui.png");
+        fourthBall =  new Ball(this, 100, 100, 200, 200, "assets/ui.png");
     }
     @Override
     protected void p_onRemoved(Window window) {
@@ -93,7 +85,12 @@ public class PongScene extends A_Scene {
     public void update(double deltaTime) {
         SYSTEMS.ECS.update();
 
-        paddle.update();
+        paddle.update(0.4);
+
+        ball.update(0.4);
+        secondBall.update(0.4);
+        thirdBall.update(0.4);
+        fourthBall.update(0.4);
     }
 
 

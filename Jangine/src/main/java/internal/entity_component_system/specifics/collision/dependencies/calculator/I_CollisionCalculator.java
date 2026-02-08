@@ -4,6 +4,7 @@ package internal.entity_component_system.specifics.collision.dependencies.calcul
 import internal.entity_component_system.specifics.collision.data.A_CollisionData;
 import internal.entity_component_system.specifics.collision.data.ObjectData;
 import internal.rendering.container.A_Container;
+import org.joml.Vector2d;
 
 
 public interface I_CollisionCalculator {
@@ -19,6 +20,7 @@ public interface I_CollisionCalculator {
 
     boolean isCollidingWith(ObjectData objA, ObjectData objB);
     boolean isCollidingWith(ObjectData objA, A_Container container);
+    boolean isCollidingWith(ObjectData objA, Vector2d position);
 
 
 }
