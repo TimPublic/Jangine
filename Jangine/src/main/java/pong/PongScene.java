@@ -68,10 +68,10 @@ public class PongScene extends A_Scene {
     protected void p_onAdded(Window window) {
         paddle = new Paddle(this, 400, 100, "assets/placeholder_texture.png");
 
-        ball =  new Ball(this, 100, 100, 100, 0, "assets/ui.png");
-        secondBall =  new Ball(this, 100, 100, 0, 100, "assets/ui.png");
-        thirdBall =  new Ball(this, 100, 100, 100, 100, "assets/ui.png");
-        fourthBall =  new Ball(this, 100, 100, 200, 200, "assets/ui.png");
+        ball =  new Ball(this, 100, 100, 101, 101, "assets/ui.png");
+        secondBall =  new Ball(this, 100, 100, 300, 101, "assets/ui.png");
+        thirdBall =  new Ball(this, 100, 100, 500, 102, "assets/ui.png");
+        fourthBall =  new Ball(this, 100, 100, 700, 204, "assets/ui.png");
 
         BallCatcher catcher;
 

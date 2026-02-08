@@ -250,7 +250,7 @@ class Node {
     // -+- OBJECT MANAGEMENT -+- //
 
     public void addObject(ObjectData obj) {
-        if (isLeaf()) {
+        if (!isLeaf()) {
             for (Node node : _NODES) {
                 if (node == null) continue;
                 node.addObject(obj);
@@ -266,7 +266,7 @@ class Node {
         _ADD_OBJECTS.add(obj);
     }
     public void rmvObject(ObjectData obj) {
-        if (isLeaf()) {
+        if (!isLeaf()) {
             for (Node node : _NODES) {
                 if (node == null) continue;
                 node.rmvObject(obj);

@@ -20,7 +20,7 @@ public class BallCatcher extends A_Entity {
     public BallCatcher(A_Scene scene, double width, double height, double x, double y) {
         super(scene);
 
-        _VELOCITY = new Vector2d(1, 1);
+        _VELOCITY = new Vector2d(0, 0);
         _POSITION = new Vector2d(x, y);
 
         p_addComponent(new PositionComponent(_POSITION));
@@ -68,7 +68,11 @@ public class BallCatcher extends A_Entity {
         oce = (ObjectCollisionEvent) event;
 
         if (oce.object.positionComponent.owningEntity != getId()) return;
-        if (!(EntityRegistry.get().getEntity(oce.collidingObject.positionComponent.owningEntity) instanceof Ball)) return;
+
+        A_Entity entity = EntityRegistry.get().getEntity(oce.collidingObject.positionComponent.owningEntity);
+        if (!(entity instanceof Ball)) return;
+
+        Ball ball = (Ball) entity;
 
         System.out.println("CAUGHT!");
         System.out.println(oce.collidingObject.positionComponent.owningEntity);
@@ -76,7 +80,7 @@ public class BallCatcher extends A_Entity {
         System.out.println(oce.object.positionComponent.owningEntity);
         System.out.println(EntityRegistry.get().getEntity(oce.object.positionComponent.owningEntity));
 
-        ((Ball) EntityRegistry.get().getEntity(oce.collidingObject.positionComponent.owningEntity)).kill();
+        ball.kill();
     }
 
 

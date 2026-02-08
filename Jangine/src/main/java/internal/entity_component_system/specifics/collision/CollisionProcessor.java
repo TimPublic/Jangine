@@ -76,7 +76,7 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
     protected void p_internalUpdate(Collection<CollisionComponent> validComponents, System system, A_Scene scene) {
         if (_positionProcessor == null || _hitboxProcessor == null) return;
 
-        HashMap<ObjectData, HashSet<ObjectData>> pairs;
+        HashMap<Integer, HashSet<ObjectData>> pairs;
 
         A_HitboxComponent hitboxComponent;
         PositionComponent positionComponent;
@@ -101,16 +101,16 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
             eventHandler.pushEvent(new ContainerCollisionEvent(_COLLISION_CALCULATOR.getCollisionAxis(object, container), object, container));
         }
     }
-    private void h_checkAgainstObjects(ObjectData object, Collection<ObjectData> objects, HashMap<ObjectData, HashSet<ObjectData>> pairs, EventHandler eventHandler) {
+    private void h_checkAgainstObjects(ObjectData object, Collection<ObjectData> objects, HashMap<Integer, HashSet<ObjectData>> pairs, EventHandler eventHandler) {
         A_CollisionData.COLLISION_AXIS collisionAxis;
 
-        pairs.put(object, new HashSet<>());
+        pairs.put(object.hitboxComponent.owningEntity, new HashSet<>());
 
         for (ObjectData objectB : objects) {
-            if (pairs.containsKey(objectB)) continue;
+            if (pairs.containsKey(objectB.hitboxComponent.owningEntity)) continue;
             if (!_COLLISION_CALCULATOR.isCollidingWith(object, objectB)) continue;
 
-            pairs.get(object).add(objectB);
+            pairs.get(object.hitboxComponent.owningEntity).add(objectB);
 
             collisionAxis = _COLLISION_CALCULATOR.getCollisionAxis(object, objectB);
 
