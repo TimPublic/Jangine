@@ -66,7 +66,7 @@ public class PongScene extends A_Scene {
 
     @Override
     protected void p_onAdded(Window window) {
-        paddle = new Paddle(this, 100, 100, "assets/placeholder_texture.png");
+        paddle = new Paddle(this, 400, 100, "assets/placeholder_texture.png");
 
         ball =  new Ball(this, 100, 100, 100, 0, "assets/ui.png");
         secondBall =  new Ball(this, 100, 100, 0, 100, "assets/ui.png");

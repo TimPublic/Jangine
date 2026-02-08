@@ -49,7 +49,7 @@ public class Camera2D {
     public Camera2D adjustProjection(int width, int height) {
         _projectionMatrix.identity();
 
-        _projectionMatrix.ortho(0.0f, width * 32.0f, 0.0f, height * 32.0f, 0.0f, 100.0f);
+        _projectionMatrix.ortho(0.0f, width, 0.0f, height, 0.0f, 100.0f);
 
         return this;
     }

@@ -29,7 +29,7 @@ public abstract class A_Scene extends A_Container {
 
         setActive(false);
 
-        _CAMERA = new Camera2D((int) width / 10, (int) height / 10);
+        _CAMERA = new Camera2D((int) width, (int) height);
     }
 
     public void init(Window window) {

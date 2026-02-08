@@ -46,7 +46,7 @@ public class Paddle extends A_Entity {
         return new float[] {
                 0,               0, 0, 0, 0,
                 (float) _WIDTH,               0, 1, 0, 0,
-                (float) _HEIGHT, (float) _HEIGHT, 1, 1, 0,
+                (float) _WIDTH, (float) _HEIGHT, 1, 1, 0,
                 0, (float) _HEIGHT, 0, 1, 0,
         };
     }
