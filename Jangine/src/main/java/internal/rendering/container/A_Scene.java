@@ -1,11 +1,10 @@
 package internal.rendering.container;
 
 
+import internal.audio.Sound;
 import internal.entity_component_system.System;
 import internal.events.EventHandler;
 import internal.events.EventListeningPort;
-import internal.input.KeyListener;
-import internal.input.MouseListener;
 import internal.main.Engine;
 import internal.rendering.camera.Camera2D;
 import internal.rendering.texture.Texture;
@@ -75,8 +74,12 @@ public abstract class A_Scene extends A_Container {
 
         public Util(I_TextureLoader loader) {
             PATH_MANAGER = new PathManager();
-            TEXTURE_LOADER = new ResourceManager<>(
+
+            TEXTURE_MANAGER = new ResourceManager<>(
                     path -> new Texture(path, new STBI_TextureLoader())
+            );
+            SOUND_MANAGER = new ResourceManager<>(
+                    path -> new Sound(path, false)
             );
         }
 
@@ -87,7 +90,8 @@ public abstract class A_Scene extends A_Container {
 
         public final PathManager PATH_MANAGER;
 
-        public final ResourceManager<Texture> TEXTURE_LOADER;
+        public final ResourceManager<Texture> TEXTURE_MANAGER;
+        public final ResourceManager<Sound> SOUND_MANAGER;
 
 
     }

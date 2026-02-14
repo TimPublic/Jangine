@@ -15,6 +15,8 @@ import internal.rendering.texture.dependencies.I_TextureLoader;
 import internal.rendering.texture.dependencies.implementations.STBI_TextureLoader;
 import org.joml.Vector2d;
 
+import java.io.File;
+
 
 public class PongScene extends A_Scene {
 
@@ -76,6 +78,8 @@ public class PongScene extends A_Scene {
         BallCatcher catcher;
 
         catcher = new BallCatcher(this, 1920, 1, 0, 0);
+
+        UTIL.SOUND_MANAGER.load("assets/test_sound.ogg").play();
     }
     @Override
     protected void p_onRemoved(Window window) {

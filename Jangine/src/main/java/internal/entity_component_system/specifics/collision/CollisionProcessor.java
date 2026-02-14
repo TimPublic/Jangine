@@ -36,6 +36,8 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
     public CollisionProcessor(I_SpatialPartitioner spatialPartitioner, I_CollisionCalculator collisionCalculator) {
         _SPATIAL_PARTITIONER = spatialPartitioner;
         _COLLISION_CALCULATOR = collisionCalculator;
+
+        _OBJECTS = new HashMap<>();
     }
 
     @Override
@@ -62,6 +64,8 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
     private final I_SpatialPartitioner _SPATIAL_PARTITIONER;
     private final I_CollisionCalculator _COLLISION_CALCULATOR;
 
+    private final HashMap<CollisionComponent, ObjectData> _OBJECTS;
+
     // NON-FINALS //
 
     private HitboxProcessor _hitboxProcessor;
@@ -87,9 +91,9 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
         pairs = new HashMap<>();
 
         for (CollisionComponent component : validComponents) {
-            hitboxComponent = _hitboxProcessor.getComponent(component.owningEntity);
-            positionComponent = _positionProcessor.getComponent(component.owningEntity);
-            objectData = new ObjectData(hitboxComponent, positionComponent);
+            objectData = _OBJECTS.get(component);
+
+            if (objectData == null) continue;
 
             h_checkAgainstContainer(objectData, scene, scene.SYSTEMS.EVENT_HANDLER);
             h_checkAgainstObjects(objectData, _SPATIAL_PARTITIONER.getCollidingObjects(objectData), pairs, scene.SYSTEMS.EVENT_HANDLER);
@@ -132,13 +136,19 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
 
     @Override
     protected void p_onComponentAdded(CollisionComponent component) {
+        ObjectData objectData;
+
         if (_hitboxProcessor == null || _positionProcessor == null) return;
 
-        _SPATIAL_PARTITIONER.addObject(new ObjectData(_hitboxProcessor.getComponent(component.owningEntity), _positionProcessor.getComponent(component.owningEntity)));
+        objectData = new ObjectData(_hitboxProcessor.getComponent(component.owningEntity), _positionProcessor.getComponent(component.owningEntity));
+
+        _SPATIAL_PARTITIONER.addObject(objectData);
+        _OBJECTS.put(component, objectData);
     }
     @Override
     protected void p_onComponentRemoved(CollisionComponent component) {
-
+        _SPATIAL_PARTITIONER.rmvObject(_OBJECTS.get(component));
+        _OBJECTS.remove(component);
     }
     @Override
     protected void p_onComponentActivated(CollisionComponent component) {

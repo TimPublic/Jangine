@@ -8,6 +8,10 @@ import internal.input.MouseListener;
 import internal.main.Engine;
 import org.joml.Vector2d;
 import org.lwjgl.glfw.*;
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.ALC;
+import org.lwjgl.openal.ALCCapabilities;
+import org.lwjgl.openal.ALCapabilities;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
@@ -17,6 +21,7 @@ import java.util.HashSet;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.openal.ALC10.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -47,6 +52,14 @@ public class Window extends A_Container {
         _ENGINE_PORT = Engine.get().getEventHandler().register();
     }
 
+    public void kill() {
+        alcDestroyContext(_audioContext);
+        alcCloseDevice(_audioDevice);
+
+        glfwFreeCallbacks(_glfw_windowPointer);
+        glfwDestroyWindow(_glfw_windowPointer);
+    }
+
 
     // -+- PARAMETERS -+- //
 
@@ -61,6 +74,9 @@ public class Window extends A_Container {
     private long _glfw_windowPointer;
 
     private A_Scene _activeScene;
+
+    private long _audioContext;
+    private long _audioDevice;
 
 
     // FINALS //
@@ -86,9 +102,7 @@ public class Window extends A_Container {
      */
     public boolean update(double deltaTime) {
         if (glfwWindowShouldClose(_glfw_windowPointer)) {
-            // Free the window callbacks and destroy the window
-            glfwFreeCallbacks(_glfw_windowPointer);
-            glfwDestroyWindow(_glfw_windowPointer);
+            kill();
 
             return false;
         }
@@ -127,7 +141,7 @@ public class Window extends A_Container {
      * @author Tim Kloepper.
      */
     private void _init() {
-        // Setup an error callback. The default implementation
+        // Set up an error callback. The default implementation
         // will print the error message in System.err.
         GLFWErrorCallback.createPrint(System.err).set();
 
@@ -185,6 +199,21 @@ public class Window extends A_Container {
         // creates the GLCapabilities instance and makes the OpenGL
         // bindings available for use.
         GL.createCapabilities();
+
+        // Set up OpenAL
+        String defaultAudioDeviceName = alcGetString(0, ALC_DEFAULT_DEVICE_SPECIFIER);
+        _audioDevice = alcOpenDevice(defaultAudioDeviceName);
+
+        int[] attributes;
+
+        attributes = new int[] {0};
+        _audioContext = alcCreateContext(_audioDevice, attributes);
+        alcMakeContextCurrent(_audioContext);
+
+        ALCCapabilities ALC_Capabilities = ALC.createCapabilities(_audioDevice);
+        ALCapabilities AL_Capabilities = AL.createCapabilities(ALC_Capabilities);
+
+        if (!AL_Capabilities.OpenAL10) throw new UnsupportedOperationException("Audio library is not supported!");
 
         // Set the clear color
         glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
