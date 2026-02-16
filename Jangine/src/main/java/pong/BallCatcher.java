@@ -74,12 +74,6 @@ public class BallCatcher extends A_Entity {
 
         Ball ball = (Ball) entity;
 
-        System.out.println("CAUGHT!");
-        System.out.println(oce.collidingObject.positionComponent.owningEntity);
-        System.out.println(EntityRegistry.get().getEntity(oce.collidingObject.positionComponent.owningEntity));
-        System.out.println(oce.object.positionComponent.owningEntity);
-        System.out.println(EntityRegistry.get().getEntity(oce.object.positionComponent.owningEntity));
-
         ball.kill();
     }
 
