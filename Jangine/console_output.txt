@@ -4,7 +4,7 @@
 
 > Task :Main.main()
 WARNING: A restricted method in java.lang.System has been called
-WARNING: java.lang.System::load has been called by org.lwjgl.system.Library$$Lambda/0x000001a8aa00a000 in an unnamed module (file:/C:/Users/Tim%20Kl%c3%b6pper/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl/3.3.6/ce7721d30cfaf47feaed10213e0c43eb55c49d68/lwjgl-3.3.6.jar)
+WARNING: java.lang.System::load has been called by org.lwjgl.system.Library$$Lambda/0x000002184400a000 in an unnamed module (file:/C:/Users/Tim%20Kl%c3%b6pper/.gradle/caches/modules-2/files-2.1/org.lwjgl/lwjgl/3.3.6/ce7721d30cfaf47feaed10213e0c43eb55c49d68/lwjgl-3.3.6.jar)
 WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
 WARNING: Restricted methods will be blocked in a future release unless native access is enabled
 
@@ -13,5 +13,5 @@ WARNING: sun.misc.Unsafe::objectFieldOffset has been called by org.lwjgl.system.
 WARNING: Please consider reporting this to the maintainers of class org.lwjgl.system.MemoryUtil
 WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 
-BUILD SUCCESSFUL in 500ms
+BUILD SUCCESSFUL in 582ms
 2 actionable tasks: 1 executed, 1 up-to-date

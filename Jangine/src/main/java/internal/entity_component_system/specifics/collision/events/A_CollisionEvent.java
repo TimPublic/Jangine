@@ -3,7 +3,7 @@ package internal.entity_component_system.specifics.collision.events;
 
 import internal.entity_component_system.specifics.collision.data.A_CollisionData;
 import internal.entity_component_system.specifics.collision.data.ObjectData;
-import internal.events.Event;
+import internal.events.implementations.Event;
 
 
 public abstract class A_CollisionEvent extends Event {

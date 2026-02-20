@@ -3,7 +3,8 @@ package internal.top_classes;
 
 import internal.entity_component_system.A_Component;
 import internal.entity_component_system.System;
-import internal.events.EventListeningPort;
+import internal.events.EventFilter;
+import internal.events.implementations.ActiveEventPort;
 import internal.rendering.container.A_Scene;
 
 
@@ -16,7 +17,8 @@ public abstract class A_Entity {
         p_ECS = scene.SYSTEMS.ECS;
         _ID = p_ECS.addEntity();
 
-        p_PORT = scene.SYSTEMS.EVENT_HANDLER.register();
+        p_PORT = new ActiveEventPort(new EventFilter());
+        scene.SYSTEMS.EVENT_HANDLER.register(p_PORT);
     }
 
 
@@ -27,7 +29,7 @@ public abstract class A_Entity {
     protected final System p_ECS;
     private final int _ID;
 
-    protected final EventListeningPort p_PORT;
+    protected final ActiveEventPort p_PORT;
 
 
     // -+- COMPONENT MANAGEMENT -+- //

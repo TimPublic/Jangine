@@ -1,8 +1,9 @@
 package internal.rendering.container;
 
 
-import internal.events.EventHandler;
-import internal.events.EventListeningPort;
+import internal.events.EventFilter;
+import internal.events.EventMaster;
+import internal.events.implementations.ActiveEventPort;
 import internal.input.KeyListener;
 import internal.input.MouseListener;
 import internal.main.Engine;
@@ -18,6 +19,7 @@ import org.lwjgl.system.*;
 import java.nio.*;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.logging.Filter;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -37,7 +39,7 @@ public class Window extends A_Container {
 
         _title = "Jangine Window";
 
-        _eventHandler = new EventHandler();
+        _eventHandler = new EventMaster();
 
         _init();
 
@@ -49,7 +51,8 @@ public class Window extends A_Container {
         _SCENES = new HashSet<>();
         _SCENE_PORTS = new HashMap<>();
 
-        _ENGINE_PORT = Engine.get().getEventHandler().register();
+        _ENGINE_PORT = new ActiveEventPort(new EventFilter());
+        Engine.get().getEventHandler().register(_ENGINE_PORT);
     }
 
     public void kill() {
@@ -67,7 +70,7 @@ public class Window extends A_Container {
 
     private String _title;
 
-    private EventHandler _eventHandler;
+    private EventMaster _eventHandler;
     private KeyListener _keyListener;
     private MouseListener _mouseListener;
 
@@ -82,9 +85,9 @@ public class Window extends A_Container {
     // FINALS //
 
     private final HashSet<A_Scene> _SCENES;
-    private final HashMap<A_Scene, EventListeningPort> _SCENE_PORTS;
+    private final HashMap<A_Scene, ActiveEventPort> _SCENE_PORTS;
 
-    private final EventListeningPort _ENGINE_PORT;
+    private final ActiveEventPort _ENGINE_PORT;
 
     // Used for sharing the context, in order to make all ids except vertex array object globally accessible.
     private static final HashSet<Window> p_WINDOWS = new HashSet<>();
@@ -251,12 +254,16 @@ public class Window extends A_Container {
 
     public void addScene(A_Scene scene) {
         if (scene == null) throw new IllegalStateException("[WINDOW ERROR] : Scene cannot be null!");
+        ActiveEventPort port;
 
         scene.init(this);
-        _SCENE_PORTS.put(scene, scene.SYSTEMS.EVENT_HANDLER.register());
+
+        port = new ActiveEventPort(new EventFilter());
+        scene.SYSTEMS.EVENT_HANDLER.register(port);
+        _SCENE_PORTS.put(scene, port);
         _SCENE_PORTS.get(scene).
-                registerFunction(
-                        event -> _eventHandler.pushEvent(event)
+                addCallback(
+                        event -> _eventHandler.push(event)
                 );
 
         _SCENES.add(scene);
@@ -333,11 +340,11 @@ public class Window extends A_Container {
     }
 
     // Returns this windows' event-handler.
-    public EventHandler getEventHandler() {
+    public EventMaster getEventHandler() {
         return _eventHandler;
     }
 
-    public EventListeningPort getEnginePort() {
+    public ActiveEventPort getEnginePort() {
         return _ENGINE_PORT;
     }
 

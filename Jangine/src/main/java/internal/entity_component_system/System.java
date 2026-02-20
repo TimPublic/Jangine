@@ -135,7 +135,7 @@ public class System {
      * @author Tim Kloepper
      */
     private void _onProcessorAdded(A_Processor processor) {
-        _SCENE.SYSTEMS.EVENT_HANDLER.pushEvent(new ProcessorAddedEvent(processor));
+        _SCENE.SYSTEMS.EVENT_HANDLER.push(new ProcessorAddedEvent(processor));
     }
     /**
      * Gets called, when a processor got removed.
@@ -146,7 +146,7 @@ public class System {
      * @author Tim Kloepper
      */
     private void _onProcessorRemoved(A_Processor processor) {
-        _SCENE.SYSTEMS.EVENT_HANDLER.pushEvent(new ProcessorRemovedEvent(processor));
+        _SCENE.SYSTEMS.EVENT_HANDLER.push(new ProcessorRemovedEvent(processor));
     }
 
 

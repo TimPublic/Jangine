@@ -2,7 +2,7 @@ package internal.entity_component_system.events;
 
 
 import internal.entity_component_system.A_Processor;
-import internal.events.Event;
+import internal.events.implementations.Event;
 
 
 public abstract class A_ProcessorEvent extends Event {

@@ -1,26 +1,18 @@
 package internal.main;
 
 
-import internal.events.Event;
-import internal.events.EventHandler;
-import internal.events.EventListeningPort;
+import internal.events.A_EventPort;
+import internal.events.EventFilter;
+import internal.events.EventMaster;
+import internal.events.implementations.ActiveEventPort;
 import internal.rendering.container.Window;
 import internal.util.DeltaTimer;
-import org.lwjgl.opengl.GL;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
-import static org.lwjgl.glfw.GLFW.GLFW_MAXIMIZED;
-import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
-import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
-import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
-import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
-import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 
 
 /**
@@ -39,10 +31,10 @@ public class Engine {
     private static Engine _instance;
 
 
-    private EventHandler _eventHandler;
+    private EventMaster _eventHandler;
 
     private Set<Window> _windows;
-    private final HashMap<Window, EventListeningPort> _WINDOW_PORTS;
+    private final HashMap<Window, ActiveEventPort> _WINDOW_PORTS;
 
     private boolean _shouldClose;
 
@@ -50,7 +42,7 @@ public class Engine {
 
 
     private Engine() {
-        _eventHandler = new EventHandler();
+        _eventHandler = new EventMaster();
 
         _windows = new HashSet<>();
         _WINDOW_PORTS = new HashMap<>();
@@ -107,14 +99,7 @@ public class Engine {
 
     // -+- GETTERS -+- //
 
-    /**
-     * Returns the engines' event handler.
-     *
-     * @return {@link EventHandler}
-     *
-     * @author Tim Kloepper
-     */
-    public EventHandler getEventHandler() {
+    public EventMaster getEventHandler() {
         return _eventHandler;
     }
 
@@ -129,11 +114,15 @@ public class Engine {
      * @author Tim Kloepper
      */
     public void addWindow(Window window) {
+        ActiveEventPort port;
+
         _windows.add(window);
 
-        _WINDOW_PORTS.put(window, window.getEventHandler().register());
-        _WINDOW_PORTS.get(window).registerFunction(
-                event -> _eventHandler.pushEvent(event)
+        port = new ActiveEventPort(new EventFilter());
+        window.getEventHandler().register(port);
+        _WINDOW_PORTS.put(window, port);
+        _WINDOW_PORTS.get(window).addCallback(
+                event -> _eventHandler.push(event)
         );
     }
     public void rmvWindow(Window window) {

@@ -8,8 +8,11 @@ import internal.entity_component_system.specifics.position.PositionComponent;
 import internal.entity_component_system.specifics.position.PositionProcessor;
 import internal.entity_component_system.A_Processor;
 import internal.entity_component_system.System;
-import internal.events.Event;
-import internal.events.EventListeningPort;
+import internal.events.EventFilter;
+import internal.events.EventMaster;
+import internal.events.I_Event;
+import internal.events.implementations.ActiveEventPort;
+import internal.events.implementations.Event;
 import internal.rendering.container.A_Scene;
 
 import java.util.Collection;
@@ -22,10 +25,11 @@ public class VelocityProcessor extends A_Processor<VelocityComponent> {
 
     @Override
     protected void p_init(System system, A_Scene scene) {
-        _port = scene.SYSTEMS.EVENT_HANDLER.register();
+        _port = new ActiveEventPort(new EventFilter());
+        scene.SYSTEMS.EVENT_HANDLER.register(_port);
 
-        _port.registerFunction(this::onProcessorAdded, List.of(ProcessorAddedEvent.class));
-        _port.registerFunction(this::onProcessorRemoved, List.of(ProcessorRemovedEvent.class));
+        _port.addCallback(this::onProcessorAdded);
+        _port.addCallback(this::onProcessorRemoved);
     }
     @Override
     protected void p_kill(System system, A_Scene scene) {
@@ -51,8 +55,10 @@ public class VelocityProcessor extends A_Processor<VelocityComponent> {
     }
 
 
-    public void onProcessorAdded(Event event) {
+    public void onProcessorAdded(I_Event event) {
         ProcessorAddedEvent pae;
+
+        if (!(event instanceof ProcessorAddedEvent)) return;
 
         pae = (ProcessorAddedEvent) event;
 
@@ -60,8 +66,10 @@ public class VelocityProcessor extends A_Processor<VelocityComponent> {
             _positionProcessor = (PositionProcessor) pae.processor;
         }
     }
-    public void onProcessorRemoved(Event event) {
+    public void onProcessorRemoved(I_Event event) {
         ProcessorAddedEvent pae;
+
+        if (!(event instanceof ProcessorRemovedEvent)) return;
 
         pae = (ProcessorAddedEvent) event;
 
@@ -77,7 +85,7 @@ public class VelocityProcessor extends A_Processor<VelocityComponent> {
 
     private PositionProcessor _positionProcessor;
 
-    private EventListeningPort _port;
+    private ActiveEventPort _port;
 
 
     @Override

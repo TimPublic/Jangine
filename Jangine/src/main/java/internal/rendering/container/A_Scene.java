@@ -3,8 +3,9 @@ package internal.rendering.container;
 
 import internal.audio.Sound;
 import internal.entity_component_system.System;
-import internal.events.EventHandler;
-import internal.events.EventListeningPort;
+import internal.events.EventFilter;
+import internal.events.EventMaster;
+import internal.events.implementations.ActiveEventPort;
 import internal.main.Engine;
 import internal.rendering.camera.Camera2D;
 import internal.rendering.texture.Texture;
@@ -37,9 +38,10 @@ public abstract class A_Scene extends A_Container {
         }
 
         SYSTEMS.window_event_handler = window.getEventHandler();
-        SYSTEMS.window_port = SYSTEMS.window_event_handler.register();
+        SYSTEMS.window_port = new ActiveEventPort(new EventFilter());
+        SYSTEMS.window_event_handler.register(SYSTEMS.window_port);
 
-        SYSTEMS.window_port.setActive(false);
+        SYSTEMS.window_port.active = false;
     }
     public void kill() {
         if (SYSTEMS.window_event_handler != null) {
@@ -101,9 +103,10 @@ public abstract class A_Scene extends A_Container {
         public Systems(A_Scene scene) {
             ECS = new System(scene);
 
-            EVENT_HANDLER = new EventHandler();
+            EVENT_HANDLER = new EventMaster();
 
-            ENGINE_PORT = Engine.get().getEventHandler().register();
+            ENGINE_PORT = new ActiveEventPort(new EventFilter());
+            Engine.get().getEventHandler().register(ENGINE_PORT);
         }
 
 
@@ -113,14 +116,14 @@ public abstract class A_Scene extends A_Container {
 
         public final System ECS;
 
-        public final EventHandler EVENT_HANDLER;
+        public final EventMaster EVENT_HANDLER;
 
         // NON-FINALS //
 
-        public EventHandler window_event_handler;
-        public EventListeningPort window_port;
+        public EventMaster window_event_handler;
+        public ActiveEventPort window_port;
 
-        public final EventListeningPort ENGINE_PORT;
+        public final ActiveEventPort ENGINE_PORT;
 
 
         // -+- UPDATE LOOP -+- //
@@ -140,7 +143,7 @@ public abstract class A_Scene extends A_Container {
 
         _active = value;
 
-        SYSTEMS.window_port.setActive(value);
+        SYSTEMS.window_port.active = value;
 
         if (value) p_onActivation();
         else p_onDeactivation();

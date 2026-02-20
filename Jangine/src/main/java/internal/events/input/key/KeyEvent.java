@@ -1,7 +1,7 @@
 package internal.events.input.key;
 
 
-import internal.events.Event;
+import internal.events.implementations.Event;
 import internal.input.KeyListener;
 
 

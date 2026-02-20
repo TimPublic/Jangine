@@ -1,8 +1,7 @@
 package internal.input;
 
 
-import internal.events.Event;
-import internal.events.EventHandler;
+import internal.events.EventMaster;
 import internal.events.input.mouse.*;
 import internal.main.Engine;
 import internal.rendering.container.Window;
@@ -26,7 +25,7 @@ import static org.lwjgl.glfw.GLFW.*;
 public class MouseListener {
 
 
-    private ArrayList<EventHandler> _eventHandlers;
+    private ArrayList<EventMaster> _eventHandlers;
 
 
     private double _xPos, _yPos;
@@ -163,40 +162,16 @@ public class MouseListener {
 
     // -+- EVENT-MANAGEMENT -+- //
 
-    /**
-     * Adds a {@link EventHandler} to receive events created and pushed by this mouse listener.
-     *
-     * @param eventHandler
-     *
-     * @author Tim Kloepper
-     */
-    public void addEventHandler(EventHandler eventHandler) {
+    public void addEventHandler(EventMaster eventHandler) {
         _eventHandlers.add(eventHandler);
     }
-    /**
-     * Removes a {@link EventHandler} to no longer receive events created and pushed by this mouse listener.
-     *
-     * @param eventHandler
-     *
-     * @author Tim Kloepper
-     */
-    public void rmvEventHandler(EventHandler eventHandler) {
+    public void rmvEventHandler(EventMaster eventHandler) {
         _eventHandlers.remove(eventHandler);
     }
 
-    /**
-     * Adds the {@link EventHandler} of the {@link Engine} to this mouse listener (see {@link MouseListener#addEventHandler(EventHandler)}).
-     *
-     * @author Tim Kloepper
-     */
     public void addEngine() {
         _eventHandlers.add(Engine.get().getEventHandler());
     }
-    /**
-     * Removes the {@link EventHandler} of the {@link Engine} to this mouse listener (see {@link KeyListener#rmvEventHandler(EventHandler)}).
-     *
-     * @author Tim Kloepper
-     */
     public void rmvEngine() {
         _eventHandlers.remove(Engine.get().getEventHandler());
     }
@@ -296,16 +271,9 @@ public class MouseListener {
         _pushEvent(new MouseButtonReleasedEvent(index));
     }
 
-    /**
-     * Pushes the given event to all registered {@link EventHandler}.
-     *
-     * @param event event to be pushed
-     *
-     * @author Tim Kloepper
-     */
     private void _pushEvent(MouseEvent event) {
-        for (EventHandler eventHandler : _eventHandlers) {
-            eventHandler.pushEvent(event);
+        for (EventMaster eventHandler : _eventHandlers) {
+            eventHandler.push(event);
         }
     }
 

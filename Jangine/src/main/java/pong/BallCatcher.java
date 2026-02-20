@@ -6,7 +6,8 @@ import internal.entity_component_system.specifics.collision.events.ObjectCollisi
 import internal.entity_component_system.specifics.hitbox.RectangleHitboxComponent;
 import internal.entity_component_system.specifics.position.PositionComponent;
 import internal.entity_component_system.specifics.velocity.VelocityComponent;
-import internal.events.Event;
+import internal.events.I_Event;
+import internal.events.implementations.Event;
 import internal.rendering.container.A_Scene;
 import internal.top_classes.A_Entity;
 import org.joml.Vector2d;
@@ -38,7 +39,7 @@ public class BallCatcher extends A_Entity {
     }
 
     private void h_setUpCallbacks() {
-        p_PORT.registerFunction(this::onObjectCollision, List.of(ObjectCollisionEvent.class));
+        p_PORT.addCallback(this::onObjectCollision);
     }
 
 
@@ -62,8 +63,10 @@ public class BallCatcher extends A_Entity {
 
     // -+- CALLBACKS -+- //
 
-    public void onObjectCollision(Event event) {
+    public void onObjectCollision(I_Event event) {
         ObjectCollisionEvent oce;
+
+        if (!(event instanceof ObjectCollisionEvent)) return;
 
         oce = (ObjectCollisionEvent) event;
 

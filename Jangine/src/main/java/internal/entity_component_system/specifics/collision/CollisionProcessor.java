@@ -16,9 +16,11 @@ import internal.entity_component_system.specifics.hitbox.HitboxProcessor;
 import internal.entity_component_system.specifics.position.PositionComponent;
 import internal.entity_component_system.specifics.hitbox.A_HitboxComponent;
 import internal.entity_component_system.specifics.position.PositionProcessor;
-import internal.events.Event;
-import internal.events.EventHandler;
-import internal.events.EventListeningPort;
+import internal.events.EventFilter;
+import internal.events.EventMaster;
+import internal.events.I_Event;
+import internal.events.implementations.ActiveEventPort;
+import internal.events.implementations.Event;
 import internal.rendering.container.A_Scene;
 import internal.rendering.container.A_Container;
 
@@ -42,9 +44,10 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
 
     @Override
     protected void p_init(System system, A_Scene scene) {
-        _port = scene.SYSTEMS.EVENT_HANDLER.register();
-        _port.registerFunction(this::onProcessorAdded, List.of(ProcessorAddedEvent.class));
-        _port.registerFunction(this::onProcessorRemoved, List.of(ProcessorRemovedEvent.class));
+        _port = new ActiveEventPort(new EventFilter());
+        scene.SYSTEMS.EVENT_HANDLER.register(_port);
+        _port.addCallback(this::onProcessorAdded);
+        _port.addCallback(this::onProcessorRemoved);
     }
     @Override
     protected void p_kill(System system, A_Scene scene) {
@@ -71,7 +74,7 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
     private HitboxProcessor _hitboxProcessor;
     private PositionProcessor _positionProcessor;
 
-    private EventListeningPort _port;
+    private ActiveEventPort _port;
 
 
     // -+- UPDATE LOOP -+- //
@@ -100,12 +103,12 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
         }
     }
 
-    private void h_checkAgainstContainer(ObjectData object, A_Container container, EventHandler eventHandler) {
+    private void h_checkAgainstContainer(ObjectData object, A_Container container, EventMaster eventHandler) {
         if (_COLLISION_CALCULATOR.isCollidingWith(object, container)) {
-            eventHandler.pushEvent(new ContainerCollisionEvent(_COLLISION_CALCULATOR.getCollisionAxis(object, container), object, container));
+            eventHandler.push(new ContainerCollisionEvent(_COLLISION_CALCULATOR.getCollisionAxis(object, container), object, container));
         }
     }
-    private void h_checkAgainstObjects(ObjectData object, Collection<ObjectData> objects, HashMap<Integer, HashSet<ObjectData>> pairs, EventHandler eventHandler) {
+    private void h_checkAgainstObjects(ObjectData object, Collection<ObjectData> objects, HashMap<Integer, HashSet<ObjectData>> pairs, EventMaster eventHandler) {
         A_CollisionData.COLLISION_AXIS collisionAxis;
 
         pairs.put(object.hitboxComponent.owningEntity, new HashSet<>());
@@ -121,9 +124,9 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
             h_pushCollisionEvents(object, objectB, collisionAxis, eventHandler);
         }
     }
-    private void h_pushCollisionEvents(ObjectData object, ObjectData collidingObject, A_CollisionData.COLLISION_AXIS collisionAxis, EventHandler eventHandler) {
-        eventHandler.pushEvent(new ObjectCollisionEvent(collisionAxis, object, collidingObject));
-        eventHandler.pushEvent(new ObjectCollisionEvent(collisionAxis, collidingObject, object));
+    private void h_pushCollisionEvents(ObjectData object, ObjectData collidingObject, A_CollisionData.COLLISION_AXIS collisionAxis, EventMaster eventHandler) {
+        eventHandler.push(new ObjectCollisionEvent(collisionAxis, object, collidingObject));
+        eventHandler.push(new ObjectCollisionEvent(collisionAxis, collidingObject, object));
     }
 
 
@@ -162,13 +165,13 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
 
     // -+- PROCESSOR MANAGEMENT -+- //
 
-    public void onProcessorAdded(Event event) {
+    public void onProcessorAdded(I_Event event) {
         if (!(event instanceof ProcessorAddedEvent)) return;
 
         if (((ProcessorAddedEvent) event).processor instanceof HitboxProcessor) _hitboxProcessor = (HitboxProcessor) ((ProcessorAddedEvent) event).processor;
         else if (((ProcessorAddedEvent) event).processor instanceof PositionProcessor) _positionProcessor = (PositionProcessor) ((ProcessorAddedEvent) event).processor;
     }
-    public void onProcessorRemoved(Event event) {
+    public void onProcessorRemoved(I_Event event) {
         if (!(event instanceof ProcessorRemovedEvent)) return;
 
         if (((ProcessorRemovedEvent) event).processor instanceof HitboxProcessor) _hitboxProcessor = null;

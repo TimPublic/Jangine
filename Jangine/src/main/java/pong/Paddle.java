@@ -7,8 +7,9 @@ import internal.entity_component_system.specifics.hitbox.RectangleHitboxComponen
 import internal.entity_component_system.specifics.position.PositionComponent;
 import internal.entity_component_system.specifics.render.RenderComponent;
 import internal.entity_component_system.specifics.velocity.VelocityComponent;
-import internal.events.Event;
-import internal.events.EventListeningPort;
+import internal.events.I_Event;
+import internal.events.implementations.ActiveEventPort;
+import internal.events.implementations.Event;
 import internal.events.input.key.KeyContinuedEvent;
 import internal.rendering.container.A_Scene;
 import internal.rendering.mesh.TexturedAMesh;
@@ -59,9 +60,9 @@ public class Paddle extends A_Entity {
         };
     }
 
-    private void h_setUpCallbacks(EventListeningPort windowPort) {
-        p_PORT.registerFunction(this::onContainerCollision, List.of(ContainerCollisionEvent.class));
-        windowPort.registerFunction(this::onKeyContinued, List.of(KeyContinuedEvent.class));
+    private void h_setUpCallbacks(ActiveEventPort windowPort) {
+        p_PORT.addCallback(this::onContainerCollision);
+        windowPort.addCallback(this::onKeyContinued);
     }
 
 
@@ -109,8 +110,10 @@ public class Paddle extends A_Entity {
 
     // -+- CALLBACKS -+- //
 
-    public void onContainerCollision(Event event) {
+    public void onContainerCollision(I_Event event) {
         ContainerCollisionEvent cce;
+
+        if (!(event instanceof ContainerCollisionEvent)) return;
 
         cce = (ContainerCollisionEvent) event;
 
@@ -119,8 +122,10 @@ public class Paddle extends A_Entity {
         if (cce.container.getPosition().x > cce.object.positionComponent.position.x) _touchesLeft = true;
         else _touchesRight = true;
     }
-    public void onKeyContinued(Event event) {
+    public void onKeyContinued(I_Event event) {
         KeyContinuedEvent kce;
+
+        if (!(event instanceof KeyContinuedEvent)) return;
 
         kce = (KeyContinuedEvent) event;
 

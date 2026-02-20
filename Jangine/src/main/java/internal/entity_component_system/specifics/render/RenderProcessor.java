@@ -9,8 +9,10 @@ import internal.entity_component_system.events.ProcessorAddedEvent;
 import internal.entity_component_system.events.ProcessorRemovedEvent;
 import internal.entity_component_system.specifics.position.PositionComponent;
 import internal.entity_component_system.specifics.position.PositionProcessor;
-import internal.events.Event;
-import internal.events.EventListeningPort;
+import internal.events.EventFilter;
+import internal.events.I_Event;
+import internal.events.implementations.ActiveEventPort;
+import internal.events.implementations.Event;
 import internal.rendering.container.A_Scene;
 import internal.rendering.mesh.A_Mesh;
 import org.joml.Vector2d;
@@ -31,16 +33,16 @@ public class RenderProcessor extends A_Processor<RenderComponent> {
 
     // NON-FINALS //
 
-    private EventListeningPort _port;
+    private ActiveEventPort _port;
     private PositionProcessor _positionProcessor;
 
 
     @Override
     protected void p_init(System system, A_Scene scene) {
-        _port = scene.SYSTEMS.EVENT_HANDLER.register();
-
-        _port.registerFunction(this::onSystemAdded, List.of(ProcessorAddedEvent.class));
-        _port.registerFunction(this::onSystemRemoved, List.of(ProcessorRemovedEvent.class));
+        _port = new ActiveEventPort(new EventFilter());
+        scene.SYSTEMS.EVENT_HANDLER.register(_port);
+        _port.addCallback(this::onSystemAdded);
+        _port.addCallback(this::onSystemRemoved);
 
         _system = new BatchSystem(scene.getCamera());
     }
@@ -118,13 +120,17 @@ public class RenderProcessor extends A_Processor<RenderComponent> {
     }
 
 
-    public void onSystemAdded(Event event) {
+    public void onSystemAdded(I_Event event) {
+        if (!(event instanceof ProcessorAddedEvent)) return;
+
         if (((ProcessorAddedEvent) event).processor instanceof PositionProcessor) {
             _positionProcessor = (PositionProcessor) ((ProcessorAddedEvent) event).processor;
         }
     }
-    public void onSystemRemoved(Event event) {
-        if (((ProcessorAddedEvent) event).processor instanceof PositionProcessor) {
+    public void onSystemRemoved(I_Event event) {
+        if (!(event instanceof ProcessorRemovedEvent)) return;
+
+        if (((ProcessorRemovedEvent) event).processor instanceof PositionProcessor) {
             _positionProcessor = null;
         }
     }

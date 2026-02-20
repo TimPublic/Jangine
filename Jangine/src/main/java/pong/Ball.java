@@ -8,7 +8,8 @@ import internal.entity_component_system.specifics.hitbox.RectangleHitboxComponen
 import internal.entity_component_system.specifics.position.PositionComponent;
 import internal.entity_component_system.specifics.render.RenderComponent;
 import internal.entity_component_system.specifics.velocity.VelocityComponent;
-import internal.events.Event;
+import internal.events.I_Event;
+import internal.events.implementations.Event;
 import internal.rendering.container.A_Scene;
 import internal.rendering.mesh.TexturedAMesh;
 import internal.top_classes.A_Entity;
@@ -61,8 +62,8 @@ public class Ball extends A_Entity {
     }
 
     private void h_setUpCallbacks() {
-        p_PORT.registerFunction(this::onContainerCollision, List.of(ContainerCollisionEvent.class));
-        p_PORT.registerFunction(this::onObjectCollision, List.of(ObjectCollisionEvent.class));
+        p_PORT.addCallback(this::onContainerCollision);
+        p_PORT.addCallback(this::onObjectCollision);
     }
 
     public void kill() {
@@ -97,8 +98,10 @@ public class Ball extends A_Entity {
 
     // -+- CALLBACKS -+- //
 
-    public void onContainerCollision(Event event) {
+    public void onContainerCollision(I_Event event) {
         ContainerCollisionEvent cce;
+
+        if (!(event instanceof ContainerCollisionEvent)) return;
 
         cce = (ContainerCollisionEvent) event;
 
@@ -109,8 +112,10 @@ public class Ball extends A_Entity {
             case Y -> _VELOCITY.mul(-1, 1);
         }
     }
-    public void onObjectCollision(Event event) {
+    public void onObjectCollision(I_Event event) {
         ObjectCollisionEvent oce;
+
+        if (!(event instanceof ObjectCollisionEvent)) return;
 
         oce = (ObjectCollisionEvent) event;
 

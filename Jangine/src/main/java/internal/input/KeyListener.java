@@ -1,8 +1,8 @@
 package internal.input;
 
 
-import internal.events.Event;
-import internal.events.EventHandler;
+import internal.events.EventMaster;
+import internal.events.implementations.Event;
 import internal.events.input.key.KeyContinuedEvent;
 import internal.events.input.key.KeyPressedEvent;
 import internal.events.input.key.KeyReleasedEvent;
@@ -27,7 +27,7 @@ import static org.lwjgl.glfw.GLFW.glfwSetKeyCallback;
 public class KeyListener {
 
 
-    private ArrayList<EventHandler> _eventHandlers;
+    private ArrayList<EventMaster> _eventHandlers;
 
     private HashSet<Integer> _keyPressedBuffer;
     private HashSet<Integer> _prevKeyPressedBuffer;
@@ -93,40 +93,16 @@ public class KeyListener {
 
     // -+- EVENT-HANDLING -+- //
 
-    /**
-     * Adds a {@link EventHandler} to receive events created and pushed by this key listener.
-     *
-     * @param eventHandler
-     *
-     * @author Tim Kloepper
-     */
-    public void addEventHandler(EventHandler eventHandler) {
+    public void addEventHandler(EventMaster eventHandler) {
         _eventHandlers.add(eventHandler);
     }
-    /**
-     * Removes a {@link EventHandler} to no longer receive events created and pushed by this key listener.
-     *
-     * @param eventHandler
-     *
-     * @author Tim Kloepper
-     */
-    public void rmvEventHandler(EventHandler eventHandler) {
+    public void rmvEventHandler(EventMaster eventHandler) {
         _eventHandlers.remove(eventHandler);
     }
 
-    /**
-     * Adds the {@link EventHandler} of the {@link Engine} to this key listener (see {@link KeyListener#addEventHandler(EventHandler)}).
-     *
-     * @author Tim Kloepper
-     */
     public void addEngine() {
         _eventHandlers.add(Engine.get().getEventHandler());
     }
-    /**
-     * Removes the {@link EventHandler} of the {@link Engine} to this key listener (see {@link KeyListener#rmvEventHandler(EventHandler)}).
-     *
-     * @author Tim Kloepper
-     */
     public void rmvEngine() {
         _eventHandlers.remove(Engine.get().getEventHandler());
     }
@@ -186,16 +162,9 @@ public class KeyListener {
         _pushEvent(new KeyReleasedEvent(key));
     }
 
-    /**
-     * Pushes the specifies {@link Event} to all registered {@link EventHandler}.
-     *
-     * @param event {@link Event} event to be pushed
-     *
-     * @author Tim Kloepper
-     */
     private void _pushEvent(KeyEvent event) {
-        for (EventHandler eventHandler : _eventHandlers) {
-            eventHandler.pushEvent(event);
+        for (EventMaster eventHandler : _eventHandlers) {
+            eventHandler.push(event);
         }
     }
 
