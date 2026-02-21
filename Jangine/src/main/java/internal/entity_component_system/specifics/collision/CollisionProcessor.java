@@ -44,10 +44,15 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
 
     @Override
     protected void p_init(System system, A_Scene scene) {
-        _port = new ActiveEventPort(new EventFilter());
-        scene.SYSTEMS.EVENT_HANDLER.register(_port);
-        _port.addCallback(this::onProcessorAdded);
-        _port.addCallback(this::onProcessorRemoved);
+        _processorAddedPort = new ActiveEventPort(new EventFilter());
+        _processorAddedPort.filter.addInterest(ProcessorAddedEvent.class);
+        _processorAddedPort.addCallback(this::onProcessorAdded);
+        scene.SYSTEMS.EVENT_HANDLER.register(_processorAddedPort);
+
+        _processorRemovedPort = new ActiveEventPort(new EventFilter());
+        _processorRemovedPort.filter.addInterest(ProcessorRemovedEvent.class);
+        _processorRemovedPort.addCallback(this::onProcessorRemoved);
+        scene.SYSTEMS.EVENT_HANDLER.register(_processorRemovedPort);
     }
     @Override
     protected void p_kill(System system, A_Scene scene) {
@@ -74,7 +79,8 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
     private HitboxProcessor _hitboxProcessor;
     private PositionProcessor _positionProcessor;
 
-    private ActiveEventPort _port;
+    private ActiveEventPort _processorAddedPort;
+    private ActiveEventPort _processorRemovedPort;
 
 
     // -+- UPDATE LOOP -+- //
@@ -166,14 +172,10 @@ public class CollisionProcessor extends A_Processor<CollisionComponent> {
     // -+- PROCESSOR MANAGEMENT -+- //
 
     public void onProcessorAdded(I_Event event) {
-        if (!(event instanceof ProcessorAddedEvent)) return;
-
         if (((ProcessorAddedEvent) event).processor instanceof HitboxProcessor) _hitboxProcessor = (HitboxProcessor) ((ProcessorAddedEvent) event).processor;
         else if (((ProcessorAddedEvent) event).processor instanceof PositionProcessor) _positionProcessor = (PositionProcessor) ((ProcessorAddedEvent) event).processor;
     }
     public void onProcessorRemoved(I_Event event) {
-        if (!(event instanceof ProcessorRemovedEvent)) return;
-
         if (((ProcessorRemovedEvent) event).processor instanceof HitboxProcessor) _hitboxProcessor = null;
         else if (((ProcessorRemovedEvent) event).processor instanceof PositionProcessor) _positionProcessor = null;
     }
