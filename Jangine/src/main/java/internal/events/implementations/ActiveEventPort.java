@@ -27,21 +27,21 @@ public class ActiveEventPort extends A_EventPort {
 
     // FINALS //
 
-    private final ArrayList<WeakReference<Consumer<I_Event>>> _CALLBACKS;
+    private final ArrayList<Consumer<I_Event>> _CALLBACKS;
 
 
     // -+- EVENT MANAGEMENT -+- //
 
     @Override
     protected void p_pushValidEvent(I_Event event) {
-        Iterator<WeakReference<Consumer<I_Event>>> iterator;
+        Iterator<Consumer<I_Event>> iterator;
 
         iterator = _CALLBACKS.iterator();
 
         while (iterator.hasNext()) {
             Consumer<I_Event> callback;
 
-            callback = iterator.next().get();
+            callback = iterator.next();
             if (callback == null) {
                 iterator.remove();
 
@@ -58,31 +58,31 @@ public class ActiveEventPort extends A_EventPort {
     public void addCallback(Consumer<I_Event> callback) {
         if (contains(callback)) return;
 
-        _CALLBACKS.add(new WeakReference<>(callback));
+        _CALLBACKS.add(callback);
     }
     public void rmvCallback(Consumer<I_Event> callback) {
-        Iterator<WeakReference<Consumer<I_Event>>> iterator;
+        Iterator<Consumer<I_Event>> iterator;
 
         iterator = _CALLBACKS.iterator();
 
         while (iterator.hasNext()) {
             Consumer<I_Event> currentCallback;
 
-            currentCallback = iterator.next().get();
+            currentCallback = iterator.next();
 
             if (currentCallback == null || currentCallback == callback) iterator.remove();
         }
     }
 
     public boolean contains(Consumer<I_Event> callback) {
-        Iterator<WeakReference<Consumer<I_Event>>> iterator;
+        Iterator<Consumer<I_Event>> iterator;
 
         iterator = _CALLBACKS.iterator();
 
         while (iterator.hasNext()) {
             Consumer<I_Event> currentCallback;
 
-            currentCallback = iterator.next().get();
+            currentCallback = iterator.next();
             if (currentCallback == null) {
                 iterator.remove();
 

@@ -141,6 +141,8 @@ public abstract class A_Scene extends A_Container {
     public void setActive(boolean value) {
         if (_active == value) return;
 
+        java.lang.System.out.println("Changed activation state!");
+
         _active = value;
 
         SYSTEMS.window_port.active = value;
