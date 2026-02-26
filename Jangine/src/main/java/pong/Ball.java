@@ -119,16 +119,12 @@ public class Ball extends A_Entity {
 
         oce = (ObjectCollisionEvent) event;
 
-        if (_collisionTimer > 0) return;
-
         if (oce.object.positionComponent.owningEntity != getId()) return;
 
         switch (oce.collisionAxis) {
             case X -> _VELOCITY.mul(1, -1);
             case Y -> _VELOCITY.mul(-1, 1);
         }
-
-        _collisionTimer = 10;
     }
 
 

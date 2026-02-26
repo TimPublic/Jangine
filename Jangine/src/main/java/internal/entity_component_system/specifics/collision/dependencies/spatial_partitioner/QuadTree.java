@@ -213,13 +213,9 @@ class Node {
         halvedHeight = _height / 2;
 
         _NODES[0] = _POOL.request(p_OBJECTS, new Vector2d(_position), halvedWidth, halvedHeight);
-        _LEAF_CREATED_CALLBACK.accept(_NODES[0]);
         _NODES[1] = _POOL.request(p_OBJECTS, new Vector2d(_position.x, _position.y + halvedHeight), halvedWidth, halvedHeight);
-        _LEAF_CREATED_CALLBACK.accept(_NODES[1]);
         _NODES[2] = _POOL.request(p_OBJECTS, new Vector2d(_position.x + halvedWidth, _position.y), halvedWidth, halvedHeight);
-        _LEAF_CREATED_CALLBACK.accept(_NODES[2]);
         _NODES[3] = _POOL.request(p_OBJECTS, new Vector2d(_position.x + halvedWidth, _position.y + halvedHeight), halvedWidth, halvedHeight);
-        _LEAF_CREATED_CALLBACK.accept(_NODES[3]);
 
         _isLeaf = false;
     }

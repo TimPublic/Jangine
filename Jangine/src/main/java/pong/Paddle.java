@@ -9,14 +9,11 @@ import internal.entity_component_system.specifics.render.RenderComponent;
 import internal.entity_component_system.specifics.velocity.VelocityComponent;
 import internal.events.I_Event;
 import internal.events.implementations.ActiveEventPort;
-import internal.events.implementations.Event;
 import internal.events.input.key.KeyContinuedEvent;
 import internal.rendering.container.A_Scene;
 import internal.rendering.mesh.TexturedAMesh;
 import internal.top_classes.A_Entity;
 import org.joml.Vector2d;
-
-import java.util.List;
 
 
 public class Paddle extends A_Entity {
