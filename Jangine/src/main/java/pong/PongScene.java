@@ -15,8 +15,6 @@ import internal.rendering.texture.dependencies.I_TextureLoader;
 import internal.rendering.texture.dependencies.implementations.STBI_TextureLoader;
 import org.joml.Vector2d;
 
-import java.io.File;
-
 
 public class PongScene extends A_Scene {
 
